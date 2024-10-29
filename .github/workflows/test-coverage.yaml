@@ -44,7 +44,7 @@ jobs:
           file: ./cobertura.xml
           plugin: noop
           disable_search: true
-          token: c930022b-e11a-47ad-90f1-ffd2b6e14c80
+          token: d39775b8-5aec-4f5e-899a-fb7bee735f07
 
       - name: Show testthat output
         if: always()
