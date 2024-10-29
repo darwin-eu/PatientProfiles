@@ -13,8 +13,8 @@ Identify the characteristics of patients in data mapped to the Observational Med
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://darwin-eu-dev.github.io/PatientProfiles/}
-  \item Report bugs at \url{https://github.com/darwin-eu-dev/PatientProfiles/issues}
+  \item \url{https://darwin-eu.github.io/PatientProfiles/}
+  \item Report bugs at \url{https://github.com/darwin-eu/PatientProfiles/issues}
 }
 
 }
