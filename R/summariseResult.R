@@ -40,8 +40,8 @@
 #' library(dplyr)
 #'
 #' cdm <- mockPatientProfiles()
-#' x <- cdm$cohort1 %>%
-#'   addDemographics() %>%
+#' x <- cdm$cohort1 |>
+#'   addDemographics() |>
 #'   collect()
 #' result <- summariseResult(x)
 #' mockDisconnect(cdm = cdm)
@@ -74,8 +74,8 @@ summariseResult <- function(table,
   }
 
   # create the summary for overall
-  if (table %>%
-    dplyr::count() %>%
+  if (table |>
+    dplyr::count() |>
     dplyr::pull() == 0) {
     if (counts) {
       result <- dplyr::tibble(
@@ -124,15 +124,15 @@ summariseResult <- function(table,
       ))))
 
     # collect if necessary
-    collectFlag <- functions %>%
-      dplyr::filter(grepl("q", .data$estimate_name)) %>%
+    collectFlag <- functions |>
+      dplyr::filter(grepl("q", .data$estimate_name)) |>
       nrow() > 0
     if (collectFlag) {
       cli::cli_inform(c(
         "!" = "Table is collected to memory as not all requested estimates are
         supported on the database side"
       ))
-      table <- table %>% dplyr::collect()
+      table <- table |> dplyr::collect()
     }
 
     # correct dates and logicals
@@ -249,10 +249,10 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
     # format group strata
     strataGroup <- strataGroup |>
       dplyr::collect() |>
-      visOmopResults::uniteGroup(
+      omopgenerics::uniteGroup(
         cols = groupk, keep = TRUE, ignore = character()
       ) |>
-      visOmopResults::uniteStrata(
+      omopgenerics::uniteStrata(
         cols = stratak, keep = TRUE, ignore = character()
       ) |>
       dplyr::select(
@@ -293,21 +293,21 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
 
 countSubjects <- function(x, personVariable) {
   result <- list()
-  result$record <- x %>%
+  result$record <- x |>
     dplyr::summarise(
       "estimate_value" = dplyr::n(),
       .groups = "drop"
-    ) %>%
+    ) |>
     dplyr::collect() |>
     dplyr::mutate(
       "variable_name" = "number_records"
     )
   if (!is.null(personVariable)) {
-    result$subject <- x %>%
+    result$subject <- x |>
       dplyr::summarise(
         "estimate_value" = dplyr::n_distinct(.data[[personVariable]]),
         .groups = "drop"
-      ) %>%
+      ) |>
       dplyr::collect() |>
       dplyr::mutate(
         "variable_name" = "number_subjects"

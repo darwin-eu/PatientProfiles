@@ -53,7 +53,7 @@ It creates columns to indicate the presence of cohorts
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2"
   )

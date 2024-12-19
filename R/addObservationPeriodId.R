@@ -29,8 +29,10 @@
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addObservationPeriodId()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -67,8 +69,10 @@ addObservationPeriodId <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addObservationPeriodIdQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -110,6 +114,7 @@ addObservationPeriodIdQuery <- function(x,
 
   currentObsId <- x |>
     dplyr::select(dplyr::all_of(c(personVariable, indexDate))) |>
+    dplyr::distinct() |>
     dplyr::inner_join(
       cdm$observation_period |>
         dplyr::select(

@@ -10,7 +10,7 @@ library(DT)
 # read results from data folder ----
 devtools::load_all()
 cdm <- DrugUtilisation::mockDrugUtilisation(numberIndividuals = 100)
-cdm$cohort1 <- cdm$cohort1 %>% addSex()
+cdm$cohort1 <- cdm$cohort1 |> addSex()
 summaryCharacteristics <- summariseCharacteristics(
   cohort = cdm$cohort1,
   strata = list("sex" = "sex"),
@@ -26,10 +26,10 @@ summaryCharacteristics <- summariseCharacteristics(
     )
   ),
   minCellCount = 1
-) %>%
-  mutate(group = paste0(.data$group_name, ": ", .data$group_level)) %>%
-  mutate(strata = paste0(.data$strata_name, ": ", .data$strata_level)) %>%
-  select(-c("group_name", "group_level", "strata_name", "strata_level")) %>%
+) |>
+  mutate(group = paste0(.data$group_name, ": ", .data$group_level)) |>
+  mutate(strata = paste0(.data$strata_name, ": ", .data$strata_level)) |>
+  select(-c("group_name", "group_level", "strata_name", "strata_level")) |>
   relocate("cdm_name", "group", "strata")
 
 # ui shiny ----
@@ -115,7 +115,7 @@ ui <- dashboardPage(
               outputId = "summary_characteristics_download_raw_filtered",
               label = "Download table as csv"
             ),
-            DTOutput("summary_characteristics_table_raw") %>% withSpinner()
+            DTOutput("summary_characteristics_table_raw") |> withSpinner()
           ),
           tabPanel(
             "Tidy table",
@@ -123,7 +123,7 @@ ui <- dashboardPage(
               outputId = "summary_characteristics_download_tidy_word",
               label = "Download table as word"
             ),
-            gt_output("summary_characteristics_table_tidy") %>% withSpinner()
+            gt_output("summary_characteristics_table_tidy") |> withSpinner()
           )
         )
       )
@@ -136,11 +136,11 @@ server <- function(input, output, session) {
   ## summary characteristics ----
   ### get data ----
   get_summary_characteristics_data <- reactive({
-    summaryCharacteristics %>%
-      filter(variable %in% input$summary_characteristics_variable) %>%
-      filter(cdm_name %in% input$summary_characteristics_cdm_name) %>%
-      filter(estimate_type %in% input$summary_characteristics_estimate_type) %>%
-      filter(group %in% input$summary_characteristics_group) %>%
+    summaryCharacteristics |>
+      filter(variable %in% input$summary_characteristics_variable) |>
+      filter(cdm_name %in% input$summary_characteristics_cdm_name) |>
+      filter(estimate_type %in% input$summary_characteristics_estimate_type) |>
+      filter(group %in% input$summary_characteristics_group) |>
       filter(strata %in% input$summary_characteristics_strata)
   })
   ### get raw table ----
@@ -148,7 +148,7 @@ server <- function(input, output, session) {
     summaryResult <- get_summary_characteristics_data()
     validate(need(nrow(summaryResult) > 0, "No results for selected inputs"))
     datatable(
-      summaryResult %>% select(-"result_type"),
+      summaryResult |> select(-"result_type"),
       rownames = FALSE,
       extensions = "Buttons",
       options = list(scrollX = TRUE, scrollCollapse = TRUE)

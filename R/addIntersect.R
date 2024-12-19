@@ -65,7 +65,7 @@
   # define overlapTable that contains the events of interest
   overlapTable <- cdm[[tableName]]
   if (!is.null(filterTbl)) {
-    overlapTable <- overlapTable %>%
+    overlapTable <- overlapTable |>
       dplyr::filter(.data[[filterVariable]] %in% .env$filterId)
   } else {
     filterVariable <- "id"
@@ -86,24 +86,24 @@
     value = value,
     id_name = filterTbl$id_name,
     window_name = names(window)
-  ) %>%
-    dplyr::as_tibble() %>%
+  ) |>
+    dplyr::as_tibble() |>
     dplyr::mutate(colnam = as.character(glue::glue(
       nameStyle,
       value = .data$value,
       id_name = .data$id_name,
       window_name = .data$window_name
-    ))) %>%
+    ))) |>
     dplyr::mutate(colnam = checkSnakeCase(.data$colnam, verbose = F))
 
-  overlapTable <- overlapTable %>%
+  overlapTable <- overlapTable |>
     dplyr::select(
       !!personVariable := dplyr::all_of(personVariableTable),
       "id" = dplyr::all_of(filterVariable),
       "start_date" = dplyr::all_of(targetStartDate),
       "end_date" = dplyr::all_of(targetEndDate %||% targetStartDate),
       dplyr::all_of(extraValue)
-    ) %>%
+    ) |>
     dplyr::mutate(end_date = dplyr::if_else(
       is.na(.data$end_date), .data$start_date, .data$end_date
     ))
@@ -171,18 +171,18 @@
       if (is.infinite(win[2])) {
         resultW <- result
       } else {
-        resultW <- result %>% dplyr::filter(.data$start <= !!win[2])
+        resultW <- result |> dplyr::filter(.data$start <= !!win[2])
       }
     } else {
       if (is.infinite(win[2])) {
-        resultW <- result %>% dplyr::filter(.data$end >= !!win[1])
+        resultW <- result |> dplyr::filter(.data$end >= !!win[1])
       } else {
-        resultW <- result %>%
+        resultW <- result |>
           dplyr::filter(.data$end >= !!win[1] & .data$start <= !!win[2])
       }
     }
 
-    resultW <- resultW %>%
+    resultW <- resultW |>
       dplyr::select(-"end") |>
       dplyr::compute(
         name = omopgenerics::uniqueTableName(tablePrefix),
@@ -197,21 +197,21 @@
 
     # add count or flag
     if ("count" %in% value | "flag" %in% value) {
-      resultCF <- resultW %>%
-        dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id) %>%
-        dplyr::summarise(count = dplyr::n(), .groups = "drop") %>%
-        dplyr::left_join(cdm[[filterTblName]], by = "id") %>%
-        dplyr::select(-"id") %>%
+      resultCF <- resultW |>
+        dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id) |>
+        dplyr::summarise(count = dplyr::n(), .groups = "drop") |>
+        dplyr::left_join(cdm[[filterTblName]], by = "id") |>
+        dplyr::select(-"id") |>
         dplyr::mutate("window_name" = !!tolower(names(window)[i]))
       if ("flag" %in% value) {
-        resultCF <- resultCF %>% dplyr::mutate(flag = 1)
+        resultCF <- resultCF |> dplyr::mutate(flag = 1)
       }
       if (!("count" %in% value)) {
         resultCF <- resultCF |> dplyr::select(-"count")
       }
 
       if (i == 1) {
-        resultCountFlag <- resultCF %>%
+        resultCountFlag <- resultCF |>
           dplyr::compute(
             name = omopgenerics::uniqueTableName(tablePrefix),
             temporary = FALSE,
@@ -229,23 +229,23 @@
     }
     # add date, time or other
     if (length(value[!(value %in% c("count", "flag"))]) > 0) {
-      resultDTO <- resultW %>%
+      resultDTO <- resultW |>
         dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id)
       if (order == "first") {
-        resultDTO <- resultDTO %>%
+        resultDTO <- resultDTO |>
           dplyr::summarise(
             days = min(.data$start, na.rm = TRUE), .groups = "drop"
           )
       } else {
-        resultDTO <- resultDTO %>%
+        resultDTO <- resultDTO |>
           dplyr::summarise(
             days = max(.data$start, na.rm = TRUE), .groups = "drop"
           )
       }
-      resultDTO <- resultDTO %>%
+      resultDTO <- resultDTO |>
         dplyr::right_join(
-          resultW %>%
-            dplyr::select(dplyr::all_of(c(personVariable, "index_date", "id"))) %>%
+          resultW |>
+            dplyr::select(dplyr::all_of(c(personVariable, "index_date", "id"))) |>
             dplyr::distinct(),
           by = c(personVariable, "index_date", "id")
         )
@@ -254,21 +254,21 @@
           dplyr::mutate(date = as.Date(!!CDMConnector::dateadd("index_date", "days")))
       }
       if (length(extraValue) > 0) {
-        resultDTO <- resultDTO %>%
+        resultDTO <- resultDTO |>
           dplyr::left_join(
-            resultW %>%
+            resultW |>
               dplyr::select(
                 dplyr::all_of(personVariable), "index_date", "id",
                 "days" = "start", dplyr::all_of(extraValue)
-              ) %>%
+              ) |>
               dplyr::inner_join(
-                resultDTO %>%
+                resultDTO |>
                   dplyr::select(dplyr::all_of(
                     c(personVariable, "index_date", "id", "days")
                   )),
                 by = c(personVariable, "index_date", "id", "days")
-              ) %>%
-              dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id) %>%
+              ) |>
+              dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id) |>
               dplyr::summarise(
                 dplyr::across(
                   dplyr::all_of(extraValue), ~ str_flatten(.x, collapse = "; ")
@@ -279,15 +279,15 @@
           )
       }
 
-      resultDTO <- resultDTO %>%
-        dplyr::left_join(cdm[[filterTblName]], by = "id") %>%
-        dplyr::select(-"id") %>%
+      resultDTO <- resultDTO |>
+        dplyr::left_join(cdm[[filterTblName]], by = "id") |>
+        dplyr::select(-"id") |>
         dplyr::mutate("window_name" = !!tolower(names(window)[i]))
       if (!("days" %in% value)) {
         resultDTO <- dplyr::select(resultDTO, -"days")
       }
       if (i == 1) {
-        resultDateTimeOther <- resultDTO %>%
+        resultDateTimeOther <- resultDTO |>
           dplyr::compute(
             name = omopgenerics::uniqueTableName(tablePrefix),
             temporary = FALSE,
@@ -306,19 +306,19 @@
   }
 
   if (any(c("flag", "count") %in% value)) {
-    resultCountFlagPivot <- resultCountFlag %>%
+    resultCountFlagPivot <- resultCountFlag |>
       tidyr::pivot_longer(
         dplyr::any_of(c("count", "flag")),
         names_to = "value",
         values_to = "values"
-      ) %>%
+      ) |>
       tidyr::pivot_wider(
         names_from = c("value", "id_name", "window_name"),
         values_from = "values",
         names_glue = nameStyle,
         values_fill = 0
-      ) %>%
-      dplyr::rename(!!indexDate := "index_date") %>%
+      ) |>
+      dplyr::rename(!!indexDate := "index_date") |>
       dplyr::rename_all(tolower) |>
       dplyr::compute(
         name = omopgenerics::uniqueTableName(tablePrefix),
@@ -329,7 +329,7 @@
     newColCountFlag <- colnames(resultCountFlagPivot)
     newColCountFlag <- newColCountFlag[newColCountFlag %in% newCols$colnam]
 
-    x <- x %>%
+    x <- x |>
       dplyr::left_join(
         resultCountFlagPivot,
         by = c(personVariable, indexDate)
@@ -340,7 +340,7 @@
         overwrite = TRUE
       )
 
-    x <- x %>%
+    x <- x |>
       dplyr::mutate(dplyr::across(
         dplyr::all_of(newColCountFlag), ~ dplyr::if_else(is.na(.x), 0, .x)
       )) |>
@@ -354,32 +354,32 @@
   if (length(value[!(value %in% c("count", "flag"))]) > 0) {
     values <- value[!(value %in% c("count", "flag"))]
     for (val in values) {
-      resultDateTimeOtherX <- resultDateTimeOther %>%
+      resultDateTimeOtherX <- resultDateTimeOther |>
         dplyr::select(
           dplyr::all_of(personVariable), "index_date", dplyr::all_of(val),
           "id_name", "window_name"
-        ) %>%
+        ) |>
         tidyr::pivot_longer(
           dplyr::all_of(val),
           names_to = "value",
           values_to = "values"
-        ) %>%
+        ) |>
         tidyr::pivot_wider(
           names_from = c("value", "id_name", "window_name"),
           values_from = "values",
           names_glue = nameStyle
-        ) %>%
-        dplyr::rename(!!indexDate := "index_date") %>%
+        ) |>
+        dplyr::rename(!!indexDate := "index_date") |>
         dplyr::rename_all(tolower)
 
-      x <- x %>%
+      x <- x |>
         dplyr::left_join(
           resultDateTimeOtherX,
           by = c(personVariable, indexDate)
         )
     }
 
-    x <- x %>%
+    x <- x |>
       dplyr::compute(
         name = omopgenerics::uniqueTableName(tablePrefix),
         temporary = FALSE,
@@ -388,11 +388,10 @@
   }
 
   # missing columns
-  newCols <- newCols %>%
+  missingCols <- newCols |>
     dplyr::filter(!.data$colnam %in% colnames(x))
-
-  for (val in as.character(unique(newCols$value))) {
-    cols <- newCols$colnam[newCols$value == val]
+  for (val in as.character(unique(missingCols$value))) {
+    cols <- missingCols$colnam[missingCols$value == val]
     valk <- switch(val,
       flag = 0,
       count = 0,
@@ -468,11 +467,12 @@
 #' }
 #'
 startDateColumn <- function(tableName) {
-  if (tableName %in% namesTable$table_name) {
-    return(namesTable$start_date_name[namesTable$table_name == tableName])
+  if (tableName %in% omopgenerics::omopTables()) {
+    col <- omopgenerics::omopColumns(table = tableName, field = "start_date")
   } else {
-    return("cohort_start_date")
+    col <- "cohort_start_date"
   }
+  return(col)
 }
 
 #' Get the name of the end date column for a certain table in the cdm
@@ -490,11 +490,12 @@ startDateColumn <- function(tableName) {
 #' }
 #'
 endDateColumn <- function(tableName) {
-  if (tableName %in% namesTable$table_name) {
-    return(namesTable$end_date_name[namesTable$table_name == tableName])
+  if (tableName %in% omopgenerics::omopTables()) {
+    col <- omopgenerics::omopColumns(table = tableName, field = "end_date")
   } else {
-    return("cohort_end_date")
+    col <- "cohort_end_date"
   }
+  return(col)
 }
 
 #' Get the name of the standard concept_id column for a certain table in the cdm
@@ -512,11 +513,12 @@ endDateColumn <- function(tableName) {
 #' }
 #'
 standardConceptIdColumn <- function(tableName) {
-  if (tableName %in% namesTable$table_name) {
-    return(namesTable$concept_id_name[namesTable$table_name == tableName])
+  if (tableName %in% omopgenerics::omopTables()) {
+    col <- omopgenerics::omopColumns(table = tableName, field = "standard_concept")
   } else {
-    return("cohort_definition_id")
+    col <- "cohort_definition_id"
   }
+  return(col)
 }
 
 #' Get the name of the source concept_id column for a certain table in the cdm
@@ -534,9 +536,10 @@ standardConceptIdColumn <- function(tableName) {
 #' }
 #'
 sourceConceptIdColumn <- function(tableName) {
-  if (tableName %in% namesTable$table_name) {
-    return(namesTable$source_concept_id_name[namesTable$table_name == tableName])
+  if (tableName %in% omopgenerics::omopTables()) {
+    col <- omopgenerics::omopColumns(table = tableName, field = "source_concept")
   } else {
-    return(as.character(NA))
+    col <- NA_character_
   }
+  return(col)
 }

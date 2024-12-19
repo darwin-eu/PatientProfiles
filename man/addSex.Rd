@@ -24,8 +24,10 @@ Compute the sex of the individuals
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addSex()
+
 mockDisconnect(cdm = cdm)
 }
 

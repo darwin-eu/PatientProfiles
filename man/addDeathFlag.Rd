@@ -37,8 +37,10 @@ period than `indexDate` will be observed.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addDeathFlag()
+
 mockDisconnect(cdm = cdm)
 }
 

@@ -30,8 +30,10 @@
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDeathDate()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -68,8 +70,10 @@ addDeathDate <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDeathDays()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -107,8 +111,10 @@ addDeathDays <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDeathFlag()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'

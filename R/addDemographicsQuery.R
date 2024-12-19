@@ -60,8 +60,10 @@
 #' \donttest{
 #' library(PatientProfiles)
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDemographicsQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -140,6 +142,7 @@ addDemographicsQuery <- function(x,
 #'
 #' cdm$cohort1 |>
 #'   addAgeQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addAgeQuery <- function(x,
@@ -198,8 +201,9 @@ addAgeQuery <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addFutureObservationQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addFutureObservationQuery <- function(x,
@@ -254,8 +258,9 @@ addFutureObservationQuery <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addPriorObservationQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addPriorObservationQuery <- function(x,
@@ -304,8 +309,10 @@ addPriorObservationQuery <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addSexQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -360,8 +367,10 @@ addSexQuery <- function(x,
 #' \donttest{
 #' library(PatientProfiles)
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDateOfBirthQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addDateOfBirthQuery <- function(x,
@@ -476,8 +485,8 @@ addDateOfBirthQuery <- function(x,
       } else {
         pHQ <- ".data$start_date"
       }
-      pHQ <- pHQ %>%
-        rlang::parse_exprs() %>%
+      pHQ <- pHQ |>
+        rlang::parse_exprs() |>
         rlang::set_names(glue::glue(priorObservationName))
     } else {
       pHQ <- NULL
@@ -493,7 +502,7 @@ addDateOfBirthQuery <- function(x,
         fOQ <- ".data$end_date"
       }
       fOQ <- fOQ |>
-        rlang::parse_exprs() %>%
+        rlang::parse_exprs() |>
         rlang::set_names(futureObservationName)
     } else {
       fOQ <- NULL
@@ -606,7 +615,7 @@ addDateOfBirthQuery <- function(x,
       ageName[age], names(ageGroup), sexName, dateOfBirthName[dateOfBirth]
     )
 
-    person <- person %>%
+    person <- person |>
       dplyr::mutate(!!!dtBQ) %>%
       dplyr::mutate(!!!c(aQ, agQ, sQ)) |>
       dplyr::select(dplyr::all_of(c(personVariable, indexDate, newColumns2)))
@@ -673,8 +682,10 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addInObservationQuery()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'

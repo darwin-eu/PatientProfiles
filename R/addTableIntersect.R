@@ -40,8 +40,9 @@
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addTableIntersectFlag(tableName = "visit_occurrence")
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -59,7 +60,7 @@ addTableIntersectFlag <- function(x,
   checkCdm(cdm, tables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = tableName,
       filterVariable = NULL,
@@ -105,7 +106,7 @@ addTableIntersectFlag <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addTableIntersectCount(tableName = "visit_occurrence")
 #'
 #' mockDisconnect(cdm = cdm)
@@ -125,7 +126,7 @@ addTableIntersectCount <- function(x,
   checkCdm(cdm, tables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = tableName,
       filterVariable = NULL,
@@ -171,7 +172,7 @@ addTableIntersectCount <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addTableIntersectDate(tableName = "visit_occurrence")
 #'
 #' mockDisconnect(cdm = cdm)
@@ -191,7 +192,7 @@ addTableIntersectDate <- function(x,
   checkCdm(cdm, tables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = tableName,
       filterVariable = NULL,
@@ -237,7 +238,7 @@ addTableIntersectDate <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addTableIntersectDays(tableName = "visit_occurrence")
 #'
 #' mockDisconnect(cdm = cdm)
@@ -257,7 +258,7 @@ addTableIntersectDays <- function(x,
   checkCdm(cdm, tables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = tableName,
       filterVariable = NULL,
@@ -307,7 +308,7 @@ addTableIntersectDays <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addTableIntersectField(
 #'     tableName = "visit_occurrence",
 #'     field = "visit_concept_id",
@@ -333,7 +334,7 @@ addTableIntersectField <- function(x,
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
   nameStyle <- gsub("\\{extra_value\\}", "\\{value\\}", nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = tableName,
       filterVariable = NULL,

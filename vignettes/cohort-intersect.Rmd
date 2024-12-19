@@ -28,11 +28,11 @@ library(ggplot2)
 
 cdm <- mockPatientProfiles(numberIndividuals = 1000)
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 settings(cdm$cohort1)
 
-cdm$cohort2 %>%
+cdm$cohort2 |>
   glimpse()
 settings(cdm$cohort2)
 ```
@@ -46,7 +46,7 @@ We can see each of these below. Note that they add variables to our cohort table
 Let's start by adding flag and count variables using a window of 180 days before to 180 days after the cohort start date in our table of interest. By default the cohort start date of our cohort of interest will be used as the index date, with the cohort start to cohort end date of the target cohort then used to check for an intersection.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectFlag(
     indexDate = "cohort_start_date",
     targetCohortTable = "cohort2",
@@ -56,7 +56,7 @@ cdm$cohort1 %>%
   ) |>
   glimpse()
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectCount(
     indexDate = "cohort_start_date",
     targetCohortTable = "cohort2",
@@ -70,7 +70,7 @@ cdm$cohort1 %>%
 Next we can add the date of the intersection and the days to the intersection. When identifying these variables we use only one date in our target table, which by default will be the cohort start date. In addition by default the first intersection that occurs within our window will be used.   
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDate(
     indexDate = "cohort_start_date",
     targetCohortTable = "cohort2",
@@ -80,7 +80,7 @@ cdm$cohort1 %>%
   ) |>
   glimpse()
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDays(
     indexDate = "cohort_start_date",
     targetCohortTable = "cohort2",
@@ -150,7 +150,7 @@ cdm <- mockPatientProfiles(
 If we consider the intersection relative to the cohort start date for common cold with a window of 0 to 0 (ie only the index date) then no intersection will be identified as the individual did not have an ongoing record for aspirin on that date.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -164,7 +164,7 @@ cdm$cohort1 %>%
 We could, however, change the index date to cohort end date in which case an intersection would be found.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
     indexDate = "cohort_end_date",
@@ -178,7 +178,7 @@ cdm$cohort1 %>%
 Or we could also extend the window to include more time before or after which in both cases would lead to cohort intersections being found.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -192,7 +192,7 @@ cdm$cohort1 %>%
 With a window of 90 days before to 90 days after cohort start, the person would have a count of two cohort intersections.  
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -206,7 +206,7 @@ cdm$cohort1 %>%
 With this same window, if we add the first cohort intersect date we will get the start date of the first record of aspirin.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -219,7 +219,7 @@ cdm$cohort1 %>%
 
 But if we instead set order to last, we get the start date of the second record of aspirin.
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -235,7 +235,7 @@ cdm$cohort1 %>%
 One last option relates to the naming convention used to for the new variables.
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",
@@ -250,7 +250,7 @@ cdm$cohort1 %>%
 We can instead choose a specific name (but this will only work if only one new variable will be added, otherwise we will get an error to avoid duplicate names).
 
 ```{r, message= FALSE, warning=FALSE}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     indexDate = "cohort_start_date",

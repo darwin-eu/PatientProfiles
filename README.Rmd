@@ -76,21 +76,21 @@ cdm <- mockPatientProfiles(numberIndividuals = 1000)
 Say we wanted to get individuals´sex and age at condition start date for records in the condition occurrence table. We can use the `addAge` and `addSex` functions to do this:
 
 ```{r}
-cdm$condition_occurrence %>%
+cdm$condition_occurrence |>
   glimpse()
 
-cdm$condition_occurrence <- cdm$condition_occurrence %>%
-  addAge(indexDate = "condition_start_date") %>%
+cdm$condition_occurrence <- cdm$condition_occurrence |>
+  addAge(indexDate = "condition_start_date") |>
   addSex()
 
-cdm$condition_occurrence %>%
+cdm$condition_occurrence |>
   glimpse()
 ```
 
 We could, for example, then limit our data to only males aged between 18 and 65
 ```{r}
-cdm$condition_occurrence %>%
-  filter(age >= 18 & age <= 65) %>%
+cdm$condition_occurrence |>
+  filter(age >= 18 & age <= 65) |>
   filter(sex == "Male")
 ```
 
@@ -98,27 +98,27 @@ cdm$condition_occurrence %>%
 As with other tables in the OMOP CDM, we can work in a similar way with cohort tables. For example, say we have the below cohort table
 
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
 We can add age, age groups, sex, and days of prior observation to a cohort like so
 ```{r}
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addAge(
     indexDate = "cohort_start_date",
     ageGroup = list(c(0, 18), c(19, 65), c(66, 100))
-  ) %>%
-  addSex() %>%
+  ) |>
+  addSex() |>
   addPriorObservation()
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
 We could use this information to subset the cohort. For example limiting to those with at least 365 days of prior observation available before their cohort start date like so
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   filter(prior_observation >= 365)
 ```
 
@@ -131,16 +131,16 @@ We can use `addCohortIntersectFlag` to add a flag for the presence (or not) of a
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
     window = c(-Inf, -1)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
@@ -151,17 +151,17 @@ If we wanted the number of appearances, we could instead use the `addCohortInter
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     window = list("short_term" = c(1, 30), "mid_term" = c(31, 180))
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
@@ -173,10 +173,10 @@ First occurrence:
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -184,7 +184,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
@@ -193,10 +193,10 @@ Last occurrence:
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -204,7 +204,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
@@ -215,10 +215,10 @@ Instead of returning a date, we could return the days to the intersection by usi
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDays(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -226,7 +226,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 
@@ -238,23 +238,23 @@ If we want to combine multiple cohort intersects we can concatenate the operatio
 cdm <- mockPatientProfiles()
 ```
 ```{r}
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     order = "last",
     window = c(-Inf, Inf)
-  ) %>%
+  ) |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 ```
 

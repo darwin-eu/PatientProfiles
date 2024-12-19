@@ -105,14 +105,14 @@ test_that("unsupported domain name", {
     valid_start_date = as.Date("1900-01-01"),
     valid_end_date = as.Date("2099-01-01"),
     invalid_reason = NA_character_
-  ) %>%
+  ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
   cdm <- CDMConnector::insertTable(cdm, "concept", concept)
 
-  expect_no_warning(result <- cdm$cohort1 %>%
+  expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
       conceptSet = list("random" = 1125315L)
-    ) %>%
+    ) |>
     dplyr::collect())
 
   expect_true(
@@ -122,7 +122,7 @@ test_that("unsupported domain name", {
   )
 
   expect_no_error(
-    cdm$cohort1a <- cdm$cohort1 %>%
+    cdm$cohort1a <- cdm$cohort1 |>
     addConceptIntersectFlag(
       conceptSet = list("not_in_concept_table" = 99L),
       nameStyle = "new_col"
@@ -146,14 +146,14 @@ test_that("NA domain name", {
     valid_start_date = as.Date("1900-01-01"),
     valid_end_date = as.Date("2099-01-01"),
     invalid_reason = NA_character_
-  ) %>%
+  ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
   cdm <- CDMConnector::insertTable(cdm, "concept", concept)
 
-  expect_no_warning(result <- cdm$cohort1 %>%
+  expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
       conceptSet = list("random2" = 1125315L)
-    ) %>%
+    ) |>
     dplyr::collect())
 
   expect_true(
@@ -176,14 +176,14 @@ test_that("domain name not in cdm", {
     valid_start_date = as.Date("1900-01-01"),
     valid_end_date = as.Date("2099-01-01"),
     invalid_reason = NA_character_
-  ) %>%
+  ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
   cdm <- CDMConnector::insertTable(cdm, "concept", concept)
 
-  expect_no_warning(result <- cdm$cohort1 %>%
+  expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
       conceptSet = list("random3" = 1125315L)
-    ) %>%
+    ) |>
     dplyr::collect())
 
   expect_true(
@@ -223,11 +223,11 @@ test_that("missing event end date", {
     cohort_tables = "cohort"
   )
 
-  cdm <- cdm %>%
+  cdm <- cdm |>
     CDMConnector::cdm_subset(person_id = 273L)
 
 
-  expect_true(cdm$cohort %>%
+  expect_true(cdm$cohort |>
     PatientProfiles::addConceptIntersectFlag(
       conceptSet = list(a = 192671L),
       window = c(-Inf, 0)

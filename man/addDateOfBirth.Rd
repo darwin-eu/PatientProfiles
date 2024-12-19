@@ -41,8 +41,10 @@ Add a column with the individual birth date
 \donttest{
 library(PatientProfiles)
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addDateOfBirth()
+
 mockDisconnect(cdm = cdm)
 }
 }

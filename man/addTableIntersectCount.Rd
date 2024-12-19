@@ -51,7 +51,7 @@ Compute number of intersect with an omop table.
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addTableIntersectCount(tableName = "visit_occurrence")
 
 mockDisconnect(cdm = cdm)

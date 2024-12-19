@@ -39,9 +39,9 @@ test_that("test checkCategory with length 1 ", {
 
   categories <- list("age_group" = list(c(0, 69), c(70)))
 
-  a <- cdm$cohort1 %>%
-    addAge(indexDate = "cohort_start_date") %>%
-    addCategories("age", categories) %>%
+  a <- cdm$cohort1 |>
+    addAge(indexDate = "cohort_start_date") |>
+    addCategories("age", categories) |>
     dplyr::collect()
   expect_true(a[a$subject_id == 2, ]$age_group == "70 to 70")
 
@@ -49,7 +49,7 @@ test_that("test checkCategory with length 1 ", {
 
   categories <- list("age_group" = list(c(69, 0), c(70)))
 
-  expect_error(cdm$cohort1 %>% addAge(indexDate = "cohort_start_date") %>%
+  expect_error(cdm$cohort1 |> addAge(indexDate = "cohort_start_date") |>
     addCategories("age", categories))
 
   expect_error(checkX(dplyr::tibble()))
@@ -162,13 +162,13 @@ test_that(" test checkWindow in addIntersect", {
     numberIndividuals = 2
   )
 
-  expect_error(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(-NA, 0)), value = "date"))
-  expect_error(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(-365, 0, 1)), value = "date"))
-  expect_warning(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(-365), -c(0), -c(30)), value = "date"))
+  expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-NA, 0)), value = "date"))
+  expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-365, 0, 1)), value = "date"))
+  expect_warning(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-365), -c(0), -c(30)), value = "date"))
 
-  expect_error(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(30, -365)), value = "date"))
-  expect_error(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(Inf, Inf)), value = "date"))
-  expect_error(cdm$cohort1 %>% .addIntersect(tableName = "cohort2", window = list(c(-Inf, -Inf)), value = "date"))
+  expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(30, -365)), value = "date"))
+  expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(Inf, Inf)), value = "date"))
+  expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-Inf, -Inf)), value = "date"))
 
   mockDisconnect(cdm = cdm)
 })
@@ -227,7 +227,7 @@ test_that("checkNameStyle", {
     cohort2 = cohort2
   )
 
-  expect_true(all(c("count_all", "flag_all") %in% colnames(cdm$cohort1 %>% .addIntersect(
+  expect_true(all(c("count_all", "flag_all") %in% colnames(cdm$cohort1 |> .addIntersect(
     tableName = "cohort2", value = c("flag", "count"),
     nameStyle = "{value}_{id_name}"
   ))))

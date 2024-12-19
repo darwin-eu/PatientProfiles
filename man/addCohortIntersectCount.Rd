@@ -55,10 +55,11 @@ cohort
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2"
   )
+
 mockDisconnect(cdm = cdm)
 }
 

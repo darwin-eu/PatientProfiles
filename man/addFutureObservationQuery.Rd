@@ -35,8 +35,9 @@ Same as `addFutureObservation()`, except query is not computed to a table.
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addFutureObservationQuery()
+
 mockDisconnect(cdm = cdm)
 }
 }

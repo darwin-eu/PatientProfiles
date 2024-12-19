@@ -3,7 +3,7 @@ test_that("attributes and classes are kept", {
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
 
   oldCohort <- cdm$cohort1
-  newCohort <- cdm$cohort1 %>% addDemographics()
+  newCohort <- cdm$cohort1 |> addDemographics()
 
   expect_true(length(attributes(newCohort)) == length(attributes(oldCohort)))
   for (i in names(attributes(newCohort))) {
@@ -19,7 +19,7 @@ test_that("attributes and classes are kept", {
   }
 
   oldCohort <- cdm$cohort1
-  newCohort <- cdm$cohort1 %>%
+  newCohort <- cdm$cohort1 |>
     addCohortIntersectFlag(targetCohortTable = "cohort2") |>
     addTableIntersectCount(tableName = "condition_occurrence")
 

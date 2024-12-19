@@ -56,10 +56,9 @@ Date of cohorts that are present in a certain window
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
-  addCohortIntersectDate(
-    targetCohortTable = "cohort2"
-  )
+cdm$cohort1 |>
+  addCohortIntersectDate(targetCohortTable = "cohort2")
+
 mockDisconnect(cdm = cdm)
 }
 

@@ -73,7 +73,7 @@ checkFilter <- function(filterVariable, filterId, idName, x) {
   } else {
     checkVariableInX(filterVariable, x, FALSE, "filterVariable")
     omopgenerics::assertNumeric(filterId, na = FALSE)
-    omopgenerics::assertNumeric(utils::head(x, 1) %>%
+    omopgenerics::assertNumeric(utils::head(x, 1) |>
                                dplyr::pull(dplyr::all_of(filterVariable)))
     if (is.null(idName)) {
       idName <- paste0("id", filterId)
@@ -123,12 +123,12 @@ checkCohortNames <- function(x, targetCohortId, name) {
     idName <- cohort$cohort_name
     targetCohortId <- cohort$cohort_definition_id
   } else {
-    idName <- cohort %>%
+    idName <- cohort |>
       dplyr::filter(
         as.integer(.data$cohort_definition_id) %in%
           as.integer(.env$targetCohortId)
-      ) %>%
-      dplyr::arrange(.data$cohort_definition_id) %>%
+      ) |>
+      dplyr::arrange(.data$cohort_definition_id) |>
       dplyr::pull("cohort_name")
     if (length(idName) != length(targetCohortId)) {
       cli::cli_abort(
@@ -294,10 +294,10 @@ checkVariablesFunctions <- function(variables, estimates, table) {
 
 #' @noRd
 checkCensorDate <- function(x, censorDate) {
-  check <- x %>%
-    dplyr::select(dplyr::all_of(censorDate)) %>%
-    utils::head(1) %>%
-    dplyr::pull() %>%
+  check <- x |>
+    dplyr::select(dplyr::all_of(censorDate)) |>
+    utils::head(1) |>
+    dplyr::pull() |>
     inherits("Date")
   if (!check) {
     cli::cli_abort("{censorDate} is not a date variable")
@@ -508,9 +508,9 @@ checkCategory <- function(category, overlap = FALSE, type = "numeric", call = pa
   # built tibble
   result <- lapply(category, function(x) {
     dplyr::tibble(lower_bound = x[1], upper_bound = x[2])
-  }) %>%
-    dplyr::bind_rows() %>%
-    dplyr::mutate(category_label = names(.env$category)) %>%
+  }) |>
+    dplyr::bind_rows() |>
+    dplyr::mutate(category_label = names(.env$category)) |>
     dplyr::mutate(category_label = dplyr::if_else(
       .data$category_label == "",
       dplyr::case_when(
@@ -520,7 +520,7 @@ checkCategory <- function(category, overlap = FALSE, type = "numeric", call = pa
         TRUE ~ paste(.data$lower_bound, "to", .data$upper_bound)
       ),
       .data$category_label
-    )) %>%
+    )) |>
     dplyr::arrange(.data$lower_bound)
 
   # check overlap

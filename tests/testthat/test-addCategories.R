@@ -14,32 +14,32 @@ test_that("addCategories, functionality", {
       "cohort_end_date" = as.Date(c("2045-01-01", "2052-01-01", "2060-01-01"))
     )
   )
-  agegroup <- cdm$cohort1 %>%
-    addAge() %>%
+  agegroup <- cdm$cohort1 |>
+    addAge() |>
     addCategories(
       variable = "age",
       categories = list("age_group" = list(c(0, 49), c(50, 120)))
-    ) %>%
+    ) |>
     dplyr::collect() |>
     dplyr::arrange(subject_id, cohort_start_date)
 
-  agegroupOverlap <- cdm$cohort1 %>%
-    addAge() %>%
+  agegroupOverlap <- cdm$cohort1 |>
+    addAge() |>
     addCategories(
       variable = "age",
       categories = list("age_group" = list(c(0, 55), c(50, 120))),
       overlap = TRUE
-    ) %>%
+    ) |>
     dplyr::collect() |>
     dplyr::arrange(subject_id, cohort_start_date)
 
   expect_true(all(
-    agegroup %>%
+    agegroup |>
       dplyr::pull(age_group) == c("0 to 49", "50 to 120", "50 to 120")
   ))
 
   expect_true(all(
-    agegroupOverlap %>%
+    agegroupOverlap |>
       dplyr::pull(age_group) == c("0 to 55", "0 to 55 and 50 to 120", "50 to 120")
   ))
 
@@ -50,14 +50,14 @@ test_that("addCategories, functionality", {
   )
 
   expect_no_error(
-    agegroupOverlap <- cdm$cohort1 %>%
-      addAge() %>%
+    agegroupOverlap <- cdm$cohort1 |>
+      addAge() |>
       addCategories(
         variable = "age",
         categories = list("age_group" = list(c(0, 55), c(50, 120))),
         overlap = TRUE,
         missingCategoryValue = NA_character_
-      ) %>%
+      ) |>
       dplyr::collect() |>
       dplyr::arrange(subject_id, cohort_start_date)
   )
@@ -69,33 +69,33 @@ test_that("addCategory with both upper and lower infinite, age", {
   skip_on_cran()
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
   expect_no_error(
-    agegroup <- cdm$cohort1 %>%
-      addAge() %>%
+    agegroup <- cdm$cohort1 |>
+      addAge() |>
       addCategories(
         variable = "age",
         categories = list("age_group" = list(c(-Inf, Inf)))
-      ) %>%
+      ) |>
       dplyr::collect() |>
       dplyr::arrange(subject_id, cohort_start_date)
   )
   expect_true(
-    all(agegroup %>%
+    all(agegroup |>
       dplyr::pull("age_group") == "any")
   )
 
   expect_no_error(
-    agegroup2 <- cdm$cohort1 %>%
-      addAge() %>%
+    agegroup2 <- cdm$cohort1 |>
+      addAge() |>
       addCategories(
         variable = "age",
         categories = list("age_group" = list(c(-Inf, 50), c(51, 120)))
-      ) %>%
+      ) |>
       dplyr::collect() |>
       dplyr::arrange(subject_id, cohort_start_date)
   )
   expect_true(
     "50 or below" %in% (
-      agegroup2 %>% dplyr::pull("age_group")
+      agegroup2 |> dplyr::pull("age_group")
     )
   )
 
@@ -118,12 +118,12 @@ test_that("addCategories with infinity", {
     numberIndividuals = 10
   )
   cdm <- omopgenerics::insertTable(cdm = cdm, name = "table", table = table)
-  table <- cdm$table %>%
+  table <- cdm$table |>
     addCategories(
       variable = "prior_history", categories = list(
         "prior_group" = list(c(1, 10), c(11, Inf))
       ), missingCategoryValue = "None", overlap = FALSE
-    ) %>%
+    ) |>
     addCategories(
       variable = "date_infection", categories = list(
         "period1" = list(
@@ -131,8 +131,8 @@ test_that("addCategories with infinity", {
           as.Date(c("2023-01-01", "2028-12-31"))
         )
       ), missingCategoryValue = "None", overlap = FALSE
-    ) %>%
-    dplyr::collect() %>%
+    ) |>
+    dplyr::collect() |>
     dplyr::arrange(.data$subject_id)
   # check inf worked
   expect_true("prior_group" %in% colnames(table))

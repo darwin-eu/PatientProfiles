@@ -82,50 +82,50 @@ Once we have our codes for acetaminophen we can create variables based on these.
 First, we can add a binary flag variable indicating whether an individual had a record of acetaminophen on the day of their ankle sprain or up to 30 days afterwards.
 
 ```{r}
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectFlag(
     conceptSet = acetaminophen_cs,
     indexDate = "cohort_start_date",
     window = c(0, 30)
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 
 Second, we can count the number of records of acetaminophen in this same window for each individual.
 
 ```{r}
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectCount(
     conceptSet = acetaminophen_cs,
     indexDate = "cohort_start_date",
     window = c(0, 30)
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 
 Third, we could identify the first start date of acetaminophen in this window.
 
 ```{r}
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectDate(
     conceptSet = acetaminophen_cs,
     indexDate = "cohort_start_date",
     window = c(0, 30),
     order = "first"
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 
 Or fourth, we can get the number of days to the start date of acetaminophen in the window.
 
 ```{r}
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectDays(
     conceptSet = acetaminophen_cs,
     indexDate = "cohort_start_date",
     window = c(0, 30),
     order = "first"
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 
@@ -134,7 +134,7 @@ cdm$ankle_sprain %>%
 We can add more than one variable at a time when using these functions. For example, we might want to add variables for multiple time windows.
 
 ```{r}
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectFlag(
     conceptSet = acetaminophen_cs,
     indexDate = "cohort_start_date",
@@ -143,7 +143,7 @@ cdm$ankle_sprain %>%
       c(0, 0),
       c(1, Inf)
     )
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 
@@ -163,7 +163,7 @@ meds_cs <- getDrugIngredientCodes(
   )
 )
 
-cdm$ankle_sprain %>%
+cdm$ankle_sprain |>
   addConceptIntersectFlag(
     conceptSet = meds_cs,
     indexDate = "cohort_start_date",
@@ -171,7 +171,7 @@ cdm$ankle_sprain %>%
       c(-Inf, -1),
       c(0, 0)
     )
-  ) %>%
+  ) |>
   dplyr::glimpse()
 ```
 

@@ -32,8 +32,10 @@ is in.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addObservationPeriodId()
+
 mockDisconnect(cdm = cdm)
 }
 

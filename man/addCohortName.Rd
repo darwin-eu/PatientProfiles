@@ -20,7 +20,7 @@ Add cohort name for each cohort_definition_id
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addCohortName()
 }
 

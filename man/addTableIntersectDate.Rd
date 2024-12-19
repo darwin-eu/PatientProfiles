@@ -52,7 +52,7 @@ Compute date of intersect with an omop table.
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addTableIntersectDate(tableName = "visit_occurrence")
 
 mockDisconnect(cdm = cdm)

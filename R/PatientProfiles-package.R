@@ -18,6 +18,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom dplyr %>%
 #' @importFrom rlang %||%
 #' @importFrom rlang .data
 #' @importFrom rlang .env
