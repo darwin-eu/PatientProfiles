@@ -57,8 +57,10 @@
 #' \donttest{
 #' library(PatientProfiles)
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDemographics()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -195,8 +197,9 @@ addAge <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addFutureObservation()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addFutureObservation <- function(x,
@@ -251,8 +254,9 @@ addFutureObservation <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addPriorObservation()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addPriorObservation <- function(x,
@@ -304,8 +308,10 @@ addPriorObservation <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addInObservation()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -349,8 +355,10 @@ addInObservation <- function(x,
 #' @examples
 #' \donttest{
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addSex()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -405,8 +413,10 @@ addSex <- function(x,
 #' \donttest{
 #' library(PatientProfiles)
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#'
+#' cdm$cohort1 |>
 #'   addDateOfBirth()
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 addDateOfBirth <- function(x,

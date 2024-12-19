@@ -29,7 +29,7 @@ window <- list(
 
 devtools::load_all()
 
-cdm$index_sex <- cdm$index %>% addSex()
+cdm$index_sex <- cdm$index |> addSex()
 
 tictoc::tic()
 lsc <- summariseLargeScaleCharacteristics(cohort = cdm$index, window = window)

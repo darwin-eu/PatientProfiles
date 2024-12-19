@@ -40,13 +40,13 @@ variableTypes <- function(table) {
     x <- dplyr::tibble(
       "variable_name" = colnames(table),
       "variable_type" = lapply(colnames(table), function(x) {
-        table %>%
-          dplyr::select(dplyr::all_of(x)) %>%
-          utils::head(1) %>%
-          dplyr::pull() %>%
+        table |>
+          dplyr::select(dplyr::all_of(x)) |>
+          utils::head(1) |>
+          dplyr::pull() |>
           dplyr::type_sum() |>
           assertClassification()
-      }) %>% unlist()
+      }) |> unlist()
     )
   } else {
     x <- dplyr::tibble(

@@ -19,26 +19,26 @@ test_that("addInObservation, cohort and condition_occurrence", {
   result1 <- addInObservation(cdm$cohort1)
   expect_true("in_observation" %in% colnames(result1))
   expect_true(all(
-    result1 %>%
-      dplyr::collect() %>%
-      dplyr::arrange(cohort_definition_id, cohort_start_date) %>%
-      dplyr::select(in_observation) %>%
+    result1 |>
+      dplyr::collect() |>
+      dplyr::arrange(cohort_definition_id, cohort_start_date) |>
+      dplyr::select(in_observation) |>
       dplyr::pull() == c(1, 1)
   ))
   result2 <- addInObservation(cdm$cohort2)
 
 
   expect_true("in_observation" %in% colnames(result2))
-  expect_true(all(result2 %>% dplyr::collect() |> dplyr::arrange(cohort_definition_id, cohort_start_date) %>% dplyr::select(in_observation) %>% dplyr::pull() == 1))
+  expect_true(all(result2 |> dplyr::collect() |> dplyr::arrange(cohort_definition_id, cohort_start_date) |> dplyr::select(in_observation) |> dplyr::pull() == 1))
 
-  result3 <- addInObservation(cdm$cohort1 %>% dplyr::rename(person_id = subject_id))
+  result3 <- addInObservation(cdm$cohort1 |> dplyr::rename(person_id = subject_id))
   expect_true("in_observation" %in% colnames(result3))
-  expect_true(all(result1 %>% dplyr::select(in_observation) %>% dplyr::pull() == result3 %>%
-    dplyr::select(in_observation) %>%
+  expect_true(all(result1 |> dplyr::select(in_observation) |> dplyr::pull() == result3 |>
+    dplyr::select(in_observation) |>
     dplyr::pull()))
   result4 <- addInObservation(cdm$condition_occurrence, indexDate = "condition_start_date")
   expect_true("in_observation" %in% colnames(result4))
-  expect_true(all(result4 %>% dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) %>% dplyr::select(in_observation) %>% dplyr::pull() == 1))
+  expect_true(all(result4 |> dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) |> dplyr::select(in_observation) |> dplyr::pull() == 1))
 
   mockDisconnect(cdm = cdm)
 })
@@ -51,7 +51,7 @@ test_that("addInObservation, parameters", {
   expect_true("observ" %in% colnames(result1))
   expect_false("in_observation" %in% colnames(result1))
 
-  expect_true(all(result1 %>% dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) %>% dplyr::select(observ) %>% dplyr::pull() == 1))
+  expect_true(all(result1 |> dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) |> dplyr::select(observ) |> dplyr::pull() == 1))
 
   mockDisconnect(cdm = cdm)
 })
@@ -170,13 +170,13 @@ test_that("query gives same result as main function", {
   skip_on_cran()
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
   # we should get the same results if compute was internal or not
-  result_1 <- cdm$cohort1 %>%
-    addInObservation() %>%
+  result_1 <- cdm$cohort1 |>
+    addInObservation() |>
     dplyr::collect() |>
     dplyr::arrange(cohort_definition_id,
                    subject_id,
                    cohort_start_date)
-  result_2 <- cdm$cohort1 %>%
+  result_2 <- cdm$cohort1 |>
     addInObservationQuery() |>
     dplyr::collect() |>
     dplyr::arrange(cohort_definition_id,
@@ -186,7 +186,7 @@ test_that("query gives same result as main function", {
 
   # check no tables are created along the way with query
   start_tables <- CDMConnector::listSourceTables(cdm)
-  cdm$cohort1 %>%
+  cdm$cohort1 |>
     addInObservationQuery()
   end_tables <- CDMConnector::listSourceTables(cdm)
   expect_equal(start_tables, end_tables)

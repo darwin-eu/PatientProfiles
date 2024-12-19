@@ -88,41 +88,41 @@ test_that("groups and strata", {
     con = connection(), writeSchema = writeSchema(), numberIndividuals = 1000
   )
 
-  result <- cdm$condition_occurrence %>%
+  result <- cdm$condition_occurrence |>
     addDemographics(
       indexDate = "condition_start_date",
       ageGroup = list(c(0, 30), c(31, 60))
-    ) %>%
-    dplyr::collect() %>%
+    ) |>
+    dplyr::collect() |>
     summariseResult(strata = list("sex"))
 
   expect_true(
-    result %>%
+    result |>
       dplyr::filter(
         group_name == "overall" & group_level == "overall" &
           strata_name == "overall" & strata_level == "overall" &
           variable_name == "number subjects"
-      ) %>%
+      ) |>
       dplyr::pull("estimate_value") |>
       as.numeric() <= 1000
   )
 
-  result <- cdm$condition_occurrence %>%
+  result <- cdm$condition_occurrence |>
     addDemographics(
       indexDate = "condition_start_date",
       ageGroup = list(c(0, 30), c(31, 60))
-    ) %>%
-    dplyr::collect() %>%
+    ) |>
+    dplyr::collect() |>
     summariseResult(strata = list(c("age_group", "sex")))
 
-  expect_true(all(result %>%
-    dplyr::select("strata_name") %>%
-    dplyr::distinct() %>%
+  expect_true(all(result |>
+    dplyr::select("strata_name") |>
+    dplyr::distinct() |>
     dplyr::pull() %in%
     c("overall", "age_group &&& sex")))
-  expect_true(all(result %>%
-    dplyr::select("strata_level") %>%
-    dplyr::distinct() %>%
+  expect_true(all(result |>
+    dplyr::select("strata_level") |>
+    dplyr::distinct() |>
     dplyr::pull() %in%
     c(
       "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
@@ -130,21 +130,21 @@ test_that("groups and strata", {
       "None &&& Male"
     )))
 
-  result <- cdm$condition_occurrence %>%
+  result <- cdm$condition_occurrence |>
     addDemographics(
       indexDate = "condition_start_date",
       ageGroup = list(c(0, 30), c(31, 60))
-    ) %>%
-    dplyr::collect() %>%
+    ) |>
+    dplyr::collect() |>
     summariseResult(group = c("age_group", "sex"))
-  expect_true(all(result %>%
-    dplyr::select("group_name") %>%
-    dplyr::distinct() %>%
+  expect_true(all(result |>
+    dplyr::select("group_name") |>
+    dplyr::distinct() |>
     dplyr::pull() %in%
     c("overall", "age_group &&& sex")))
-  expect_true(all(result %>%
-    dplyr::select("group_level") %>%
-    dplyr::distinct() %>%
+  expect_true(all(result |>
+    dplyr::select("group_level") |>
+    dplyr::distinct() |>
     dplyr::pull() %in%
     c(
       "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
@@ -153,8 +153,8 @@ test_that("groups and strata", {
     )))
 
   expect_no_error(
-    result <- cdm$condition_occurrence %>%
-      dplyr::collect() %>%
+    result <- cdm$condition_occurrence |>
+      dplyr::collect() |>
       dplyr::mutate("sex" = "Missing") |>
       summariseResult(group = "sex")
   )
@@ -168,22 +168,22 @@ test_that("table in db or local", {
   )
 
   # in db
-  expect_no_error(cdm$condition_occurrence %>%
+  expect_no_error(cdm$condition_occurrence |>
     addDemographics(
       indexDate = "condition_start_date",
       ageGroup = list(c(0, 30), c(31, 60))
-    ) %>%
+    ) |>
     summariseResult(strata = "sex"))
 
   # already collected
   expect_warning(
     expect_no_error(
-      cdm$condition_occurrence %>%
+      cdm$condition_occurrence |>
         addDemographics(
           indexDate = "condition_start_date",
           ageGroup = list(c(0, 30), c(31, 60))
-        ) %>%
-        dplyr::collect() %>%
+        ) |>
+        dplyr::collect() |>
         dplyr::mutate("subject_id" = .data$person_id) |>
         summariseResult(strata = list("sex"))
     )
@@ -207,40 +207,40 @@ test_that("with and with overall groups and strata", {
     con = connection(), writeSchema = writeSchema(), numberIndividuals = 1000
   )
 
-  test_data <- cdm$condition_occurrence %>%
+  test_data <- cdm$condition_occurrence |>
     addDemographics(
       indexDate = "condition_start_date",
       ageGroup = list(c(0, 30), c(31, 60))
-    ) %>%
+    ) |>
     dplyr::collect()
 
-  expect_false(any(test_data %>%
+  expect_false(any(test_data |>
     summariseResult(
       strata = list("sex"),
       includeOverallStrata = FALSE
-    ) %>%
+    ) |>
     dplyr::pull("strata_name") %in%
     c("overall")))
-  expect_true(any(test_data %>%
+  expect_true(any(test_data |>
     summariseResult(
       strata = list("sex"),
       includeOverallStrata = TRUE
-    ) %>%
+    ) |>
     dplyr::pull("strata_name") %in%
     c("overall")))
 
-  expect_false(any(test_data %>%
+  expect_false(any(test_data |>
     summariseResult(
       group = list("sex"),
       includeOverallGroup = FALSE
-    ) %>%
+    ) |>
     dplyr::pull("group_name") %in%
     c("overall")))
-  expect_true(any(test_data %>%
+  expect_true(any(test_data |>
     summariseResult(
       group = list("sex"),
       includeOverallGroup = TRUE
-    ) %>%
+    ) |>
     dplyr::pull("group_name") %in%
     c("overall")))
 
@@ -265,43 +265,43 @@ test_that("obscure", {
     suppress(minCellCount = 1)
   expect_true(nrow(s) == 34)
   expect_true(sum(s$estimate_value[!is.na(s$estimate_value)] == "<1") == 0)
-  expect_true(sum(is.na(s$estimate_value)) == 0)
+  expect_true(sum(s$estimate_value == "-") == 0)
 
   # minCellCount = 2
   s <- summariseResult(x) |>
     suppress(minCellCount = 2)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 8)
+  expect_true(sum(s$estimate_value == "-") == 8)
 
   # minCellCount = 3
   s <- summariseResult(x) |>
     suppress(minCellCount = 3)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 16)
+  expect_true(sum(s$estimate_value == "-") == 16)
 
   # minCellCount = 4
   s <- summariseResult(x) |>
     suppress(minCellCount = 4)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 23)
+  expect_true(sum(s$estimate_value == "-") == 23)
 
   # minCellCount = 5
   s <- summariseResult(x) |>
     suppress(minCellCount = 5)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 23)
+  expect_true(sum(s$estimate_value == "-") == 23)
 
   # minCellCount = 6
   s <- summariseResult(x) |>
     suppress(minCellCount = 6)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 23)
+  expect_true(sum(s$estimate_value == "-") == 23)
 
   # minCellCount = 7
   s <- summariseResult(x) |>
     suppress(minCellCount = 7)
   expect_true(nrow(s) == 34)
-  expect_true(sum(is.na(s$estimate_value)) == 34)
+  expect_true(sum(s$estimate_value == "-") == 34)
 })
 
 test_that("test empty cohort", {
@@ -309,7 +309,7 @@ test_that("test empty cohort", {
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
 
   expect_no_error(
-    cdm$cohort1 %>% dplyr::filter(cohort_definition_id == 0) %>%
+    cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
       summariseResult(
         group = list("cohort_name"),
         includeOverallGroup = FALSE,
@@ -318,7 +318,7 @@ test_that("test empty cohort", {
   )
 
   expect_no_error(
-    cdm$cohort1 %>% dplyr::filter(cohort_definition_id == 0) %>%
+    cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
       summariseResult(
         group = list("cohort_name"),
         includeOverallGroup = TRUE,
@@ -328,7 +328,7 @@ test_that("test empty cohort", {
 
 
   expect_no_error(
-    cdm$cohort1 %>% dplyr::filter(cohort_definition_id == 0) %>%
+    cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
       summariseResult(
         group = list("cohort_name"),
         includeOverallGroup = FALSE,
@@ -337,7 +337,7 @@ test_that("test empty cohort", {
   )
 
   expect_no_error(
-    cdm$cohort1 %>% dplyr::filter(cohort_definition_id == 0) %>%
+    cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
       summariseResult(
         group = list("cohort_name"),
         includeOverallGroup = TRUE,
@@ -353,13 +353,13 @@ test_that("test summary table naming", {
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
 
   dat <-
-    cdm$cohort1 %>%
-    addDemographics() %>%
+    cdm$cohort1 |>
+    addDemographics() |>
     dplyr::mutate(
       age_age = age,
       age_age_age = age,
       age_age_age_age = age
-    ) %>%
+    ) |>
     summariseResult()
 
   expect_true(all(
@@ -411,13 +411,13 @@ test_that("misisng counts", {
     "Female", "age", 1, 100,
     "Female", "number_visits", 0, 0,
     "Female", "prior_history", 0, 0,
-  ) %>%
+  ) |>
     dplyr::mutate(
       count = as.character(.data$count),
       percentage = as.character(.data$percentage)
     )
   for (k in seq_len(nrow(expected))) {
-    x <- result %>%
+    x <- result |>
       dplyr::filter(
         .data$strata_level == .env$expected$strata[k],
         .data$variable_name == .env$expected$variable_name[k]
@@ -429,15 +429,15 @@ test_that("misisng counts", {
   }
   # female age is all na
   expect_true(
-    result %>%
+    result |>
       dplyr::filter(
         .data$variable_name == "age",
         .data$strata_level == "Female",
         is.na(.data$variable_level),
         !.data$estimate_name %in% c("count_missing", "percentage_missing")
-      ) %>%
-      dplyr::pull("estimate_value") %>%
-      is.na() %>%
+      ) |>
+      dplyr::pull("estimate_value") |>
+      is.na() |>
       all()
   )
   DBI::dbRemoveTable(con, name = name)

@@ -60,7 +60,7 @@ entries with the target columns in a window of the user's choice.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addTableIntersectField(
     tableName = "visit_occurrence",
     field = "visit_concept_id",

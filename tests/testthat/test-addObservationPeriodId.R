@@ -168,3 +168,79 @@ test_that("add observation period id", {
 
   mockDisconnect(cdm = cdm)
 })
+
+test_that("check when there is the same record in multiple cohorts", {
+  person <- dplyr::tibble(
+    person_id = c(1L, 2L, 3L),
+    gender_concept_id = 1L,
+    year_of_birth = 1990L,
+    race_concept_id = 1L,
+    ethnicity_concept_id = 1L
+  )
+
+  observation_period <- dplyr::tibble(
+    person_id = c(1L, 1L, 2L, 3L),
+    observation_period_start_date = as.Date(c(
+      "2010-01-01", "2019-01-01", "2019-01-01", "2019-01-01"
+    )),
+    observation_period_end_date = as.Date(c(
+      "2016-01-01", "2021-01-01", "2022-01-01", "2019-01-01"
+    )),
+    observation_period_id = c(1L, 2L, 3L, 4L),
+    period_type_concept_id = 0L
+  )
+
+  cdm <- mockPatientProfiles(
+    con = connection(),
+    writeSchema = writeSchema(),
+    person = person,
+    observation_period = observation_period
+  )
+
+  my_cohort <- dplyr::tibble(
+    cohort_definition_id = c(1L, 2L, 1L, 2L),
+    subject_id = c(1L, 1L, 2L, 1L),
+    cohort_start_date = as.Date(c(
+      "2020-01-01", "2015-05-12", "2020-01-01", "2020-01-01"
+    )),
+    cohort_end_date = as.Date(c(
+      "2020-01-01", "2015-05-12", "2020-01-01", "2020-01-01"
+    ))
+  )
+
+  cdm <- omopgenerics::insertTable(
+    cdm = cdm, name = "my_cohort", table = my_cohort
+  )
+
+  # note we have a cohort entry outside of observation to test expected NA
+  cdm$my_cohort <- omopgenerics::newCohortTable(cdm$my_cohort,
+                                                .softValidation = TRUE
+  )
+
+  cdm$my_cohort_obs <- cdm$my_cohort |>
+    addObservationPeriodId()
+
+  expect_true(
+    cdm$my_cohort_obs |>
+      dplyr::filter(subject_id == 1L,
+                    cohort_start_date == as.Date("2020-01-01"),
+                    cohort_definition_id == 1) |>
+      dplyr::pull("observation_period_id") == 2
+  )
+
+  expect_true(
+    cdm$my_cohort_obs |>
+      dplyr::filter(subject_id == 1L,
+                    cohort_start_date == as.Date("2020-01-01"),
+                    cohort_definition_id == 2) |>
+      dplyr::pull("observation_period_id") == 2
+  )
+
+  expect_identical(
+    cdm$my_cohort_obs |> dplyr::summarise(n = dplyr::n()) |> dplyr::pull("n") |> as.character(),
+    cdm$my_cohort |> dplyr::summarise(n = dplyr::n()) |> dplyr::pull("n") |> as.character()
+  )
+
+})
+
+

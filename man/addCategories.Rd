@@ -22,8 +22,7 @@ addCategories(
 limit.}
 
 \item{missingCategoryValue}{Value to assign to those individuals not in
-any named category. If NULL or NA, missing will values will be
-given.}
+any named category. If NULL or NA, missing values will not be changed.}
 
 \item{overlap}{TRUE if the categories given overlap.}
 
@@ -39,8 +38,8 @@ Categorize a numeric variable
 \donttest{
 cdm <- mockPatientProfiles()
 
-result <- cdm$cohort1 \%>\%
-  addAge() \%>\%
+result <- cdm$cohort1 |>
+  addAge() |>
   addCategories(
     variable = "age",
     categories = list("age_group" = list(

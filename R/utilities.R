@@ -27,7 +27,7 @@
 #' library(PatientProfiles)
 #'
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addCohortName()
 #' }
 #'
@@ -38,7 +38,7 @@ addCohortName <- function(cohort) {
     cli::cli_inform(c("!" = "`cohort_name` will be overwrite"))
     cohort <- cohort |> dplyr::select(!"cohort_name")
   }
-  cohort %>%
+  cohort |>
     dplyr::left_join(
       attr(cohort, "cohort_set") |>
         dplyr::select("cohort_definition_id", "cohort_name"),
@@ -60,7 +60,7 @@ addCohortName <- function(cohort) {
 #' library(PatientProfiles)
 #'
 #' cdm <- mockPatientProfiles()
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addCdmName()
 #' }
 #'
@@ -69,7 +69,7 @@ addCdmName <- function(table, cdm = omopgenerics::cdmReference(table)) {
   if ("cdm_name" %in% colnames(table)) {
     cli::cli_inform(c("!" = "`cdm_name` will be overwrite"))
   }
-  table %>% dplyr::mutate("cdm_name" = .env$name)
+  table |> dplyr::mutate("cdm_name" = .env$name)
 }
 
 newTable <- function(name, call = parent.frame()) {

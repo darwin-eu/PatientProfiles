@@ -38,8 +38,9 @@ at a certain date
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addPriorObservation()
+
 mockDisconnect(cdm = cdm)
 }
 }

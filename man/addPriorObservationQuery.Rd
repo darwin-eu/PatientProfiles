@@ -35,8 +35,9 @@ Same as `addPriorObservation()`, except query is not computed to a table.
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addPriorObservationQuery()
+
 mockDisconnect(cdm = cdm)
 }
 }

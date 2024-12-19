@@ -50,8 +50,8 @@ library(PatientProfiles)
 library(dplyr)
 
 cdm <- mockPatientProfiles()
-x <- cdm$cohort1 \%>\%
-  addDemographics() \%>\%
+x <- cdm$cohort1 |>
+  addDemographics() |>
   collect()
 result <- summariseResult(x)
 mockDisconnect(cdm = cdm)

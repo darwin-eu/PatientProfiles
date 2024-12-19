@@ -39,8 +39,10 @@ Same as `addDateOfBirth()`, except query is not computed to a table.
 \donttest{
 library(PatientProfiles)
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addDateOfBirthQuery()
+
 mockDisconnect(cdm = cdm)
 }
 }

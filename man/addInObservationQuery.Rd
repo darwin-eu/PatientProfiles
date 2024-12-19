@@ -36,8 +36,10 @@ Same as `addInObservation()`, except query is not computed to a table.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addInObservationQuery()
+
 mockDisconnect(cdm = cdm)
 }
 

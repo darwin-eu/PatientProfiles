@@ -58,10 +58,9 @@ and a target cohort
 \donttest{
 cdm <- mockPatientProfiles()
 
-cdm$cohort1 \%>\%
-  addCohortIntersectDays(
-    targetCohortTable = "cohort2"
-  )
+cdm$cohort1 |>
+  addCohortIntersectDays(targetCohortTable = "cohort2")
+
 mockDisconnect(cdm = cdm)
 }
 

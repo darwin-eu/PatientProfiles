@@ -39,7 +39,7 @@
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addCohortIntersectFlag(
 #'     targetCohortTable = "cohort2"
 #'   )
@@ -63,7 +63,7 @@ addCohortIntersectFlag <- function(x,
   parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = targetCohortTable,
       filterVariable = parameters$filter_variable,
@@ -108,10 +108,11 @@ addCohortIntersectFlag <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
+#' cdm$cohort1 |>
 #'   addCohortIntersectCount(
 #'     targetCohortTable = "cohort2"
 #'   )
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -132,7 +133,7 @@ addCohortIntersectCount <- function(x,
   parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = targetCohortTable,
       filterVariable = parameters$filter_variable,
@@ -180,10 +181,9 @@ addCohortIntersectCount <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
-#'   addCohortIntersectDays(
-#'     targetCohortTable = "cohort2"
-#'   )
+#' cdm$cohort1 |>
+#'   addCohortIntersectDays(targetCohortTable = "cohort2")
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -204,7 +204,7 @@ addCohortIntersectDays <- function(x,
   parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = targetCohortTable,
       indexDate = indexDate,
@@ -253,10 +253,9 @@ addCohortIntersectDays <- function(x,
 #' \donttest{
 #' cdm <- mockPatientProfiles()
 #'
-#' cdm$cohort1 %>%
-#'   addCohortIntersectDate(
-#'     targetCohortTable = "cohort2"
-#'   )
+#' cdm$cohort1 |>
+#'   addCohortIntersectDate(targetCohortTable = "cohort2")
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
@@ -277,7 +276,7 @@ addCohortIntersectDate <- function(x,
   parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
-  x <- x %>%
+  x <- x |>
     .addIntersect(
       tableName = targetCohortTable,
       indexDate = indexDate,

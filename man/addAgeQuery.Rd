@@ -52,6 +52,7 @@ cdm <- mockPatientProfiles()
 
 cdm$cohort1 |>
   addAgeQuery()
+
 mockDisconnect(cdm = cdm)
 }
 }

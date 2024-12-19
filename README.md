@@ -102,7 +102,7 @@ records in the condition occurrence table. We can use the `addAge` and
 `addSex` functions to do this:
 
 ``` r
-cdm$condition_occurrence %>%
+cdm$condition_occurrence |>
   glimpse()
 #> Rows: ??
 #> Columns: 6
@@ -114,11 +114,11 @@ cdm$condition_occurrence %>%
 #> $ condition_concept_id      <int> 2, 5, 5, 5, 7, 7, 10, 4, 10, 5, 6, 7, 2, 4, …
 #> $ condition_type_concept_id <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
 
-cdm$condition_occurrence <- cdm$condition_occurrence %>%
-  addAge(indexDate = "condition_start_date") %>%
+cdm$condition_occurrence <- cdm$condition_occurrence |>
+  addAge(indexDate = "condition_start_date") |>
   addSex()
 
-cdm$condition_occurrence %>%
+cdm$condition_occurrence |>
   glimpse()
 #> Rows: ??
 #> Columns: 8
@@ -137,8 +137,8 @@ We could, for example, then limit our data to only males aged between 18
 and 65
 
 ``` r
-cdm$condition_occurrence %>%
-  filter(age >= 18 & age <= 65) %>%
+cdm$condition_occurrence |>
+  filter(age >= 18 & age <= 65) |>
   filter(sex == "Male")
 #> # Source:   SQL [?? x 8]
 #> # Database: DuckDB v1.1.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
@@ -165,7 +165,7 @@ As with other tables in the OMOP CDM, we can work in a similar way with
 cohort tables. For example, say we have the below cohort table
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -180,15 +180,15 @@ We can add age, age groups, sex, and days of prior observation to a
 cohort like so
 
 ``` r
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addAge(
     indexDate = "cohort_start_date",
     ageGroup = list(c(0, 18), c(19, 65), c(66, 100))
-  ) %>%
-  addSex() %>%
+  ) |>
+  addSex() |>
   addPriorObservation()
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 8
@@ -208,7 +208,7 @@ to those with at least 365 days of prior observation available before
 their cohort start date like so
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   filter(prior_observation >= 365)
 #> # Source:   SQL [?? x 8]
 #> # Database: DuckDB v1.1.1 [martics@Windows 10 x64:R 4.2.1/:memory:]
@@ -236,7 +236,7 @@ We can use `addCohortIntersectFlag` to add a flag for the presence (or
 not) of a cohort in a certain window.
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -246,13 +246,13 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1974-02-03, 1918-10-07, 1967-07-21, 1951-05-19, 1…
 #> $ cohort_end_date      <date> 1974-12-26, 1920-03-27, 1967-12-09, 1953-09-30, 1…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
     window = c(-Inf, -1)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 7
@@ -272,7 +272,7 @@ If we wanted the number of appearances, we could instead use the
 `addCohortIntersectCount` function
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -282,14 +282,14 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1961-04-27, 1997-02-08, 1956-03-09, 1980-07-04, 1…
 #> $ cohort_end_date      <date> 1970-08-24, 2011-04-10, 1956-12-19, 1989-02-23, 1…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     window = list("short_term" = c(1, 30), "mid_term" = c(31, 180))
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 6
@@ -312,7 +312,7 @@ the last appearance in that cohort.
 First occurrence:
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -322,7 +322,7 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1972-05-17, 1936-05-20, 1954-03-09, 1935-10-23, 2…
 #> $ cohort_end_date      <date> 1988-05-11, 1945-08-14, 1966-11-09, 1937-04-23, 2…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -330,7 +330,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 5
@@ -345,7 +345,7 @@ cdm$cohort1 %>%
 Last occurrence:
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -355,7 +355,7 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1921-12-06, 1989-08-06, 1992-06-11, 1981-10-14, 1…
 #> $ cohort_end_date      <date> 1928-08-03, 1995-01-24, 1997-09-11, 1982-11-12, 1…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -363,7 +363,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 5
@@ -381,7 +381,7 @@ Instead of returning a date, we could return the days to the
 intersection by using `addCohortIntersectDays`
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -391,7 +391,7 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1966-12-06, 1955-09-03, 1963-11-24, 1995-11-30, 1…
 #> $ cohort_end_date      <date> 1990-01-06, 1977-12-24, 1978-05-27, 1996-07-27, 2…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDays(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
@@ -399,7 +399,7 @@ cdm$cohort1 <- cdm$cohort1 %>%
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 5
@@ -417,7 +417,7 @@ If we want to combine multiple cohort intersects we can concatenate the
 operations using the `pipe` operator:
 
 ``` r
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 4
@@ -427,20 +427,20 @@ cdm$cohort1 %>%
 #> $ cohort_start_date    <date> 1945-02-11, 1955-06-28, 1957-11-19, 1986-03-17, 1…
 #> $ cohort_end_date      <date> 1980-06-10, 1962-08-23, 1958-05-22, 1992-08-12, 1…
 
-cdm$cohort1 <- cdm$cohort1 %>%
+cdm$cohort1 <- cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     order = "last",
     window = c(-Inf, Inf)
-  ) %>%
+  ) |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
     targetCohortId = 1,
     window = c(-Inf, Inf)
   )
 
-cdm$cohort1 %>%
+cdm$cohort1 |>
   glimpse()
 #> Rows: ??
 #> Columns: 5

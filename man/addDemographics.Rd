@@ -95,8 +95,10 @@ Compute demographic characteristics at a certain date
 \donttest{
 library(PatientProfiles)
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addDemographics()
+
 mockDisconnect(cdm = cdm)
 }
 

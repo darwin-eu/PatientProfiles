@@ -1,3 +1,5 @@
 ## R CMD check results
 
-This is a new release.
+0 errors | 0 warnings | 0 notes
+
+* This is a new release.

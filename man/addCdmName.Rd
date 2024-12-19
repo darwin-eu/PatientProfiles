@@ -22,7 +22,7 @@ Add cdm name
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+cdm$cohort1 |>
   addCdmName()
 }
 

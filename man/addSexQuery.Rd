@@ -23,8 +23,10 @@ Same as `addSex()`, except query is not computed to a table.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addSexQuery()
+
 mockDisconnect(cdm = cdm)
 }
 

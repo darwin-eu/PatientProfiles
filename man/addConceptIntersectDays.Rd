@@ -63,14 +63,13 @@ concept <- dplyr::tibble(
   valid_start_date = as.Date("1900-01-01"),
   valid_end_date = as.Date("2099-01-01"),
   invalid_reason = NA_character_
-) \%>\%
+) |>
   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
 cdm <- CDMConnector::insertTable(cdm, "concept", concept)
-result <- cdm$cohort1 \%>\%
-  addConceptIntersectDays(
-    conceptSet = list("acetaminophen" = 1125315)
-  ) \%>\%
-  dplyr::collect()
+
+cdm$cohort1 |>
+  addConceptIntersectDays(conceptSet = list("acetaminophen" = 1125315))
+
 mockDisconnect(cdm = cdm)
 }
 

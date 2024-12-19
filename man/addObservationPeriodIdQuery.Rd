@@ -29,8 +29,10 @@ is in. Result is not computed, only query is added.
 \examples{
 \donttest{
 cdm <- mockPatientProfiles()
-cdm$cohort1 \%>\%
+
+cdm$cohort1 |>
   addObservationPeriodIdQuery()
+
 mockDisconnect(cdm = cdm)
 }
 

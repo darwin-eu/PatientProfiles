@@ -28,13 +28,13 @@ test_that("test methods against sql test server", {
   )
 
   # add age and add sex
-  cdm$condition_occurrence <- cdm$condition_occurrence %>%
-    addAge(indexDate = "condition_start_date") %>%
+  cdm$condition_occurrence <- cdm$condition_occurrence |>
+    addAge(indexDate = "condition_start_date") |>
     addSex()
 
   expect_true(all(c("sex", "age") %in% colnames(cdm$condition_occurrence)))
 
-  cdm$condition_occurrence %>% addDemographics(
+  cdm$condition_occurrence |> addDemographics(
     age = TRUE,
     ageName = "age",
     ageGroup = NULL,
@@ -53,7 +53,7 @@ test_that("test methods against sql test server", {
 
   # add cohort intersect
 
-  cohort <- cdm$cohort %>% addIntersect(
+  cohort <- cdm$cohort |> addIntersect(
     tableName = "cohort1",
     window = list(c(-Inf, 0)), value = "date"
   )
@@ -62,32 +62,32 @@ test_that("test methods against sql test server", {
 
   # add cohort occurrences
 
-  cohort <- cdm$cohort %>%
-    addCohortIntersectCount(targetCohortTable = "cohort1") %>%
+  cohort <- cdm$cohort |>
+    addCohortIntersectCount(targetCohortTable = "cohort1") |>
     dplyr::arrange(subject_id, cohort_start_date)
 
   expect_true(all(c("all_0_to_inf") %in% colnames(cohort)))
 
 
   # countflag
-  cohort <- cdm$cohort %>%
-    addCohortIntersectFlag(targetCohortTable = "cohort1") %>%
+  cohort <- cdm$cohort |>
+    addCohortIntersectFlag(targetCohortTable = "cohort1") |>
     dplyr::arrange(subject_id, cohort_start_date)
 
   expect_true(all(c("all_0_to_inf") %in% colnames(cohort)))
 
 
   # time to cohort
-  cohort <- cdm$cohort %>%
-    addCohortIntersectTime(targetCohortTable = "cohort1") %>%
+  cohort <- cdm$cohort |>
+    addCohortIntersectTime(targetCohortTable = "cohort1") |>
     dplyr::arrange(subject_id, cohort_start_date)
 
   expect_true(all(c("all_0_to_inf") %in% colnames(cohort)))
 
   # dateOfCohort
 
-  cohort <- cdm$cohort %>%
-    addCohortIntersectDate(targetCohortTable = "cohort1") %>%
+  cohort <- cdm$cohort |>
+    addCohortIntersectDate(targetCohortTable = "cohort1") |>
     dplyr::arrange(subject_id, cohort_start_date)
 
   expect_true(all(c("all_0_to_inf") %in% colnames(cohort)))

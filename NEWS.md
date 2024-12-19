@@ -1,3 +1,22 @@
+
+# PatientProfiles 1.2.3
+
+* Bug fix to correct NA columns when not in observation by @catalamarti
+
+# PatientProfiles 1.2.2
+
+* Update links and codecoverage by @catalamarti
+* Distinct individuals in addObservationPeriodId() by @martaalcalde
+* Remove dependencies on visOmopResults and magrittr @catalamarti
+
+# PatientProfiles 1.2.1
+
+* edge case where no concept in concept table by @edward-burn
+* update assertions in addDeath functions by @catalamarti
+* increase test coverage by @catalamarti
+* add internal compute to addInObservation by @edward-burn
+* conceptIntersect inObservation argument by @edward-burn
+
 # PatientProfiles 1.2.0
 
 * `addObservationPeriodId()` is a new function that adds the number of 

@@ -27,79 +27,79 @@ test_that("basic structures", {
 test_that("input validation", {
   skip_on_cran()
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       indexDate = "index_date"
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       censorDate = "index_date"
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       censorDate = 42
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       window = c(90, 0)
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       order = 42
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       targetStartDate = "drug_exposure_start_date"
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       targetEndDate = "condition_end_date"
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       flag = 1
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       count = 1
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       date = 1
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       days = 1
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       field = "condition_start_date"
     )))
 
-  expect_error(expect_warning(cdm$cohort1 %>%
+  expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
       nameStyle = "table_name_value_window_name"
@@ -169,11 +169,11 @@ test_that("addTableIntersectCount example", {
     PatientProfiles::addTableIntersectCount(
       tableName = "drug_exposure",
       window = list(c(-50, 50))
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_count |> nrow() %>% as.numeric(),
+    de_count |> nrow() |> as.numeric(),
     10
   )
 
@@ -181,21 +181,21 @@ test_that("addTableIntersectCount example", {
     (colnames(de_count)))
 
   expect_identical(
-    de_count %>% dplyr::filter(cohort_definition_id == 1) %>%
-      dplyr::filter(cohort_start_date == "2020-01-01") %>%
-      dplyr::pull("drug_exposure_m50_to_50") %>%
+    de_count |> dplyr::filter(cohort_definition_id == 1) |>
+      dplyr::filter(cohort_start_date == "2020-01-01") |>
+      dplyr::pull("drug_exposure_m50_to_50") |>
       as.numeric(),
     6
   )
 
-  expect_true(all((de_count %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
-    dplyr::filter(cohort_start_date == "2020-01-01") %>%
-    dplyr::pull("drug_exposure_m50_to_50") %>%
+  expect_true(all((de_count |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
+    dplyr::filter(cohort_start_date == "2020-01-01") |>
+    dplyr::pull("drug_exposure_m50_to_50") |>
     as.numeric()) == 0))
 
   expect_identical(
-    de_count %>% dplyr::filter(cohort_start_date == "2020-01-01") %>%
+    de_count |> dplyr::filter(cohort_start_date == "2020-01-01") |>
       dplyr::filter(cohort_start_date == "2009-01-01") |>
       nrow() |>
       as.numeric(),
@@ -266,47 +266,47 @@ test_that("addTableIntersectFlag example", {
         c(-50, 50),
         c(-Inf, 0)
       )
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_flag |> nrow() %>% as.numeric(),
+    de_flag |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_m50_to_50", "drug_exposure_minf_to_0") %in%
     (colnames(de_flag))))
 
-  expect_true(all((de_flag %>% dplyr::select("drug_exposure_m50_to_50") %>%
+  expect_true(all((de_flag |> dplyr::select("drug_exposure_m50_to_50") |>
     dplyr::pull()) %in% c(0, 1)))
 
-  expect_true(all((de_flag %>% dplyr::select("drug_exposure_minf_to_0") %>%
+  expect_true(all((de_flag |> dplyr::select("drug_exposure_minf_to_0") |>
     dplyr::pull()) %in% c(0, 1)))
 
   expect_identical(
-    de_flag %>%
-      dplyr::filter(cohort_start_date == "2020-01-01") %>%
-      dplyr::pull("drug_exposure_m50_to_50") %>%
+    de_flag |>
+      dplyr::filter(cohort_start_date == "2020-01-01") |>
+      dplyr::pull("drug_exposure_m50_to_50") |>
       as.numeric(),
     1
   )
 
-  expect_true(all((de_flag %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
-    dplyr::pull("drug_exposure_m50_to_50") %>%
+  expect_true(all((de_flag |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
+    dplyr::pull("drug_exposure_m50_to_50") |>
     as.numeric()) == 0))
 
   expect_identical(
-    de_flag %>%
-      dplyr::filter(cohort_start_date == "2020-01-01") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_flag |>
+      dplyr::filter(cohort_start_date == "2020-01-01") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.numeric(),
     0
   )
 
-  expect_true(all((de_flag %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
-    dplyr::pull("drug_exposure_minf_to_0") %>%
+  expect_true(all((de_flag |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
+    dplyr::pull("drug_exposure_minf_to_0") |>
     as.numeric()) == 1))
 
   mockDisconnect(cdm = cdm)
@@ -370,37 +370,37 @@ test_that("addTableIntersectDate example", {
     PatientProfiles::addTableIntersectDate(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0))
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_date |> nrow() %>% as.numeric(),
+    de_date |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_minf_to_0") %in%
     (colnames(de_date))))
 
-  expect_true(is.na(de_date %>%
-    dplyr::filter(cohort_start_date == "2020-01-01") %>%
+  expect_true(is.na(de_date |>
+    dplyr::filter(cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0")))
 
-  expect_true(all(!is.na(de_date %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
+  expect_true(all(!is.na(de_date |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0"))))
 
   expect_identical(
-    de_date %>%
-      dplyr::filter(cohort_start_date == "2022-01-20") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_date |>
+      dplyr::filter(cohort_start_date == "2022-01-20") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.Date(),
     as.Date("2020-01-15")
   )
 
   expect_identical(
-    de_date %>%
-      dplyr::filter(cohort_start_date == "2024-02-01") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_date |>
+      dplyr::filter(cohort_start_date == "2024-02-01") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.Date(),
     as.Date("2020-01-15")
   )
@@ -409,37 +409,37 @@ test_that("addTableIntersectDate example", {
       tableName = "drug_exposure",
       window = list(c(-Inf, 0)),
       order = "last"
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_date2 |> nrow() %>% as.numeric(),
+    de_date2 |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_minf_to_0") %in%
     (colnames(de_date2))))
 
-  expect_true(is.na(de_date2 %>%
-    dplyr::filter(cohort_start_date == "2020-01-01") %>%
+  expect_true(is.na(de_date2 |>
+    dplyr::filter(cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0")))
 
-  expect_true(all(!is.na(de_date2 %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
+  expect_true(all(!is.na(de_date2 |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0"))))
 
   expect_identical(
-    de_date2 %>%
-      dplyr::filter(cohort_start_date == "2022-01-20") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_date2 |>
+      dplyr::filter(cohort_start_date == "2022-01-20") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.Date(),
     as.Date("2021-01-29")
   )
 
   expect_identical(
-    de_date2 %>%
-      dplyr::filter(cohort_start_date == "2024-02-01") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_date2 |>
+      dplyr::filter(cohort_start_date == "2024-02-01") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.Date(),
     as.Date("2023-02-16")
   )
@@ -505,34 +505,34 @@ test_that("addTableIntersectDays example", {
     PatientProfiles::addTableIntersectDays(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0))
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_days |> nrow() %>% as.numeric(),
+    de_days |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_minf_to_0") %in%
     (colnames(de_days))))
 
-  expect_true(is.na(de_days %>%
-    dplyr::filter(cohort_start_date == "2020-01-01") %>%
+  expect_true(is.na(de_days |>
+    dplyr::filter(cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0")))
 
-  expect_true(all(!is.na(de_days %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
+  expect_true(all(!is.na(de_days |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_minf_to_0"))))
 
-  expect_true(all(de_days %>%
-    dplyr::filter(!is.na(drug_exposure_minf_to_0)) %>%
-    dplyr::select("drug_exposure_minf_to_0") %>%
+  expect_true(all(de_days |>
+    dplyr::filter(!is.na(drug_exposure_minf_to_0)) |>
+    dplyr::select("drug_exposure_minf_to_0") |>
     dplyr::pull("drug_exposure_minf_to_0") <= 0))
 
   expect_identical(
-    de_days %>%
-      dplyr::filter(cohort_start_date == "2024-02-01") %>%
-      dplyr::pull("drug_exposure_minf_to_0") %>%
+    de_days |>
+      dplyr::filter(cohort_start_date == "2024-02-01") |>
+      dplyr::pull("drug_exposure_minf_to_0") |>
       as.numeric(),
     -as.numeric(as.Date("2024-02-01") - as.Date("2020-01-15"))
   )
@@ -542,34 +542,34 @@ test_that("addTableIntersectDays example", {
       tableName = "drug_exposure",
       window = list(c(0, Inf)),
       order = "last"
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_days2 |> nrow() %>% as.numeric(),
+    de_days2 |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_0_to_inf") %in%
     (colnames(de_days2))))
 
-  expect_true(is.na(de_days2 %>%
-    dplyr::filter(cohort_start_date == "2024-02-01") %>%
+  expect_true(is.na(de_days2 |>
+    dplyr::filter(cohort_start_date == "2024-02-01") |>
     dplyr::pull("drug_exposure_0_to_inf")))
 
-  expect_true(all(!is.na(de_days2 %>%
-    dplyr::filter(!cohort_start_date == "2024-02-01") %>%
+  expect_true(all(!is.na(de_days2 |>
+    dplyr::filter(!cohort_start_date == "2024-02-01") |>
     dplyr::pull("drug_exposure_0_to_inf"))))
 
-  expect_true(all(de_days2 %>%
-    dplyr::filter(!is.na(drug_exposure_0_to_inf)) %>%
-    dplyr::select("drug_exposure_0_to_inf") %>%
+  expect_true(all(de_days2 |>
+    dplyr::filter(!is.na(drug_exposure_0_to_inf)) |>
+    dplyr::select("drug_exposure_0_to_inf") |>
     dplyr::pull("drug_exposure_0_to_inf") >= 0))
 
   expect_identical(
-    de_days2 %>%
-      dplyr::filter(cohort_start_date == "2020-01-01") %>%
-      dplyr::pull("drug_exposure_0_to_inf") %>%
+    de_days2 |>
+      dplyr::filter(cohort_start_date == "2020-01-01") |>
+      dplyr::pull("drug_exposure_0_to_inf") |>
       as.numeric(),
     as.numeric(as.Date("2023-02-16") - as.Date("2020-01-01"))
   )
@@ -637,28 +637,28 @@ test_that("addTableIntersectFields example", {
       tableName = "drug_exposure",
       window = list(c(-Inf, 0)),
       field = "drug_concept_id"
-    ) %>%
+    ) |>
     dplyr::collect()
 
   expect_identical(
-    de_field |> nrow() %>% as.numeric(),
+    de_field |> nrow() |> as.numeric(),
     5
   )
 
   expect_true(all(c("drug_exposure_drug_concept_id_minf_to_0") %in%
     (colnames(de_field))))
 
-  expect_true(is.na(de_field %>%
-    dplyr::filter(cohort_start_date == "2020-01-01") %>%
+  expect_true(is.na(de_field |>
+    dplyr::filter(cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_drug_concept_id_minf_to_0")))
 
-  expect_true(all(!is.na(de_field %>%
-    dplyr::filter(!cohort_start_date == "2020-01-01") %>%
+  expect_true(all(!is.na(de_field |>
+    dplyr::filter(!cohort_start_date == "2020-01-01") |>
     dplyr::pull("drug_exposure_drug_concept_id_minf_to_0"))))
 
-  expect_true(all((de_field %>%
-    dplyr::filter(!is.na(drug_exposure_drug_concept_id_minf_to_0)) %>%
-    dplyr::select("drug_exposure_drug_concept_id_minf_to_0") %>%
+  expect_true(all((de_field |>
+    dplyr::filter(!is.na(drug_exposure_drug_concept_id_minf_to_0)) |>
+    dplyr::select("drug_exposure_drug_concept_id_minf_to_0") |>
     dplyr::pull("drug_exposure_drug_concept_id_minf_to_0") |>
     as.integer()) %in% c(1, 2, 3)))
 

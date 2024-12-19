@@ -12,12 +12,12 @@ test_that("addSex, check imput length and type", {
 test_that("addSex, works in both cohort and condition tables", {
   skip_on_cran()
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
-  cdm$cohort1 <- cdm$cohort1 %>% addSex()
-  cdm$condition_occurrence <- cdm$condition_occurrence %>% addSex()
+  cdm$cohort1 <- cdm$cohort1 |> addSex()
+  cdm$condition_occurrence <- cdm$condition_occurrence |> addSex()
   expect_true("sex" %in% colnames(cdm$cohort1))
-  expect_true(all(cdm$cohort1 %>% dplyr::pull("sex") %in% c("Female", "Male")))
+  expect_true(all(cdm$cohort1 |> dplyr::pull("sex") %in% c("Female", "Male")))
   expect_true("sex" %in% colnames(cdm$condition_occurrence))
-  expect_true(all(cdm$condition_occurrence %>% dplyr::pull("sex") %in% c("Female", "Male")))
+  expect_true(all(cdm$condition_occurrence |> dplyr::pull("sex") %in% c("Female", "Male")))
   mockDisconnect(cdm = cdm)
 })
 
@@ -40,7 +40,7 @@ test_that("addSex, desired result for all parameters", {
       cohort_end_date = as.Date("2020-01-01")
     )
   )
-  cdm$cohort1 <- cdm$cohort1 %>% addSex()
+  cdm$cohort1 <- cdm$cohort1 |> addSex()
   expect_true("sex" %in% colnames(cdm$cohort1))
   expect_true(all(
     cdm$cohort1 |>

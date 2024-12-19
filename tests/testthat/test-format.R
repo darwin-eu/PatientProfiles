@@ -36,50 +36,50 @@ test_that("test variableTypes", {
   vt <- variableTypes(y)
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x1") %>%
+    vt |>
+      dplyr::filter(variable_name == "x1") |>
       dplyr::pull("variable_type"),
     "numeric"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x2") %>%
+    vt |>
+      dplyr::filter(variable_name == "x2") |>
       dplyr::pull("variable_type"),
     "date"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x3") %>%
+    vt |>
+      dplyr::filter(variable_name == "x3") |>
       dplyr::pull("variable_type"),
     "categorical"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x4") %>%
+    vt |>
+      dplyr::filter(variable_name == "x4") |>
       dplyr::pull("variable_type"),
     "categorical"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x5") %>%
+    vt |>
+      dplyr::filter(variable_name == "x5") |>
       dplyr::pull("variable_type"),
     "date"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x6") %>%
+    vt |>
+      dplyr::filter(variable_name == "x6") |>
       dplyr::pull("variable_type"),
     "integer"
   )
 
   expect_identical(
-    vt %>%
-      dplyr::filter(variable_name == "x7") %>%
+    vt |>
+      dplyr::filter(variable_name == "x7") |>
       dplyr::pull("variable_type"),
     "numeric"
   )
@@ -101,7 +101,7 @@ test_that("test available functions", {
   num_test <- availableEstimates("numeric")
   expect_true(all(
     c("sd", "median", "mean") %in% (
-      num_test %>% dplyr::pull("estimate_name")
+      num_test |> dplyr::pull("estimate_name")
     )
   ))
 })
