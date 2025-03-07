@@ -63,5 +63,16 @@ quantiles <- paste0("stats::quantile(x, ", seq(0.01, 0.99, 0.01), ", na.rm = TRU
 names(quantiles) <- c(paste0("q0", 1:9), paste0("q", 10:99))
 estimatesFunc <- c(estimatesFunc, quantiles)
 
-use_data(estimatesFunc, formats, namesTable, formatsOld, internal = TRUE, overwrite = TRUE)
+estimatesFuncWeights <- c(
+  "min" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = 0, na.rm = TRUE))",
+  "max" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = 1, na.rm = TRUE))",
+  "mean" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.mean(x, weights = .data[[weights]], na.rm = TRUE))",
+  "median" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = 0.5, na.rm = TRUE))",
+  "sum" = "base::sum(x*.data[[weights]], na.rm = TRUE)",
+  "sd" = "sqrt(ifelse(all(is.na(x)), NA, Hmisc::wtd.var(x, weights = .data[[weights]], na.rm = TRUE)))")
+quantiles <- paste0("ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = ", seq(0.01, 0.99, 0.01), ", na.rm = TRUE))")
+names(quantiles) <- c(paste0("q0", 1:9), paste0("q", 10:99))
+estimatesFuncWeights <- c(estimatesFuncWeights, quantiles)
+
+use_data(estimatesFunc, estimatesFuncWeights, formats, namesTable, formatsOld, internal = TRUE, overwrite = TRUE)
 

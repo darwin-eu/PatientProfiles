@@ -14,7 +14,9 @@ addTableIntersectField(
   censorDate = NULL,
   window = list(c(0, Inf)),
   targetDate = startDateColumn(tableName),
+  inObservation = TRUE,
   order = "first",
+  allowDuplicates = FALSE,
   nameStyle = "{table_name}_{extra_value}_{window_name}",
   name = NULL
 )
@@ -41,8 +43,15 @@ or a column date of x.}
 
 \item{targetDate}{The dates in the target columns in tableName that the user may want to restrict to.}
 
+\item{inObservation}{If TRUE only records inside an observation period
+will be considered.}
+
 \item{order}{which record is considered in case of multiple records (only
 required for date and days options).}
+
+\item{allowDuplicates}{Whether to allow multiple records with same
+conceptSet, person_id and targetDate. If switched to TRUE, it can have a
+different and unpredictable behavior depending on the cdm_source.}
 
 \item{nameStyle}{naming of the added column or columns, should include
 required parameters.}

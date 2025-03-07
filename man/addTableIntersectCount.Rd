@@ -12,6 +12,7 @@ addTableIntersectCount(
   window = list(c(0, Inf)),
   targetStartDate = startDateColumn(tableName),
   targetEndDate = endDateColumn(tableName),
+  inObservation = TRUE,
   nameStyle = "{table_name}_{window_name}",
   name = NULL
 )
@@ -35,6 +36,9 @@ or a column date of x.}
 \item{targetStartDate}{Column name with start date for comparison.}
 
 \item{targetEndDate}{Column name with end date for comparison.}
+
+\item{inObservation}{If TRUE only records inside an observation period
+will be considered.}
 
 \item{nameStyle}{naming of the added column or columns, should include
 required parameters.}

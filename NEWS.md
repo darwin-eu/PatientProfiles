@@ -1,4 +1,22 @@
 
+# PatientProfiles 1.3.0
+
+* Changed addCategories by @KimLopezGuell in #734
+* conceptSet allows conceptSetExpression by @catalamarti in #743
+* account for integer64 counts by @catalamarti in #745
+* add inObservation argument in addTable... by @catalamarti in #749
+* addConceptIntersectField by @catalamarti in #747
+* validate targetCohortId with og by @catalamarti in #750
+* create filterInObservation by @catalamarti in #744
+* create filterCohortId by @catalamarti in #748
+* add benchmarkPatientProfiles by @catalamarti in #752
+* Update addIntersect.R by @catalamarti in #758
+* Reduce addDemographics computing time by @catalamarti in #759
+* Reduce addIntersect computing time by @catalamarti in #761 #762 #764 #763
+* preserve field type and add allowDuplicates arg by @catalamarti in #765
+* Add `weights` argument to `summariseResult`  by @nmercadeb in #733
+* Increase test coverage by @catalamarti in #768
+
 # PatientProfiles 1.2.3
 
 * Bug fix to correct NA columns when not in observation by @catalamarti

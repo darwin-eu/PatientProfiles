@@ -59,10 +59,10 @@ con <- DBI::dbConnect(
   password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD")
 )
 
-cdm <- cdm_from_con(
+cdm <- cdmFromCon(
   con,
-  cdm_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
-  write_schema = Sys.getenv("CDM5_POSTGRESQL_RESULT_SCHEMA")
+  cdmSchema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
+  writeSchema = Sys.getenv("CDM5_POSTGRESQL_RESULT_SCHEMA")
 )
 ```
 To see how you would create a reference to your database please consult the CDMConnector package [documentation](https://darwin-eu.github.io/CDMConnector/articles/a04_DBI_connection_examples.html). For this example though we'll work with simulated data, and we'll generate an example cdm reference like so:

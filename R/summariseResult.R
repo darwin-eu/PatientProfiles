@@ -29,6 +29,8 @@
 #' @param estimates Estimates to obtain, it can be a list to point to different
 #' set of variables.
 #' @param counts Whether to compute number of records and number of subjects.
+#' @param weights Name of the column in the table that contains the weights to
+#' be used when measuring the estimates.
 #'
 #' @return A summarised_result object with the summarised data of interest.
 #'
@@ -54,7 +56,8 @@ summariseResult <- function(table,
                             includeOverallStrata = TRUE,
                             variables = NULL,
                             estimates = c("min", "q25", "median", "q75", "max", "count", "percentage"),
-                            counts = TRUE) {
+                            counts = TRUE,
+                            weights = NULL) {
   # initial checks
   checkTable(table)
   if (length(variables) == 0 & length(estimates) == 0 & counts == FALSE) {
@@ -65,6 +68,7 @@ summariseResult <- function(table,
   if (is.null(variables)) {
     variables <- colnames(table)
     variables <- variables[!grepl("_id", variables)]
+    if (length(weights) > 0) {variables <- variables[variables != weights]}
   }
 
   if (inherits(table, "cdm_table")) {
@@ -73,10 +77,11 @@ summariseResult <- function(table,
     cdm_name <- "unknown"
   }
 
+  table <- table |>
+    dplyr::ungroup()
+
   # create the summary for overall
-  if (table |>
-    dplyr::count() |>
-    dplyr::pull() == 0) {
+  if (table |> utils::head(1) |> dplyr::tally() |> dplyr::pull() == 0) {
     if (counts) {
       result <- dplyr::tibble(
         "group_name" = "overall", "group_level" = "overall",
@@ -87,7 +92,6 @@ summariseResult <- function(table,
       )
     } else {
       result <- omopgenerics::emptySummarisedResult()
-      return(result)
     }
   } else {
     if (!is.list(variables)) {
@@ -106,6 +110,11 @@ summariseResult <- function(table,
     checkStrata(strata, table)
     functions <- checkVariablesFunctions(variables, estimates, table)
 
+    if (!is.null(weights)) {
+      omopgenerics::validateColumn(column = weights, x = table, type = "numeric")
+      rlang::check_installed("Hmisc")
+    }
+
     mes <- c("i" = "The following estimates will be computed:")
     variables <- functions$variable_name |> unique()
     for (vark in variables) {
@@ -120,12 +129,17 @@ summariseResult <- function(table,
     table <- table |>
       dplyr::select(dplyr::any_of(unique(c(
         unlist(strata), unlist(group), functions$variable_name, "person_id",
-        "subject_id"
+        "subject_id", weights
       ))))
 
     # collect if necessary
+    if (length(weights) == 0) {
+      estimatesCollect <- "q"
+    } else {
+      estimatesCollect <- "q|median|sd|mean"
+    }
     collectFlag <- functions |>
-      dplyr::filter(grepl("q", .data$estimate_name)) |>
+      dplyr::filter(grepl(estimatesCollect, .data$estimate_name)) |>
       nrow() > 0
     if (collectFlag) {
       cli::cli_inform(c(
@@ -180,7 +194,7 @@ summariseResult <- function(table,
     for (groupk in group) {
       for (stratak in strata) {
         result[[resultk]] <- summariseInternal(
-          table, groupk, stratak, functions, counts, personVariable
+          table, groupk, stratak, functions, counts, personVariable, weights
         ) |>
           # order variables
           orderVariables(colOrder, unique(unlist(estimates)))
@@ -210,14 +224,15 @@ summariseResult <- function(table,
         "result_id" = as.integer(1),
         "result_type" = "summarise_table",
         "package_name" = "PatientProfiles",
-        "package_version" = as.character(utils::packageVersion("PatientProfiles"))
+        "package_version" = as.character(utils::packageVersion("PatientProfiles")),
+        "weights" = weights
       )
     )
 
   return(result)
 }
 
-summariseInternal <- function(table, groupk, stratak, functions, counts, personVariable) {
+summariseInternal <- function(table, groupk, stratak, functions, counts, personVariable, weights) {
   result <- list()
 
   # group by relevant variables
@@ -261,26 +276,26 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
   }
   table <- table |>
     dplyr::select(dplyr::any_of(c(
-      "strata_id", "person_id", "subject_id", unique(functions$variable_name)
+      "strata_id", "person_id", "subject_id", unique(functions$variable_name), weights
     ))) |>
     dplyr::group_by(.data$strata_id)
 
   # count subjects and records
   if (counts) {
-    result$counts <- countSubjects(table, personVariable)
+    result$counts <- countSubjects(table, personVariable, weights)
   }
 
   # summariseNumeric
-  result$numeric <- summariseNumeric(table, functions)
+  result$numeric <- summariseNumeric(table, functions, weights)
 
   # summariseBinary
-  result$binary <- summariseBinary(table, functions)
+  result$binary <- summariseBinary(table, functions, weights)
 
   # summariseCategories
-  result$categories <- summariseCategories(table, functions)
+  result$categories <- summariseCategories(table, functions, weights)
 
   # summariseMissings
-  result$missings <- summariseMissings(table, functions)
+  result$missings <- summariseMissings(table, functions, weights)
 
   result <- result |>
     dplyr::bind_rows() |>
@@ -291,39 +306,64 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
   return(result)
 }
 
-countSubjects <- function(x, personVariable) {
+countSubjects <- function(x, personVariable, weights) {
   result <- list()
-  result$record <- x |>
-    dplyr::summarise(
-      "estimate_value" = dplyr::n(),
-      .groups = "drop"
-    ) |>
-    dplyr::collect() |>
-    dplyr::mutate(
-      "variable_name" = "number_records"
-    )
-  if (!is.null(personVariable)) {
-    result$subject <- x |>
-      dplyr::summarise(
-        "estimate_value" = dplyr::n_distinct(.data[[personVariable]]),
-        .groups = "drop"
-      ) |>
+  #if (length(weights) == 0) {
+    result$record <- x |>
+      dplyr::summarise("estimate_value" = dplyr::n(), .groups = "drop") |>
       dplyr::collect() |>
       dplyr::mutate(
-        "variable_name" = "number_subjects"
+        "variable_name" = "number_records",
+        "estimate_value" = sprintf("%.0f", as.numeric(.data$estimate_value))
       )
-  }
+    if (!is.null(personVariable)) {
+      result$subject <- x |>
+        dplyr::summarise(
+          "estimate_value" = dplyr::n_distinct(.data[[personVariable]]),
+          .groups = "drop"
+        ) |>
+        dplyr::collect() |>
+        dplyr::mutate(
+          "variable_name" = "number_subjects",
+          "estimate_value" = sprintf("%.0f", as.numeric(.data$estimate_value))
+        )
+    }
+  # } else {
+  #   result$record <- x |>
+  #     dplyr::summarise(
+  #       "estimate_value" = sum(.data[[weights]]),
+  #       .groups = "drop"
+  #     ) |>
+  #     dplyr::collect() |>
+  #     dplyr::mutate(
+  #       "variable_name" = "number_records",
+  #       "estimate_value" = sprintf("%.0f", as.numeric(.data$estimate_value))
+  #     )
+  #   if (!is.null(personVariable)) {
+  #     result$subject <- x |>
+  #       dplyr::group_by(.data[[personVariable]]) |>
+  #       dplyr::summarise(
+  #         estimate_value = max(.data[[weights]], na.rm = TRUE),
+  #         .groups = "drop"
+  #       ) |>
+  #       dplyr::summarise(estimate_value = sum(.data$estimate_value)) |>
+  #       dplyr::collect() |>
+  #       dplyr::mutate(
+  #         "variable_name" = "number_subjects",
+  #         "estimate_value" = sprintf("%.0f", as.numeric(.data$estimate_value))
+  #       )
+  #   }
+  # }
   result <- dplyr::bind_rows(result) |>
     dplyr::mutate(
       "estimate_type" = "integer",
       "estimate_name" = "count",
-      "variable_level" = NA_character_,
-      "estimate_value" = as.character(.data$estimate_value)
+      "variable_level" = NA_character_
     )
   return(result)
 }
 
-summariseNumeric <- function(table, functions) {
+summariseNumeric <- function(table, functions, weights) {
   functions <- functions |>
     dplyr::filter(
       .data$variable_type %in% c("date", "numeric", "integer") &
@@ -334,14 +374,22 @@ summariseNumeric <- function(table, functions) {
     return(NULL)
   }
 
+  if (length(weights) == 0) {
+    estimatesFunctions <- estimatesFunc
+  } else {
+    estimatesFunctions <- estimatesFuncWeights
+  }
+
   funs <- functions |>
     dplyr::filter(.data$estimate_name != "density")
 
   if (nrow(funs) > 0) {
     funs <- funs |>
-      dplyr::mutate(fun = estimatesFunc[.data$estimate_name]) |>
+      dplyr::mutate(fun = estimatesFunctions[.data$estimate_name]) |>
       dplyr::rowwise() |>
-      dplyr::mutate(fun = gsub("x, ", paste0(".data[['", .data$variable_name, "']], "), .data$fun)) |>
+      dplyr::mutate(
+        fun = gsub("\\(x", paste0("\\(.data[['", .data$variable_name, "']]"), .data$fun)
+      ) |>
       dplyr::ungroup() |>
       dplyr::mutate(id = paste0("variable_", stringr::str_pad(dplyr::row_number(), 6, pad = "0")))
     numericSummary <- funs$fun |>
@@ -375,12 +423,12 @@ summariseNumeric <- function(table, functions) {
     res <- res |>
       dplyr::union_all(
         table |>
-          dplyr::select(dplyr::all_of(c("strata_id", functions$variable_name))) |>
+          dplyr::select(dplyr::all_of(c("strata_id", functions$variable_name, weights))) |>
           dplyr::collect() |>
           dplyr::group_by(.data$strata_id) |>
           dplyr::group_split() |>
           as.list() |>
-          purrr::map_df(getDensityResult) |>
+          purrr::map_df(getDensityResult, weights) |>
           dplyr::inner_join(
             functions |>
               dplyr::select("variable_name", "estimate_type" = "variable_type") |>
@@ -415,24 +463,36 @@ correctTypes <- function(x) {
     ))
 }
 
-getDensityResult <- function(x) {
+getDensityResult <- function(x, weights) {
+  w <- NULL
+  if (length(weights) != 0) {
+    w <- x |> dplyr::pull(.data[[weights]])
+  }
   x |>
-    dplyr::select(!"strata_id") |>
+    dplyr::select(!dplyr::all_of(c("strata_id", weights))) |>
     as.list() |>
-    purrr::map(densityResult) |>
+    purrr::map(densityResult, w) |>
     dplyr::bind_rows(.id = "variable_name") |>
     dplyr::mutate(strata_id = x$strata_id[1])
 }
-densityResult <- function(x) {
+densityResult <- function(x, w) {
   nPoints <- 512
   nDigits <- ceiling(log(nPoints)/log(10))
-  x <- as.numeric(x[!is.na(x)])
+  id <- !is.na(x)
+  x <- as.numeric(x[id])
   if (length(x) == 0) {
     return(NULL)
   } else if (length(x) == 1) {
     den <- list(x = c(x - 1, x, x + 1), y = c(0, 1, 0)) # NEEDS DISCUSSION
   } else {
-    den <- stats::density(x, n = nPoints)
+    # if-else to avoid warning when weights are NULL, but important to throw when non-null
+    if (is.null(w)) {
+      den <- stats::density(x, n = nPoints, na.rm = TRUE)
+    } else {
+      w <- as.numeric(w[id])
+      den <- stats::density(x, n = nPoints, weights = w/sum(w), na.rm = TRUE)
+    }
+
   }
   lev <- paste0("density_", stringr::str_pad(
     seq_along(den$x), width = nDigits, side = "left", pad = "0"))
@@ -449,7 +509,7 @@ densityResult <- function(x) {
     dplyr::arrange(.data$variable_level, .data$estimate_name)
 }
 
-summariseBinary <- function(table, functions) {
+summariseBinary <- function(table, functions, weights) {
   binFuns <- functions |>
     dplyr::filter(
       .data$variable_type != "categorical" &
@@ -458,11 +518,16 @@ summariseBinary <- function(table, functions) {
   binNum <- binFuns |>
     dplyr::pull("variable_name") |>
     unique()
+  if (length(weights) == 0) {
+    weights <- omopgenerics::uniqueId(exclude = colnames(table))
+    table <- table |>
+      dplyr::mutate(!!weights := 1)
+  }
   if (length(binNum) > 0) {
     num <- table |>
       dplyr::summarise(dplyr::across(
         .cols = dplyr::all_of(binNum),
-        ~ sum(.x, na.rm = TRUE),
+        ~ sum(.x*.data[[weights]], na.rm = TRUE),
         .names = "counts_{.col}"
       )) |>
       dplyr::collect() |>
@@ -488,7 +553,7 @@ summariseBinary <- function(table, functions) {
       den <- table |>
         dplyr::summarise(dplyr::across(
           .cols = dplyr::all_of(binDen),
-          ~ sum(as.integer(!is.na(.x)), na.rm = TRUE),
+          ~ sum(as.integer(!is.na(.x))*.data[[weights]], na.rm = TRUE),
           .names = "den_{.col}"
         )) |>
         dplyr::collect() |>
@@ -541,25 +606,28 @@ summariseBinary <- function(table, functions) {
   return(res)
 }
 
-summariseCategories <- function(table, functions) {
+summariseCategories <- function(table, functions, weights) {
   catFuns <- functions |>
     dplyr::filter(.data$variable_type == "categorical")
   result <- list()
   catVars <- unique(catFuns$variable_name)
+  if (length(weights) == 0) {
+    weights <- omopgenerics::uniqueId(exclude = colnames(table))
+    table <- table |>
+      dplyr::mutate(!!weights := 1)
+  }
   if (length(catVars) > 0) {
     den <- table |>
-      dplyr::tally(name = "denominator") |>
-      dplyr::collect() |>
-      dplyr::ungroup()
+      dplyr::summarise("denominator" = sum(.data[[weights]], na.rm = TRUE), .groups = "drop") |>
+      dplyr::collect()
     for (catVar in catVars) {
       est <- catFuns |>
         dplyr::filter(.data$variable_name == .env$catVar) |>
         dplyr::pull("estimate_name")
       result[[catVar]] <- table |>
         dplyr::group_by(.data$strata_id, .data[[catVar]]) |>
-        dplyr::tally(name = "count") |>
+        dplyr::summarise("count" = sum(.data[[weights]], na.rm = TRUE), .groups = "drop") |>
         dplyr::collect() |>
-        dplyr::ungroup() |>
         dplyr::inner_join(den, by = "strata_id") |>
         dplyr::mutate(
           "percentage" = as.character(100 * .data$count / .data$denominator),
@@ -588,9 +656,13 @@ summariseCategories <- function(table, functions) {
   return(dplyr::bind_rows(result))
 }
 
-summariseMissings <- function(table, functions) {
+summariseMissings <- function(table, functions, weights) {
   result <- list()
-
+  if (length(weights) == 0) {
+    weights <- omopgenerics::uniqueId(exclude = colnames(table))
+    table <- table |>
+      dplyr::mutate(!!weights := 1)
+  }
   # counts
   mVars <- functions |>
     dplyr::filter(.data$estimate_name %in% c("count_missing", "percentage_missing")) |>
@@ -601,10 +673,10 @@ summariseMissings <- function(table, functions) {
       dplyr::summarise(
         dplyr::across(
           .cols = dplyr::all_of(mVars),
-          ~ sum(as.integer(is.na(.x)), na.rm = TRUE),
+          ~ sum(as.integer(is.na(.x))*.data[[weights]], na.rm = TRUE),
           .names = "cm_{.col}"
         ),
-        "den" = dplyr::n()
+        "den" = sum(.data[[weights]], na.rm = TRUE)
       ) |>
       dplyr::collect() |>
       dplyr::mutate(dplyr::across(

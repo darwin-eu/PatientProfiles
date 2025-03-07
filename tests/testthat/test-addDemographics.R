@@ -1290,7 +1290,7 @@ test_that("allow NA as age_group", {
   cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
   expect_no_error(
     cdm$cohort1 <- cdm$cohort1 |>
-      addAge(ageGroup = list(c(0, 0)), missingAgeGroupValue = NA_character_)
+      addAge(ageGroup = list(c(1500, 1500)), missingAgeGroupValue = NA_character_)
   )
   expect_true(all(is.na(cdm$cohort1 |> dplyr::pull("age_group"))))
   mockDisconnect(cdm = cdm)

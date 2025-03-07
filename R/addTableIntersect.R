@@ -28,6 +28,8 @@
 #' @param window window to consider events in.
 #' @param targetStartDate Column name with start date for comparison.
 #' @param targetEndDate Column name with end date for comparison.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
 #' @param nameStyle naming of the added column or columns, should include
 #' required parameters.
 #' @param name Name of the new table, if NULL a temporary table is returned.
@@ -53,6 +55,7 @@ addTableIntersectFlag <- function(x,
                                   window = list(c(0, Inf)),
                                   targetStartDate = startDateColumn(tableName),
                                   targetEndDate = endDateColumn(tableName),
+                                  inObservation = TRUE,
                                   nameStyle = "{table_name}_{window_name}",
                                   name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
@@ -70,6 +73,7 @@ addTableIntersectFlag <- function(x,
       indexDate = indexDate,
       targetStartDate = targetStartDate,
       targetEndDate = targetEndDate,
+      inObservation = inObservation,
       window = window,
       order = "first",
       nameStyle = nameStyle,
@@ -94,6 +98,8 @@ addTableIntersectFlag <- function(x,
 #' @param window window to consider events in.
 #' @param targetStartDate Column name with start date for comparison.
 #' @param targetEndDate Column name with end date for comparison.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
 #' @param nameStyle naming of the added column or columns, should include
 #' required parameters.
 #' @param name Name of the new table, if NULL a temporary table is returned.
@@ -119,6 +125,7 @@ addTableIntersectCount <- function(x,
                                    window = list(c(0, Inf)),
                                    targetStartDate = startDateColumn(tableName),
                                    targetEndDate = endDateColumn(tableName),
+                                   inObservation = TRUE,
                                    nameStyle = "{table_name}_{window_name}",
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
@@ -136,6 +143,7 @@ addTableIntersectCount <- function(x,
       indexDate = indexDate,
       targetStartDate = targetStartDate,
       targetEndDate = targetEndDate,
+      inObservation = inObservation,
       window = window,
       order = "first",
       nameStyle = nameStyle,
@@ -159,6 +167,8 @@ addTableIntersectCount <- function(x,
 #' or a column date of x.
 #' @param window window to consider events in.
 #' @param targetDate Target date in tableName.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
 #' @param order which record is considered in case of multiple records (only
 #' required for date and days options).
 #' @param nameStyle naming of the added column or columns, should include
@@ -184,6 +194,7 @@ addTableIntersectDate <- function(x,
                                   censorDate = NULL,
                                   window = list(c(0, Inf)),
                                   targetDate = startDateColumn(tableName),
+                                  inObservation = TRUE,
                                   order = "first",
                                   nameStyle = "{table_name}_{window_name}",
                                   name = NULL) {
@@ -202,6 +213,7 @@ addTableIntersectDate <- function(x,
       indexDate = indexDate,
       targetStartDate = targetDate,
       targetEndDate = NULL,
+      inObservation = inObservation,
       window = window,
       order = order,
       nameStyle = nameStyle,
@@ -225,6 +237,8 @@ addTableIntersectDate <- function(x,
 #' or a column date of x.
 #' @param window window to consider events in.
 #' @param targetDate Target date in tableName.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
 #' @param order which record is considered in case of multiple records (only
 #' required for date and days options).
 #' @param nameStyle naming of the added column or columns, should include
@@ -250,6 +264,7 @@ addTableIntersectDays <- function(x,
                                   censorDate = NULL,
                                   window = list(c(0, Inf)),
                                   targetDate = startDateColumn(tableName),
+                                  inObservation = TRUE,
                                   order = "first",
                                   nameStyle = "{table_name}_{window_name}",
                                   name = NULL) {
@@ -268,6 +283,7 @@ addTableIntersectDays <- function(x,
       indexDate = indexDate,
       targetStartDate = targetDate,
       targetEndDate = NULL,
+      inObservation = inObservation,
       window = window,
       order = order,
       nameStyle = nameStyle,
@@ -296,8 +312,13 @@ addTableIntersectDays <- function(x,
 #' or a column date of x.
 #' @param window window to consider events in when intersecting with the chosen column.
 #' @param targetDate The dates in the target columns in tableName that the user may want to restrict to.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
 #' @param order which record is considered in case of multiple records (only
 #' required for date and days options).
+#' @param allowDuplicates Whether to allow multiple records with same
+#' conceptSet, person_id and targetDate. If switched to TRUE, it can have a
+#' different and unpredictable behavior depending on the cdm_source.
 #' @param nameStyle naming of the added column or columns, should include
 #' required parameters.
 #' @param name Name of the new table, if NULL a temporary table is returned.
@@ -325,7 +346,9 @@ addTableIntersectField <- function(x,
                                    censorDate = NULL,
                                    window = list(c(0, Inf)),
                                    targetDate = startDateColumn(tableName),
+                                   inObservation = TRUE,
                                    order = "first",
+                                   allowDuplicates = FALSE,
                                    nameStyle = "{table_name}_{extra_value}_{window_name}",
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
@@ -344,8 +367,10 @@ addTableIntersectField <- function(x,
       indexDate = indexDate,
       targetStartDate = targetDate,
       targetEndDate = NULL,
+      inObservation = inObservation,
       window = window,
       order = order,
+      allowDuplicates = allowDuplicates,
       nameStyle = nameStyle,
       censorDate = censorDate,
       name = name

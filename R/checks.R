@@ -116,31 +116,15 @@ checkCohortNames <- function(x, targetCohortId, name) {
   if (!("cohort_table" %in% class(x))) {
     cli::cli_abort("cdm[[targetCohortTable]]) must be a 'cohort_table'.")
   }
-  cohort <- omopgenerics::settings(x)
-  filterVariable <- "cohort_definition_id"
-  if (is.null(targetCohortId)) {
-    cohort <- dplyr::collect(cohort)
-    idName <- cohort$cohort_name
-    targetCohortId <- cohort$cohort_definition_id
-  } else {
-    idName <- cohort |>
-      dplyr::filter(
-        as.integer(.data$cohort_definition_id) %in%
-          as.integer(.env$targetCohortId)
-      ) |>
-      dplyr::arrange(.data$cohort_definition_id) |>
-      dplyr::pull("cohort_name")
-    if (length(idName) != length(targetCohortId)) {
-      cli::cli_abort(
-        "some of the cohort ids given do not exist in the cohortSet of
-          cdm[[targetCohortName]]"
-      )
-    }
-  }
+  targetCohortId <- omopgenerics::validateCohortIdArgument(
+    cohortId = {{targetCohortId}}, cohort = x
+  )
+  set <- omopgenerics::settings(x) |>
+    dplyr::filter(.data$cohort_definition_id %in% .env$targetCohortId)
   parameters <- list(
-    "filter_variable" = filterVariable,
-    "filter_id" = sort(targetCohortId),
-    "id_name" = idName
+    "filter_variable" = "cohort_definition_id",
+    "filter_id" = set$cohort_definition_id,
+    "id_name" = set$cohort_name
   )
   invisible(parameters)
 }
@@ -537,4 +521,3 @@ checkCategory <- function(category, overlap = FALSE, type = "numeric", call = pa
 
   invisible(result)
 }
-

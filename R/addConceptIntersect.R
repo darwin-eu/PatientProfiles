@@ -24,18 +24,25 @@
                                  inObservation = TRUE,
                                  order = "first",
                                  value,
+                                 allowDuplicates = FALSE,
                                  nameStyle = "{value}_{concept_name}_{window_name}",
                                  name) {
+  cdm <- omopgenerics::cdmReference(x)
+
   # initial checks
-  omopgenerics::newCodelist(conceptSet)
+  conceptSet <- omopgenerics::validateConceptSetArgument(conceptSet = conceptSet, cdm = cdm)
   omopgenerics::assertChoice(targetStartDate, choices = c("event_start_date", "event_end_date"), length = 1)
   omopgenerics::assertChoice(targetEndDate, choices = c("event_start_date", "event_end_date"), length = 1, null = TRUE)
   omopgenerics::assertLogical(inObservation, length = 1)
+  omopgenerics::assertCharacter(value)
 
-  cdm <- omopgenerics::cdmReference(x)
   tablePrefix <- omopgenerics::tmpPrefix()
 
-  nameStyle <- gsub("\\{concept_name\\}", "\\{id_name\\}", nameStyle)
+  nameStyle <- nameStyle |>
+    stringr::str_replace(
+      pattern = "\\{concept_name\\}",
+      replacement = "\\{id_name\\}"
+    )
 
   # concepts table
   conceptsTable <- getConceptsTable(conceptSet)
@@ -46,7 +53,7 @@
   conceptSetId <- conceptSetId(conceptSet)
 
   # subset table
-  cdm[[nm]] <- subsetTable(cdm[[nm]]) |>
+  cdm[[nm]] <- subsetTable(cdm[[nm]], value) |>
     dplyr::compute(name = nm, temporary = FALSE)
   attr(x, "cdm_reference") <- cdm
   x <- x |>
@@ -63,12 +70,13 @@
       targetStartDate = targetStartDate,
       targetEndDate = targetEndDate,
       inObservation = inObservation,
+      allowDuplicates = allowDuplicates,
       nameStyle = nameStyle,
       name = name
     )
 
   # drop intermediate tables
-  omopgenerics::dropTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
 
   return(x)
 }
@@ -84,7 +92,7 @@ conceptSetId <- function(conceptSet) {
     "concept_set_id" = as.integer(seq_along(conceptSet))
   )
 }
-subsetTable <- function(x) {
+subsetTable <- function(x, value) {
   cdm <- omopgenerics::cdmReference(x)
 
   # domains
@@ -104,11 +112,64 @@ subsetTable <- function(x) {
   domains[domains == "obs"] <- "observation"
   domains <- unique(domains)
 
-  if(length(domains) == 0){
-    domains <- NA_character_
+  if (length(domains) == 0) {
+    res <- cdm[["concept"]] |>
+      dplyr::select("concept_id") |>
+      dplyr::mutate(
+        "event_start_date" = as.Date("2000-01-01"),
+        "event_end_date" = as.Date("2000-01-01"),
+        "concept_set_id" = as.integer(0),
+        "person_id" = as.integer(0)
+      ) |>
+      utils::head(0)
+    if (!value %in% c("flag", "count", "date", "days")) {
+      res <- res |>
+        dplyr::mutate(!!value := character())
+    }
+    return(res)
   }
 
-  lapply(domains, function(domain) {
+  # extra column
+  if (!value %in% c("flag", "count", "date", "days")) {
+    type <- purrr::map(domains, \(x) {
+      nm <- tableFromDomain(x)
+      if (!nm %in% names(cdm)) {
+        type <- character()
+      } else if (value %in% colnames(cdm[[nm]])) {
+        type <- cdm[[nm]] |>
+          dplyr::select(dplyr::all_of(value)) |>
+          utils::head(1) |>
+          dplyr::pull() |>
+          dplyr::type_sum()
+      } else {
+        type <- character()
+      }
+      return(type)
+    }) |>
+      unlist() |>
+      unique()
+    if (length(type) == 1) {
+      val <- switch(type,
+                    "chr" = NA_character_,
+                    "date" = as.Date(NA),
+                    "dttm" = as.Date(NA),
+                    "lgl" = NA,
+                    "drtn" = NA_real_,
+                    "dbl" = NA_real_,
+                    "int" = NA_integer_,
+                    "int64" = bit64::as.integer64(NA),
+                    NA_character_)
+      extraColumn <- TRUE
+    } else if (length(type) == 0) {
+      cli::cli_abort(c(x = "Column `{value}` not found in any of the tables."))
+    } else {
+      cli::cli_abort(c(x = "Different types found for column `{value}`."))
+    }
+  } else {
+    extraColumn <- FALSE
+  }
+
+  purrr::map(domains, \(domain) {
     tableName <- switch(domain,
       "device" = "device_exposure",
       "specimen" = "specimen",
@@ -121,18 +182,24 @@ subsetTable <- function(x) {
       NA_character_
     )
     if (tableName %in% names(cdm)) {
-      concept <- standardConceptIdColumn(tableName)
-      start <- startDateColumn(tableName)
-      end <- endDateColumn(tableName)
+      sel <- c(
+        "event_start_date" = startDateColumn(tableName),
+        "event_end_date" = endDateColumn(tableName),
+        "concept_id" = standardConceptIdColumn(tableName),
+        "person_id"
+      )
+      if (extraColumn & value %in% colnames(cdm[[tableName]])) {
+        sel <- c(sel, value)
+      }
       res <- cdm[[tableName]] |>
-        dplyr::select(
-          "event_start_date" = .env$start, "event_end_date" = .env$end,
-          "concept_id" = .env$concept, "person_id"
-        ) |>
+        dplyr::select(dplyr::all_of(sel)) |>
         dplyr::inner_join(
           x |> dplyr::select("concept_id", "concept_set_id"),
           by = "concept_id"
         )
+      if (extraColumn & !value %in% colnames(cdm[[tableName]])) {
+        res <- dplyr::mutate(res, !!value := .env$val)
+      }
     } else {
       if (!is.na(tableName)) {
         cli::cli_alert_warning("{.pkg tableName} not found in cdm object.")
@@ -148,10 +215,26 @@ subsetTable <- function(x) {
           "person_id" = as.integer(0)
         ) |>
         utils::head(0)
+      if (extraColumn) {
+        res <- dplyr::mutate(res, !!value := .env$val)
+      }
     }
     return(res)
   }) |>
     purrr::reduce(dplyr::union_all)
+}
+tableFromDomain <- function(domain) {
+  switch(domain,
+         "device" = "device_exposure",
+         "specimen" = "specimen",
+         "measurement" = "measurement",
+         "drug" = "drug_exposure",
+         "condition" = "condition_occurrence",
+         "observation" = "observation",
+         "procedure" = "procedure_occurrence",
+         "episode" = "episode",
+         NA_character_
+  )
 }
 
 #' It creates column to indicate the flag overlap information between a table
@@ -433,6 +516,93 @@ addConceptIntersectDays <- function(x,
     inObservation = inObservation,
     order = order,
     value = "days",
+    nameStyle = nameStyle,
+    name = name
+  )
+}
+
+#' It adds a custom column (field) from the intersection with a certain table
+#' subsetted by concept id. In general it is used to add the first value of a
+#' certain measurement.
+#'
+#' @param x Table with individuals in the cdm.
+#' @param conceptSet Concept set list.
+#' @param field Column in the standard omop table that you want to add.
+#' @param indexDate Variable in x that contains the date to compute the
+#' intersection.
+#' @param censorDate Whether to censor overlap events at a date column of x
+#' @param window Window to consider events in.
+#' @param targetDate Event date to use for the intersection.
+#' @param order 'last' or 'first' to refer to which event consider if multiple
+#' events are present in the same window.
+#' @param inObservation If TRUE only records inside an observation period
+#' will be considered.
+#' @param allowDuplicates Whether to allow multiple records with same
+#' conceptSet, person_id and targetDate. If switched to TRUE, it can have a
+#' different and unpredictable behavior depending on the cdm_source.
+#' @param nameStyle naming of the added column or columns, should include
+#' required parameters.
+#' @param name Name of the new table, if NULL a temporary table is returned.
+#'
+#' @return Table with the `field` value obtained from the intersection
+#'
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' library(PatientProfiles)
+#' cdm <- mockPatientProfiles()
+#' concept <- dplyr::tibble(
+#'   concept_id = c(1125315),
+#'   domain_id = "Drug",
+#'   vocabulary_id = NA_character_,
+#'   concept_class_id = "Ingredient",
+#'   standard_concept = "S",
+#'   concept_code = NA_character_,
+#'   valid_start_date = as.Date("1900-01-01"),
+#'   valid_end_date = as.Date("2099-01-01"),
+#'   invalid_reason = NA_character_
+#' ) |>
+#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'
+#' cdm$cohort1 |>
+#'   addConceptIntersectField(
+#'     conceptSet = list("acetaminophen" = 1125315),
+#'     field = "drug_type_concept_id"
+#'   )
+#'
+#' mockDisconnect(cdm = cdm)
+#' }
+#'
+addConceptIntersectField <- function(x,
+                                     conceptSet,
+                                     field,
+                                     indexDate = "cohort_start_date",
+                                     censorDate = NULL,
+                                     window = list(c(0, Inf)),
+                                     targetDate = "event_start_date",
+                                     order = "first",
+                                     inObservation = TRUE,
+                                     allowDuplicates = FALSE,
+                                     nameStyle = "{field}_{concept_name}_{window_name}",
+                                     name = NULL) {
+  omopgenerics::assertCharacter(nameStyle, length = 1)
+  nameStyle <- stringr::str_replace(
+    string = nameStyle, pattern = "\\{field\\}", replacement = "\\{value\\}"
+  )
+  .addConceptIntersect(
+    x = x,
+    conceptSet = conceptSet,
+    indexDate = indexDate,
+    censorDate = censorDate,
+    window = window,
+    targetStartDate = targetDate,
+    targetEndDate = NULL,
+    inObservation = inObservation,
+    order = order,
+    value = field,
+    allowDuplicates = allowDuplicates,
     nameStyle = nameStyle,
     name = name
   )
