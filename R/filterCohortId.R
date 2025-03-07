@@ -28,7 +28,6 @@
 filterCohortId <- function(cohort,
                            cohortId = NULL) {
   # initial checks
-  cohort <- omopgenerics::validateCohortArgument(cohort = cohort)
   cohortId <- omopgenerics::validateCohortIdArgument(
     cohortId = cohortId, cohort = cohort
   )

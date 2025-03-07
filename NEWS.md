@@ -1,4 +1,10 @@
 
+# PatientProfiles 1.3.1
+
+* Validate cohort using class by @catalamarti in #773
+* Use case_when in addCategories by @catalamarti in #774
+* Fix binary counts in db by @catalamarti in #775
+
 # PatientProfiles 1.3.0
 
 * Changed addCategories by @KimLopezGuell in #734

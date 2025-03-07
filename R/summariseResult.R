@@ -527,7 +527,7 @@ summariseBinary <- function(table, functions, weights) {
     num <- table |>
       dplyr::summarise(dplyr::across(
         .cols = dplyr::all_of(binNum),
-        ~ sum(.x*.data[[weights]], na.rm = TRUE),
+        \(x) sum(x * !!dplyr::sym(weights), na.rm = TRUE),
         .names = "counts_{.col}"
       )) |>
       dplyr::collect() |>
@@ -553,7 +553,7 @@ summariseBinary <- function(table, functions, weights) {
       den <- table |>
         dplyr::summarise(dplyr::across(
           .cols = dplyr::all_of(binDen),
-          ~ sum(as.integer(!is.na(.x))*.data[[weights]], na.rm = TRUE),
+          \(x) sum(as.integer(!is.na(x)) * !!dplyr::sym(weights), na.rm = TRUE),
           .names = "den_{.col}"
         )) |>
         dplyr::collect() |>

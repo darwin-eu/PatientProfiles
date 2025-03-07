@@ -23,6 +23,8 @@
 #' @param missingCategoryValue Value to assign to those individuals not in
 #' any named category. If NULL or NA, missing values will not be changed.
 #' @param overlap TRUE if the categories given overlap.
+#' @param includeLowerBound Whether to include the lower bound in the group.
+#' @param includeUpperBound Whether to include the upper bound in the group.
 #' @param name Name of the new table, if NULL a temporary table is returned.
 #'
 #' @return The x table with the categorical variable added.
@@ -48,170 +50,195 @@ addCategories <- function(x,
                           categories,
                           missingCategoryValue = "None",
                           overlap = FALSE,
+                          includeLowerBound = TRUE,
+                          includeUpperBound = TRUE,
                           name = NULL) {
   comp <- newTable(name)
   omopgenerics::assertClass(x, class = "cdm_table")
-  omopgenerics::assertCharacter(variable, length = 1)
-  if (!variable %in% colnames(x)) {
-    cli::cli_abort("{variable} is not a column of x")
-  }
-  var <- dplyr::pull(utils::head(x, 1), variable)
-  if (!inherits(var, "numeric") &
-    !inherits(var, "integer") &
-    !inherits(var, "Date")) {
-    cli::cli_abort("{variable} must be a numeric or date variable")
-  }
+  variable <- omopgenerics::validateColumn(variable, x = x, type = c("date", "numeric", "integer"))
   omopgenerics::assertList(categories, class = "list")
   omopgenerics::assertCharacter(missingCategoryValue, length = 1, na = TRUE)
+  omopgenerics::assertLogical(includeLowerBound, length = 1)
+  omopgenerics::assertLogical(includeUpperBound, length = 1)
 
+  # check names
   if (length(unique(names(categories))) < length((names(categories)))) {
-    cli::cli_abort(
-      "Categories have repeated names, please rename the groups."
-    )
+    "Categories have repeated names, please rename the groups." |>
+      cli::cli_abort()
   }
-
   if (is.null(names(categories))) {
-    nam <- paste0("category_", seq_along(categories))
-  } else {
-    nam <- names(categories)
+    names(categories) <- paste0("category_", seq_along(categories))
   }
 
-  x <- warnOverwriteColumns(x, nameStyle = nam)
+  # validate new columns
+  x <- omopgenerics::validateNewColumn(x, names(categories), validation = "error")
 
-  if (
-    utils::head(x, 1) |>
-      dplyr::pull(dplyr::all_of(variable)) |>
-      inherits("Date")
-  ) {
-    rand1 <- paste0("extra_", sample(letters, 5, TRUE) |> paste0(collapse = ""))
-    rand2 <- paste0("extra_", sample(letters, 6, TRUE) |> paste0(collapse = ""))
+  # get signs
+  le <- if (includeLowerBound) "<=" else "<"
+  ue <- if (includeUpperBound) "<=" else "<"
+  if (is.na(missingCategoryValue)) {
+    miss <- 'NA_character_'
+  } else {
+    miss <- paste0('"', missingCategoryValue, '"')
+  }
+
+  # check if date
+  date <- x |>
+    utils::head(1) |>
+    dplyr::pull(dplyr::all_of(variable)) |>
+    dplyr::type_sum() |>
+    assertClassification() == "date"
+  if (date) {
+    id <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
     x <- x |>
-      dplyr::mutate(!!rand1 := as.Date("1970-01-01")) %>%
-      dplyr::mutate(!!rand2 := !!CDMConnector::datediff(rand1, variable)) |>
-      dplyr::select(-dplyr::all_of(rand1))
-    variable <- rand2
-    categories <- lapply(categories, function(x) {
-      lapply(x, function(y) {
-        y <- as.numeric(y)
-        y[is.na(y)] <- Inf
-        return(y)
-      })
-    })
-    date <- TRUE
-  } else {
-    date <- FALSE
+      dplyr::mutate(!!id[1] := as.Date("1970-01-01")) %>%
+      dplyr::mutate(!!id[2] := !!CDMConnector::datediff(id[1], variable)) |>
+      dplyr::select(-dplyr::all_of(id[1]))
+    variable <- id[2]
+    categories <- categories |>
+      purrr::map(\(x) purrr::map(x, as.numeric))
   }
 
-  categoryTibble <- list()
-  for (k in seq_along(categories)) {
-    categoryTibble[[nam[k]]] <- checkCategory(categories[[k]],
-      overlap = overlap
-    )
-    if (date & is.null(names(categories[[k]]))) {
-      categoryTibble[[nam[k]]] <- categoryTibble[[nam[k]]] |>
-        dplyr::mutate(category_label = paste(
-          as.Date(.data$lower_bound, origin = "1970-01-01"), "to",
-          as.Date(.data$lower_bound, origin = "1970-01-01")
-        ))
+  # check categories
+  categoryTibble <- purrr::map(categories, \(category) {
+    omopgenerics::assertList(category, class = "numeric")
+    if (is.null(names(category))) {
+      names(category) <- rep("", length(category))
     }
-  }
-
-  tablePrefix <- omopgenerics::tmpPrefix()
-
-  for (k in seq_along(categories)) {
-    categoryTibbleK <- categoryTibble[[k]]
-    nm <- names(categoryTibble)[k]
-    if (!overlap) {
-      sqlCategories <- "#ELSE#"
-      for (i in 1:nrow(categoryTibbleK)) {
-        lower <- categoryTibbleK$lower_bound[i]
-        upper <- categoryTibbleK$upper_bound[i]
-        category <- categoryTibbleK$category_label[i]
-        if (is.infinite(lower)) {
-          if (is.infinite(upper)) {
-            sqlCategories <- gsub(
-              "#ELSE#", paste0("\"", category, "\""), sqlCategories
-            )
-            break
-          } else {
-            newSql <- paste0(
-              "dplyr::if_else(.data[[variable]] <= ", upper, ", \"", category,
-              "\" , #ELSE#)"
-            )
-          }
-        } else {
-          if (is.infinite(upper)) {
-            newSql <- paste0(
-              "dplyr::if_else(.data[[variable]] >= ", lower, ", \"", category,
-              "\" , #ELSE#)"
-            )
-          } else {
-            newSql <- paste0(
-              "dplyr::if_else(.data[[variable]] >= ", lower,
-              " & .data[[variable]] <= ", upper, ", \"", category,
-              "\" , #ELSE#)"
-            )
-          }
-        }
-        sqlCategories <- gsub("#ELSE#", newSql, sqlCategories)
-      }
-      if (is.na(missingCategoryValue)) {
-        sqlCategories <- gsub("#ELSE#", "NA_character_", sqlCategories)
+    category <- purrr::map(category, \(x) if (length(x) == 1) c(x, x) else x)
+    if (any(lengths(category) != 2)) {
+      "Please specify two values per category (lower bound and upper bound)" |>
+        cli::cli_abort()
+    }
+    xf <- purrr::map_dbl(category, \(x) if (is.infinite(x[1])) NA else x[1])
+    xs <- purrr::map_dbl(category, \(x) if (is.infinite(x[2])) NA else x[2])
+    if (any(xf > xs & !is.na(xf) & !is.na(xs))) {
+     cli::cli_abort("Lower bound must be smaller than upper bound")
+    }
+    res <- dplyr::tibble(
+      lower_bound = .env$xf,
+      upper_bound = .env$xs,
+      category_label = names(category)
+    ) |>
+      dplyr::mutate(category_label = dplyr::if_else(
+        .data$category_label == "",
+        categoryName(.data$lower_bound, .data$upper_bound, date),
+        .data$category_label
+      ))
+    ov <- detectOverlap(category, includeLowerBound & includeUpperBound)
+    if (ov) {
+      if (!overlap) {
+        "There is overlap between categories, please use overlap = TRUE or provide non overlaping categories" |>
+          cli::cli_abort()
       } else {
-        sqlCategories <- gsub("#ELSE#", paste0("\"", ifelse(
-          is.null(missingCategoryValue), NA, missingCategoryValue
-        ), "\""), sqlCategories)
-      }
-      sqlCategories <- sqlCategories |>
-        rlang::parse_exprs() |>
-        rlang::set_names(glue::glue(nm))
-      x <- x |>
-        dplyr::mutate(!!!sqlCategories)
-    } else {
-      x <- dplyr::mutate(x, !!nm := as.character(NA))
-      for (i in 1:nrow(categoryTibbleK)) {
-        lower <- categoryTibbleK$lower_bound[i]
-        upper <- categoryTibbleK$upper_bound[i]
-        category <- categoryTibbleK$category_label[i]
-        x <- x |>
-          dplyr::mutate(!!nm := dplyr::if_else(
-            is.na(.data[[nm]]) &
-              .data[[variable]] >= .env$lower &
-              .data[[variable]] <= .env$upper,
-            .env$category,
-            dplyr::if_else(
-              !is.na(.data[[nm]]) &
-                .data[[variable]] >= .env$lower &
-                .data[[variable]] <= .env$upper,
-              paste0(.data[[nm]], " and ", .env$category),
-              .data[[nm]]
-            )
-          ))
-      }
-      # add missing as category
-      if (!is.null(missingCategoryValue) && !is.na(missingCategoryValue)) {
-        x <- x |>
-          dplyr::mutate(!!nm := dplyr::if_else(!is.na(.data[[nm]]),
-            .data[[nm]],
-            .env$missingCategoryValue
-          ))
+        res <- createNonOverlapingCategories(res)
       }
     }
+    res |>
+      dplyr::arrange(.data$lower_bound)
+  })
 
-    x <- x |>
-      dplyr::compute(
-        name = omopgenerics::uniqueTableName(tablePrefix), temporary = FALSE
+  # create query
+  q <- categoryTibble |>
+    purrr::map_chr(\(x) {
+      cond <- purrr::map_chr(seq_len(nrow(x)), \(k) {
+        low <- x$lower_bound[k]
+        up <- x$upper_bound[k]
+        category <- x$category_label[k]
+        condition(variable, low, up, le, ue) |>
+          purrr::map_chr(\(x) paste0(x, ' ~ "', category, '"'))
+      })
+      cond <- c(
+        cond,
+        # handle NA's
+        paste0('is.na(.data[["', variable, '"]]) ~ NA_character_'),
+        # default
+        paste0('.default = ', miss)
       )
-  }
+      paste0("dplyr::case_when(", paste0(cond, collapse = ", "), ")")
+    }) |>
+    rlang::parse_exprs()
+
+  x <- x |>
+    dplyr::mutate(!!!q)
 
   if (date) {
-    x <- x |> dplyr::select(-dplyr::all_of(variable))
+    x <- x |>
+      dplyr::select(!dplyr::all_of(variable))
   }
 
-  x <- x |> dplyr::compute(name = comp$name, temporary = comp$temporary)
-
-  cdm <- omopgenerics::cdmReference(x)
-  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+  x <- x |>
+    dplyr::compute(name = comp$name, temporary = comp$temporary)
 
   return(x)
+}
+detectOverlap <- function(groups, bothIncluded) {
+  tib <- purrr::map_df(groups, \(x) dplyr::tibble(min = x[1], max = x[2])) |>
+    dplyr::mutate(next_min = dplyr::lead(.data$min, order_by = .data$min)) |>
+    dplyr::filter(!is.na(.data$next_min))
+  if (bothIncluded) {
+    overlap <- any(tib$next_min <= tib$max)
+  } else {
+    overlap <- any(tib$next_min < tib$max)
+  }
+  return(overlap)
+}
+condition <- function(variable, low, up, le, ue) {
+  if (is.na(low)) {
+    if (is.na(up)) {
+      x <- 'TRUE'
+    } else {
+      x <- '.data[["{variable}"]] {ue} {up}'
+    }
+  } else {
+    if (is.na(up)) {
+      x <- '{low} {le} .data[["{variable}"]]'
+    } else {
+      x <- '{low} {le} .data[["{variable}"]] & .data[["{variable}"]] {ue} {up}'
+    }
+  }
+  glue::glue(x)
+}
+createNonOverlapingCategories <- function(res, both) {
+  bounds <- sort(unique(c(res$upper_bound, res$lower_bound)))
+  id <- seq_len(length(bounds) - 1)
+  dplyr::tibble(
+    lower_bound = bounds[id], upper_bound = bounds[id + 1]
+  ) |>
+    dplyr::cross_join(
+      res |>
+        dplyr::rename(
+          group_lower_bound = "lower_bound", group_upper_bound = "upper_bound"
+        )
+    ) |>
+    dplyr::filter(
+      .data$group_lower_bound < .data$upper_bound &
+        .data$lower_bound < .data$group_upper_bound
+    ) |>
+    dplyr::group_by(.data$lower_bound, .data$upper_bound) |>
+    dplyr::summarise(
+      category_label = paste0(.data$category_label, collapse = " and "),
+      .groups = "drop"
+    )
+}
+categoryName <- function(low, upp, date) {
+  purrr::map2_chr(low, upp, \(l, u) {
+    if (date) {
+      u <- as.Date(u, origin = "1970-01-01")
+      l <- as.Date(l, origin = "1970-01-01")
+    }
+    if (is.na(l)) {
+      if (is.na(u)) {
+        "any"
+      } else {
+        paste0(u, " or below")
+      }
+    } else {
+      if (is.na(u)) {
+        paste0(l, " or above")
+      } else {
+        paste0(l, " to ", u)
+      }
+    }
+  })
 }
