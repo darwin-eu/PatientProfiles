@@ -31,10 +31,18 @@ test_that("test all functions", {
     headache_minf_to_0 = c(0, 1, 0),
     covid_minf_to_0 = c(1, 1, 0)
   )
-  expect_no_error(summariseResult(
-    x,
-    strata = list()
-  ))
+  expect_no_error(
+    x1 <- summariseResult(
+      x,
+      strata = list()
+    ))
+  expect_no_error(
+    x2 <- summariseResult(
+      x |> dplyr::mutate(w = c(0.5, 0.25, 0.25)),
+      strata = list(),
+      weights = "w"
+    ))
+  expect_true(nrow(x1) == nrow(x2))
 
   expect_no_error(
     emptySR <- summariseResult(
@@ -77,9 +85,16 @@ test_that("test all functions", {
     )
   )
 
-  expect_identical(
+  expect_no_error(
+    result <- summariseResult(
+      table = cohort |> dplyr::mutate(w = c(3, 0, 1, 2)), variables = variables, estimates = functions, weights = "w"
+    )
+  )
+
+  expect_equal(
     dplyr::tibble() |> summariseResult(counts = FALSE),
-    omopgenerics::emptySummarisedResult()
+    omopgenerics::emptySummarisedResult(),
+    ignore_attr = TRUE
   )
 })
 
@@ -116,19 +131,19 @@ test_that("groups and strata", {
     summariseResult(strata = list(c("age_group", "sex")))
 
   expect_true(all(result |>
-    dplyr::select("strata_name") |>
-    dplyr::distinct() |>
-    dplyr::pull() %in%
-    c("overall", "age_group &&& sex")))
+                    dplyr::select("strata_name") |>
+                    dplyr::distinct() |>
+                    dplyr::pull() %in%
+                    c("overall", "age_group &&& sex")))
   expect_true(all(result |>
-    dplyr::select("strata_level") |>
-    dplyr::distinct() |>
-    dplyr::pull() %in%
-    c(
-      "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
-      "31 to 60 &&& Female", "31 to 60 &&& Male", "None &&& Female",
-      "None &&& Male"
-    )))
+                    dplyr::select("strata_level") |>
+                    dplyr::distinct() |>
+                    dplyr::pull() %in%
+                    c(
+                      "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
+                      "31 to 60 &&& Female", "31 to 60 &&& Male", "None &&& Female",
+                      "None &&& Male"
+                    )))
 
   result <- cdm$condition_occurrence |>
     addDemographics(
@@ -138,25 +153,32 @@ test_that("groups and strata", {
     dplyr::collect() |>
     summariseResult(group = c("age_group", "sex"))
   expect_true(all(result |>
-    dplyr::select("group_name") |>
-    dplyr::distinct() |>
-    dplyr::pull() %in%
-    c("overall", "age_group &&& sex")))
+                    dplyr::select("group_name") |>
+                    dplyr::distinct() |>
+                    dplyr::pull() %in%
+                    c("overall", "age_group &&& sex")))
   expect_true(all(result |>
-    dplyr::select("group_level") |>
-    dplyr::distinct() |>
-    dplyr::pull() %in%
-    c(
-      "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
-      "31 to 60 &&& Female", "31 to 60 &&& Male", "None &&& Female",
-      "None &&& Male"
-    )))
+                    dplyr::select("group_level") |>
+                    dplyr::distinct() |>
+                    dplyr::pull() %in%
+                    c(
+                      "overall", "0 to 30 &&& Female", "0 to 30 &&& Male",
+                      "31 to 60 &&& Female", "31 to 60 &&& Male", "None &&& Female",
+                      "None &&& Male"
+                    )))
 
   expect_no_error(
     result <- cdm$condition_occurrence |>
       dplyr::collect() |>
       dplyr::mutate("sex" = "Missing") |>
       summariseResult(group = "sex")
+  )
+
+  expect_error(
+    result <- cdm$condition_occurrence |>
+      dplyr::collect() |>
+      dplyr::mutate("sex" = "Missing") |>
+      summariseResult(weights = "sex")
   )
 
   mockDisconnect(cdm = cdm)
@@ -169,11 +191,11 @@ test_that("table in db or local", {
 
   # in db
   expect_no_error(cdm$condition_occurrence |>
-    addDemographics(
-      indexDate = "condition_start_date",
-      ageGroup = list(c(0, 30), c(31, 60))
-    ) |>
-    summariseResult(strata = "sex"))
+                    addDemographics(
+                      indexDate = "condition_start_date",
+                      ageGroup = list(c(0, 30), c(31, 60))
+                    ) |>
+                    summariseResult(strata = "sex"))
 
   # already collected
   expect_warning(
@@ -215,34 +237,34 @@ test_that("with and with overall groups and strata", {
     dplyr::collect()
 
   expect_false(any(test_data |>
-    summariseResult(
-      strata = list("sex"),
-      includeOverallStrata = FALSE
-    ) |>
-    dplyr::pull("strata_name") %in%
-    c("overall")))
+                     summariseResult(
+                       strata = list("sex"),
+                       includeOverallStrata = FALSE
+                     ) |>
+                     dplyr::pull("strata_name") %in%
+                     c("overall")))
   expect_true(any(test_data |>
-    summariseResult(
-      strata = list("sex"),
-      includeOverallStrata = TRUE
-    ) |>
-    dplyr::pull("strata_name") %in%
-    c("overall")))
+                    summariseResult(
+                      strata = list("sex"),
+                      includeOverallStrata = TRUE
+                    ) |>
+                    dplyr::pull("strata_name") %in%
+                    c("overall")))
 
   expect_false(any(test_data |>
-    summariseResult(
-      group = list("sex"),
-      includeOverallGroup = FALSE
-    ) |>
-    dplyr::pull("group_name") %in%
-    c("overall")))
+                     summariseResult(
+                       group = list("sex"),
+                       includeOverallGroup = FALSE
+                     ) |>
+                     dplyr::pull("group_name") %in%
+                     c("overall")))
   expect_true(any(test_data |>
-    summariseResult(
-      group = list("sex"),
-      includeOverallGroup = TRUE
-    ) |>
-    dplyr::pull("group_name") %in%
-    c("overall")))
+                    summariseResult(
+                      group = list("sex"),
+                      includeOverallGroup = TRUE
+                    ) |>
+                    dplyr::pull("group_name") %in%
+                    c("overall")))
 
   mockDisconnect(cdm = cdm)
 })
@@ -548,6 +570,27 @@ test_that("NA when min, max and mean works", {
       "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
     )
   )
+  expect_no_warning(
+    res1 <- dplyr::tibble(
+      group = c("N", "N", "V", "C", "C", "D"),
+      var = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+      w = c(0.25, 0, 0.25, 3, 0.5, 2)
+    ) |>
+      PatientProfiles::summariseResult(
+        group = "group",
+        estimates = c("min", "max", "mean", "median", "percentage", "q25"),
+        weights = "w",
+        counts = FALSE
+      )
+  )
+  expect_equal(
+    res1$estimate_value,
+    c(
+      '100', '100', '100', '100', NA, NA, '1', '1', NA, NA, '1', '1', NA, NA,
+      '1', '1', NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', '0',
+      '0', '3.5', '2'
+    )
+  )
 
   expect_no_warning(
     res2 <- dplyr::tibble(
@@ -557,17 +600,40 @@ test_that("NA when min, max and mean works", {
     ) |>
       PatientProfiles::summariseResult(
         group = "group",
-        estimates = c("min", "max", "mean", "median", "percentage", "q25")
+        estimates = c("min", "max", "mean", "median", "percentage", "q25"),
+        counts = FALSE
       )
   )
   expect_equal(
     res2$estimate_value,
     c(
-      "2", "1", "2", "1", "100", "100", "100", "100", NA, NA, "1", "1", NA,
-      NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100",
-      "100", NA, NA, "1", "1", "0", "0", "2", "1", "1", "1", NA, NA, "1", "1",
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA,
-      NA, "1", "1", NA, NA, "2", "1", "0", "0"
+      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
+      "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0",
+      "0", "2", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1",
+      "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2", "1", "0", "0"
+    )
+  )
+
+  expect_no_warning(
+    res2 <- dplyr::tibble(
+      group = c("N", "N", "V", "C", "C", "D"),
+      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
+      w = c(0.25, 0, 0.25, 3, 0.5, 2)
+    ) |>
+      PatientProfiles::summariseResult(
+        group = "group",
+        estimates = c("min", "mean", "percentage"),
+        weights = "w",
+        counts = FALSE
+      )
+  )
+  expect_equal(
+    res2$estimate_value,
+    c(
+      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
+      "100", "100", "0", "0", "3.5", "2", "1", "1", NA, NA, "1", "1", NA, NA,
+      "100", "100", NA,  NA, "0.25", "0.25", "0", "0"
     )
   )
 
@@ -581,15 +647,40 @@ test_that("NA when min, max and mean works", {
     ) |>
       PatientProfiles::summariseResult(
         group = "group",
-        estimates = c("min", "max", "mean")
+        estimates = c("min", "max", "mean"),
+        counts = FALSE
       )
   )
   expect_equal(
     res3$estimate_value,
     c(
-      "2", "1", "2", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "1", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1"
+      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
+      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
+      NA, NA, "1", "1"
+    )
+  )
+
+  expect_no_warning(
+    res3 <- dplyr::tibble(
+      group = c("N", "N", "V", "C", "C", "D"),
+      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
+      var3 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+      w = c(0.25, 0, 0.25, 3, 0.5, 2)
+    ) |>
+      PatientProfiles::summariseResult(
+        group = "group",
+        estimates = c("min", "max", "mean"),
+        weights = "w",
+        counts = FALSE
+      )
+  )
+  expect_equal(
+    res3$estimate_value,
+    c(
+      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
+      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
+      NA, NA, "1", "1"
     )
   )
 
@@ -649,20 +740,35 @@ test_that("density works correctly", {
       .data$strata_level == "M", startsWith(.data$variable_level, "density")
     )
   expect_identical(unique(sM$estimate_value[sM$estimate_name == "density_y"]), c("0", "1"))
-  x <- sM |>
+  xx <- sM |>
     dplyr::group_by(.data$variable_level) |>
     dplyr::tally()
-  expect_true(unique(x$n) == 6L)
-  expect_true(length(unique(x$variable_level)) == 3L)
-  x <- s |>
+  expect_true(unique(xx$n) == 6L)
+  expect_true(length(unique(xx$variable_level)) == 3L)
+  xx <- s |>
     dplyr::filter(
       .data$strata_level == "F", startsWith(.data$variable_level, "density")
     ) |>
     dplyr::group_by(.data$variable_level) |>
     dplyr::tally()
-  expect_true(unique(x$n) == 8L)
-  expect_true(length(unique(x$variable_level)) == 512L)
+  expect_true(unique(xx$n) == 8L)
+  expect_true(length(unique(xx$variable_level)) == 512L)
 
   # only density
   expect_no_error(s <- summariseResult(x, estimates = "density", variables = "age1"))
+
+  # weights work (!! stats dosen't apply them yet)
+  x <- x |> dplyr::mutate(w = 1/6)
+  expect_no_error(sw <- summariseResult(x, estimates = "density", variables = "age1", weights = "w"))
+  expect_equal(
+    s |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric(),
+    sw |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric()
+  )
+
+  x <- x |> dplyr::mutate(w = c(0, 1, rep(0, 4)))
+  expect_no_error(sw <- summariseResult(x, estimates = "density", variables = "age1", weights = "w"))
+  expect_false(
+    all(s |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric() ==
+    sw |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric())
+  )
 })

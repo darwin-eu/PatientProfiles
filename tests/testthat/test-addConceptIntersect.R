@@ -1,6 +1,6 @@
 test_that("addConceptIntersect", {
   skip_on_cran()
-  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomia_dir())
+  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(
     con = con, cdmSchema = "main", writeSchema = "main"
   )
@@ -91,6 +91,64 @@ test_that("addConceptIntersect", {
   )
 
   mockDisconnect(cdm = cdm)
+})
+
+test_that("conceptSetExpression", {
+  skip_on_cran()
+  skip_if_not_installed("omopgenerics", minimum_version = "1.1.0")
+  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(
+    con = con, cdmSchema = "main", writeSchema = "main"
+  )
+  cdm <- CDMConnector::copyCdmTo(
+    con = connection(), cdm = cdm, schema = writeSchema()
+  )
+  DBI::dbDisconnect(conn = con, shutdown = TRUE)
+
+  # create a cohort
+  cdm <- CDMConnector::generateConceptCohortSet(
+    cdm = cdm,
+    conceptSet = list("sinusitis" = c(4294548L, 40481087L, 257012L)),
+    name = "my_cohort",
+    limit = "all",
+    end = 0
+  )
+
+  # get as codelist
+  codelist <- cdm$concept_ancestor |>
+    dplyr::filter(.data$ancestor_concept_id == 1125315) |>
+    dplyr::pull("descendant_concept_id") |>
+    list() |>
+    rlang::set_names("acetaminophen")
+  conceptSetExpression <- list(
+    acetaminophen = dplyr::tibble(
+      concept_id = 1125315,
+      descendants = TRUE,
+      excluded = FALSE,
+      mapped = FALSE
+    )
+  ) |>
+    omopgenerics::newConceptSetExpression()
+
+  # windows
+  windows <- list(c(-Inf, -366), c(-365, -1), c(0, 0), c(1, 365), c(366, Inf))
+
+  expect_no_error(
+    x1 <- cdm$my_cohort |>
+      addConceptIntersectCount(conceptSet = codelist, window = windows)
+  )
+  expect_no_error(
+    x2 <- cdm$my_cohort |>
+      addConceptIntersectCount(conceptSet = conceptSetExpression, window = windows)
+  )
+  prepareData <- function(x) {
+    ord <- sort(colnames(x))
+    x |>
+      dplyr::collect() |>
+      dplyr::select(dplyr::all_of(ord)) |>
+      dplyr::arrange(dplyr::across(dplyr::all_of(ord)))
+  }
+  expect_identical(prepareData(x1), prepareData(x2))
 })
 
 test_that("unsupported domain name", {
@@ -197,18 +255,7 @@ test_that("domain name not in cdm", {
 
 test_that("missing event end date", {
   skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomia_is_available()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
-  con <- DBI::dbConnect(duckdb::duckdb(),
-    dbdir = CDMConnector::eunomia_dir()
-  )
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
 
   cohort <- dplyr::tibble(
     cohort_definition_id = 1L,
@@ -218,13 +265,12 @@ test_that("missing event end date", {
   )
 
   DBI::dbWriteTable(con, "cohort", cohort)
-  cdm <- CDMConnector::cdm_from_con(con,
-    cdm_schema = "main", write_schema = "main",
-    cohort_tables = "cohort"
+  cdm <- CDMConnector::cdmFromCon(
+    con = con, cdmSchema = "main", writeSchema = "main", cohortTables = "cohort"
   )
 
   cdm <- cdm |>
-    CDMConnector::cdm_subset(person_id = 273L)
+    CDMConnector::cdmSubset(personId = 273L)
 
 
   expect_true(cdm$cohort |>

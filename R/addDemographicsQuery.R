@@ -471,11 +471,13 @@ addDateOfBirthQuery <- function(x,
 
   cdm <- omopgenerics::cdmReference(x)
 
-  personVariable <- c("person_id", "subject_id")
-  personVariable <- personVariable[personVariable %in% colnames(x)]
+  personVariable <- omopgenerics::getPersonIdentifier(x)
+
+  newCols <- omopgenerics::uniqueId(n = 2, exclude = c(colnames(x), newColumns))
 
   # OBSERVATION PERIOD JOIN
   if (priorObservation || futureObservation) {
+
     # prior observation
     if (priorObservation == TRUE) {
       if (priorObservationType == "days") {
@@ -539,31 +541,21 @@ addDateOfBirthQuery <- function(x,
   if (age | !is.null(ageGroup) | dateOfBirth | sex) {
     if (!age && is.null(ageGroup) && !dateOfBirth) indexDate <- NULL
 
-    person <- x |>
-      dplyr::select(dplyr::all_of(c(personVariable, indexDate))) |>
-      dplyr::distinct() |>
-      dplyr::inner_join(
-        cdm$person |>
-          dplyr::select(
-            !!personVariable := "person_id", "gender_concept_id",
-            "year_of_birth", dplyr::any_of(c("month_of_birth", "day_of_birth"))
-          ),
-        by = personVariable
-      )
-
     # AGE QUERYS
     if (age | !is.null(ageGroup) | dateOfBirth) {
-      if (!"day_of_birth" %in% colnames(person) || isTRUE(ageImposeDay)) {
+      if (!"day_of_birth" %in% colnames(cdm$person) || isTRUE(ageImposeDay)) {
         dB <- ".env$ageMissingDay"
       } else {
         dB <- "dplyr::if_else(is.na(.data$day_of_birth), .env$ageMissingDay, .data$day_of_birth)"
       }
-      if (!"month_of_birth" %in% colnames(person) || isTRUE(ageImposeMonth)) {
+      if (!"month_of_birth" %in% colnames(cdm$person) || isTRUE(ageImposeMonth)) {
         mB <- ".env$ageMissingMonth"
       } else {
         mB <- "dplyr::if_else(is.na(.data$month_of_birth), .env$ageMissingMonth, .data$month_of_birth)"
       }
-      if (!dateOfBirth) dateOfBirthName <- "date_of_birth"
+      if (!dateOfBirth) {
+        dateOfBirthName <- newCols[1]
+      }
       dtBQ <- "dplyr::if_else(
         is.na(.data$year_of_birth),
         as.Date(NA),
@@ -574,7 +566,9 @@ addDateOfBirthQuery <- function(x,
         rlang::parse_exprs() |>
         rlang::set_names(dateOfBirthName)
       if (age || length(ageGroup) > 0) {
-        if (!age) ageName <- "age"
+        if (!age) {
+          ageName <- newCols[2]
+        }
         aQ <- "as.integer(local(CDMConnector::datediff('{dateOfBirthName}', '{indexDate}', interval = 'year')))" |>
           glue::glue() |>
           rlang::parse_exprs() |>
@@ -610,44 +604,37 @@ addDateOfBirthQuery <- function(x,
       sQ <- NULL
     }
 
-    # variables to select
-    newColumns2 <- c(
-      ageName[age], names(ageGroup), sexName, dateOfBirthName[dateOfBirth]
-    )
-
-    person <- person |>
-      dplyr::mutate(!!!dtBQ) %>%
-      dplyr::mutate(!!!c(aQ, agQ, sQ)) |>
-      dplyr::select(dplyr::all_of(c(personVariable, indexDate, newColumns2)))
-
     xnew <- xnew |>
-      dplyr::left_join(person, by = c(personVariable, indexDate))
+      dplyr::left_join(
+        cdm$person |>
+          dplyr::mutate(!!!c(dtBQ, sQ)) |>
+          dplyr::select(dplyr::all_of(c(
+            rlang::set_names("person_id", personVariable),
+            sexName, dateOfBirthName
+          ))),
+        by = personVariable
+      ) %>%
+      dplyr::mutate(!!!c(aQ, agQ))
   }
 
   xnew <- xnew |>
     dplyr::select(dplyr::all_of(c(colnames(x), newColumns)))
-
 
   return(xnew)
 }
 
 ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
   ageName <- paste0(".data[['", ageName, "']]")
-  lapply(seq_along(ageGroup), function(i) {
-    xx <- lapply(seq_along(ageGroup[[i]]), function(k) {
-      if (is.infinite(ageGroup[[i]][[k]][2])) {
-        paste0(
-          ageName, " >= ", ageGroup[[i]][[k]][1], "L ~ '",
-          names(ageGroup[[i]])[k], "'"
-        )
+  purrr::map_chr(ageGroup, \(ag) {
+    xx <- purrr::imap_chr(ag, \(x, nm) {
+      if (is.infinite(x[2])) {
+        paste0(ageName, " >= ", x[1], "L ~ '", nm, "'")
       } else {
         paste0(
-          ageName, " >= ", ageGroup[[i]][[k]][1], "L && ", ageName, "<= ",
-          ageGroup[[i]][[k]][2], "L ~ '", names(ageGroup[[i]])[k], "'"
+          ageName, " >= ", x[1], "L && ", ageName, "<= ", x[2], "L ~ '", nm, "'"
         )
       }
-    }) |>
-      unlist()
+    })
     if (is.na(missingAgeGroupValue)) {
       xx <- c(xx, ".default = NA_character_")
     } else {
@@ -656,9 +643,7 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
     xx <- paste0(xx, collapse = ", ")
     paste0("dplyr::case_when(", xx, ")")
   }) |>
-    unlist() |>
-    rlang::parse_exprs() |>
-    rlang::set_names(names(ageGroup))
+    rlang::parse_exprs()
 }
 
 #' Query to add a new column to indicate if a certain record is within the

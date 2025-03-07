@@ -13,7 +13,8 @@ summariseResult(
   includeOverallStrata = TRUE,
   variables = NULL,
   estimates = c("min", "q25", "median", "q75", "max", "count", "percentage"),
-  counts = TRUE
+  counts = TRUE,
+  weights = NULL
 )
 }
 \arguments{
@@ -36,6 +37,9 @@ set of estimate names.}
 set of variables.}
 
 \item{counts}{Whether to compute number of records and number of subjects.}
+
+\item{weights}{Name of the column in the table that contains the weights to
+be used when measuring the estimates.}
 }
 \value{
 A summarised_result object with the summarised data of interest.

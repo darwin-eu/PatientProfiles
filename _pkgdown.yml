@@ -63,10 +63,13 @@ reference:
 - subtitle: Other functions
   desc: Helper functions
 - contents:
+  - benchmarkPatientProfiles
   - addCohortName
   - addCdmName
   - addCategories
   - addObservationPeriodId
+  - filterCohortId
+  - filterInObservation
   - variableTypes
   - availableEstimates
   - startDateColumn

@@ -336,7 +336,7 @@ addInObservation <- function(x,
     ) |>
     computeTable(name = name)
 
-  omopgenerics::dropTable(cdm = cdm, name = tmpName)
+  omopgenerics::dropSourceTable(cdm = cdm, name = tmpName)
 
   x
 }

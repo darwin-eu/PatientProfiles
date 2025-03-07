@@ -21,10 +21,10 @@ test_that("test methods against sql test server", {
 
 
 
-  cdm <- CDMConnector::cdm_from_con(db,
-    cdm_schema = "cdm_synthea_1M",
-    write_schema = "mdu",
-    cohort_tables = c("cohort", "cohort1")
+  cdm <- CDMConnector::cdmFromCon(db,
+    cdmSchema = "cdm_synthea_1M",
+    writeSchema = "mdu",
+    cohortTables = c("cohort", "cohort1")
   )
 
   # add age and add sex

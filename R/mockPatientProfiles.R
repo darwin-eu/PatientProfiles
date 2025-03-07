@@ -327,15 +327,13 @@ mockPatientProfiles <- function(con = NULL,
   }
 
   # create the cdm object
-  cdm <- CDMConnector::cdm_from_con(
+  cdm <- CDMConnector::cdmFromCon(
     con = con,
-    cdm_schema = writeSchema,
-    write_schema = writeSchema,
-    cohort_tables = names(tables)[
-      !names(tables) %in% omopgenerics::omopTables()
-    ],
-    .soft_validation = TRUE,
-    cdm_name = "PP_MOCK"
+    cdmSchema = writeSchema,
+    writeSchema = writeSchema,
+    cohortTables = names(tables)[!names(tables) %in% omopgenerics::omopTables()],
+    .softValidation = TRUE,
+    cdmName = "PP_MOCK"
   )
 
   return(cdm)
@@ -384,7 +382,7 @@ addDate <- function(x, cols) {
 #' @export
 #'
 mockDisconnect <- function(cdm) {
-  cdm <- omopgenerics::dropTable(cdm = cdm, name = dplyr::everything())
+  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::everything())
   if ("db_cdm" %in% class(omopgenerics::cdmSource(cdm))) {
     con <- CDMConnector::cdmCon(cdm = cdm)
     DBI::dbDisconnect(conn = con, shutdown = TRUE)

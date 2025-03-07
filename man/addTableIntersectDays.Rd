@@ -11,6 +11,7 @@ addTableIntersectDays(
   censorDate = NULL,
   window = list(c(0, Inf)),
   targetDate = startDateColumn(tableName),
+  inObservation = TRUE,
   order = "first",
   nameStyle = "{table_name}_{window_name}",
   name = NULL
@@ -33,6 +34,9 @@ or a column date of x.}
 \item{window}{window to consider events in.}
 
 \item{targetDate}{Target date in tableName.}
+
+\item{inObservation}{If TRUE only records inside an observation period
+will be considered.}
 
 \item{order}{which record is considered in case of multiple records (only
 required for date and days options).}

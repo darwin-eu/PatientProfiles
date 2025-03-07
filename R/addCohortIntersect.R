@@ -59,8 +59,7 @@ addCohortIntersectFlag <- function(x,
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   checkCdm(cdm, tables = targetCohortTable)
-  omopgenerics::assertNumeric(targetCohortId, null = TRUE)
-  parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
+  parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
   x <- x |>
@@ -129,8 +128,7 @@ addCohortIntersectCount <- function(x,
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   checkCdm(cdm, tables = targetCohortTable)
-  omopgenerics::assertNumeric(targetCohortId, null = TRUE)
-  parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
+  parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
   x <- x |>
@@ -200,8 +198,7 @@ addCohortIntersectDays <- function(x,
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   checkCdm(cdm, tables = targetCohortTable)
-  omopgenerics::assertNumeric(targetCohortId, null = TRUE)
-  parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
+  parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
   x <- x |>
@@ -272,8 +269,7 @@ addCohortIntersectDate <- function(x,
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   checkCdm(cdm, tables = targetCohortTable)
-  omopgenerics::assertNumeric(targetCohortId, null = TRUE)
-  parameters <- checkCohortNames(cdm[[targetCohortTable]], targetCohortId, targetCohortTable)
+  parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
   x <- x |>

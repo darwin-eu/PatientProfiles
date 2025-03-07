@@ -889,3 +889,122 @@ test_that("issue 612", {
 
   mockDisconnect(cdm)
 })
+
+test_that("targetCohortId being a name", {
+  skip_on_cran()
+  # functionality
+  cohort1 <- dplyr::tibble(
+    cohort_definition_id = as.integer(c(1, 1, 1, 1, 1)),
+    subject_id = as.integer(c(1, 1, 1, 2, 2)),
+    cohort_start_date = as.Date(c(
+      "2020-01-01", "2020-01-15", "2020-01-20", "2020-01-01", "2020-02-01"
+    )),
+    cohort_end_date = as.Date(c(
+      "2020-01-01", "2020-01-15", "2020-01-20", "2020-01-01", "2020-02-01"
+    ))
+  )
+
+  cohort2 <- dplyr::tibble(
+    cohort_definition_id = as.integer(c(1, 1, 2, 2, 3, 3, 3)),
+    subject_id = as.integer(c(1, 1, 1, 2, 2, 2, 1)),
+    cohort_start_date = as.Date(c(
+      "2020-01-15", "2020-01-25", "2020-01-26", "2020-01-29", "2020-03-15",
+      "2020-01-24", "2020-02-16"
+    )),
+    cohort_end_date = as.Date(c(
+      "2020-01-15", "2020-01-25", "2020-01-26", "2020-01-29", "2020-03-15",
+      "2020-01-24", "2020-02-16"
+    ))
+  )
+
+  cdm <- mockPatientProfiles(
+    con = connection(),
+    writeSchema = writeSchema(),
+    cohort1 = cohort1,
+    cohort2 = cohort2,
+    numberIndividuals = 2
+  )
+
+  intersectTargetId <- function(targetCohortId) {
+    x <- cdm$cohort1 |>
+      addCohortIntersectCount(
+        targetCohortTable = "cohort2",
+        targetCohortId = {{targetCohortId}},
+        nameStyle = "{value}_{cohort_name}_{window_name}"
+      ) |>
+      dplyr::collect() |>
+      dplyr::arrange(subject_id, cohort_start_date)
+    x |>
+      dplyr::select(dplyr::all_of(sort(colnames(x))))
+  }
+
+  expect_identical(
+    intersectTargetId(dplyr::starts_with("cohort")),
+    intersectTargetId(c(1L, 2L, 3L))
+  )
+  expect_identical(
+    intersectTargetId(c("cohort_1", "cohort_3")),
+    intersectTargetId(c(1L, 3L))
+  )
+
+  mockDisconnect(cdm)
+})
+
+test_that("duplicated measurment results", {
+  skip_on_cran()
+  cdm <- omock::mockCdmFromTables(tables = list(
+    measurement = dplyr::tibble(
+      person_id = 1L,
+      measurement_concept_id = 44810792L,
+      value_as_concept_id = 1010L,
+      measurement_date = as.Date("2020-01-01"),
+      measurement_id = 1L,
+      measurement_type_concept_id = 0L
+    ),
+    cohort1 = dplyr::tibble(
+      cohort_definition_id = 1L,
+      subject_id = 1L,
+      cohort_start_date = as.Date("2000-01-01"),
+      cohort_end_date = as.Date("2010-01-01")
+    )
+  ))
+  src <- CDMConnector::dbSource(
+    con = duckdb::dbConnect(duckdb::duckdb()), writeSchema = "main"
+  )
+  cdm <- omopgenerics::insertCdmTo(cdm = cdm, to = src)
+
+  concept <- list(a = 44810792L)
+  expect_equal(
+    cdm$cohort1 |>
+      addConceptIntersectField(conceptSet = concept, field = "value_as_concept_id") |>
+      dplyr::as_tibble(),
+    dplyr::tibble(
+      cohort_definition_id = 1L,
+      subject_id = 1L,
+      cohort_start_date = as.Date("2000-01-01"),
+      cohort_end_date = as.Date("2010-01-01"),
+      value_as_concept_id_a_0_to_inf = 1010L
+    ),
+    ignore_attr = TRUE
+  )
+
+  cdm$measurement <- cdm$measurement |>
+    dplyr::union_all(
+      cdm$measurement |>
+        dplyr::mutate(measurement_id = 2L, value_as_concept_id = 1011)
+    ) |>
+    dplyr::compute(name = "measurement")
+  expect_error(
+    cdm$cohort1 |>
+      addConceptIntersectField(conceptSet = concept, field = "value_as_concept_id")
+  )
+  expect_no_error(
+    cdm$cohort1 |>
+      addConceptIntersectField(
+        conceptSet = concept, field = "value_as_concept_id",
+        allowDuplicates = TRUE
+      )
+  )
+
+  omopgenerics::cdmDisconnect(cdm = cdm)
+})

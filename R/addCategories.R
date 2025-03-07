@@ -211,7 +211,7 @@ addCategories <- function(x,
   x <- x |> dplyr::compute(name = comp$name, temporary = comp$temporary)
 
   cdm <- omopgenerics::cdmReference(x)
-  omopgenerics::dropTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
 
   return(x)
 }
