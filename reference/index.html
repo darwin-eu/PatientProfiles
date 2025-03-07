@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PatientProfiles</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -199,6 +199,12 @@
         <dd>It creates column to indicate the days of difference from an index date to a concept</dd>
       </dl><dl><dt>
 
+          <code><a href="addConceptIntersectField.html">addConceptIntersectField()</a></code>
+
+        </dt>
+        <dd>It adds a custom column (field) from the intersection with a certain table subsetted by concept id. In general it is used to add the first value of a certain measurement.</dd>
+      </dl><dl><dt>
+
           <code><a href="addConceptIntersectFlag.html">addConceptIntersectFlag()</a></code>
 
         </dt>
@@ -373,6 +379,12 @@
 
       <dl><dt>
 
+          <code><a href="benchmarkPatientProfiles.html">benchmarkPatientProfiles()</a></code>
+
+        </dt>
+        <dd>Benchmark intersections and demographics functions for a certain source (cdm).</dd>
+      </dl><dl><dt>
+
           <code><a href="addCohortName.html">addCohortName()</a></code>
 
         </dt>
@@ -395,6 +407,18 @@
 
         </dt>
         <dd>Add the ordinal number of the observation period associated that a given date is in.</dd>
+      </dl><dl><dt>
+
+          <code><a href="filterCohortId.html">filterCohortId()</a></code>
+
+        </dt>
+        <dd>Filter a cohort according to cohort_definition_id column, the result is not computed into a table. only a query is added. Used usually as internal functions of other packages.</dd>
+      </dl><dl><dt>
+
+          <code><a href="filterInObservation.html">filterInObservation()</a></code>
+
+        </dt>
+        <dd>Filter the rows of a `cdm_table` to the ones in observation that `indexDate` is in observation.</dd>
       </dl><dl><dt>
 
           <code><a href="variableTypes.html">variableTypes()</a></code>

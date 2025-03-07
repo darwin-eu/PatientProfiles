@@ -25,6 +25,7 @@
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectCount.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectDate.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectDays.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectField.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectFlag.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addDateOfBirth.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addDateOfBirthQuery.html</loc></url>
@@ -49,7 +50,10 @@
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addTableIntersectField.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addTableIntersectFlag.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/availableEstimates.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/benchmarkPatientProfiles.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/endDateColumn.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/filterCohortId.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/filterInObservation.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/mockDisconnect.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/mockPatientProfiles.html</loc></url>
