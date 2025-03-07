@@ -10,6 +10,8 @@ addCategories(
   categories,
   missingCategoryValue = "None",
   overlap = FALSE,
+  includeLowerBound = TRUE,
+  includeUpperBound = TRUE,
   name = NULL
 )
 }
@@ -25,6 +27,10 @@ limit.}
 any named category. If NULL or NA, missing values will not be changed.}
 
 \item{overlap}{TRUE if the categories given overlap.}
+
+\item{includeLowerBound}{Whether to include the lower bound in the group.}
+
+\item{includeUpperBound}{Whether to include the upper bound in the group.}
 
 \item{name}{Name of the new table, if NULL a temporary table is returned.}
 }

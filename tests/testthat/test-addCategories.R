@@ -144,9 +144,9 @@ test_that("addCategories with infinity", {
   expect_true(is.na(table$period1[2]))
   xx <- table$period1[!is.na(table$period1)]
   expect_true(all(xx == c(
-    "2019-01-01 to 2019-01-01", "2019-01-01 to 2019-01-01",
-    "2019-01-01 to 2019-01-01", "2023-01-01 to 2023-01-01",
-    "2019-01-01 to 2019-01-01"
+    "2019-01-01 to 2022-12-31", "2019-01-01 to 2022-12-31",
+    "2019-01-01 to 2022-12-31", "2023-01-01 to 2028-12-31",
+    "2019-01-01 to 2022-12-31"
   )))
   mockDisconnect(cdm)
 })
