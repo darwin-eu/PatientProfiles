@@ -255,13 +255,8 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
       dplyr::arrange(dplyr::across(dplyr::all_of(strataGroupk))) |>
       dplyr::mutate("strata_id" = dplyr::row_number()) |>
       dplyr::compute()
-    if (strataGroup |> dplyr::ungroup() |> dplyr::tally() |> dplyr::pull() == 1) {
-      table <- table |>
-        dplyr::mutate("strata_id" = 1L)
-    } else {
-      table <- table |>
+    table <- table |>
         dplyr::inner_join(strataGroup, by = strataGroupk)
-    }
     # format group strata
     strataGroup <- strataGroup |>
       dplyr::collect() |>

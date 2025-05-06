@@ -565,9 +565,9 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res1$estimate_value,
     c(
-      "2", "1", "2", "1", "100", "100", "100", "100", NA, NA, "1", "1", NA,
-      NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
+      "2", "1", "2", "1", "100", "100", "100", "100", "1", "1", NA, NA, "1",
+      "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
+      "100", "100", NA, NA, "1", "1", NA, NA, "2", "1", "0", "0"
     )
   )
   expect_no_warning(
@@ -586,9 +586,9 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res1$estimate_value,
     c(
-      '100', '100', '100', '100', NA, NA, '1', '1', NA, NA, '1', '1', NA, NA,
-      '1', '1', NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', '0',
-      '0', '3.5', '2'
+      '100', '100', '100', '100', '1', '1', NA, NA, '1', '1', NA, NA, '1', '1',
+      NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', NA, NA, '3.5',
+      '2', '0', '0'
     )
   )
 
@@ -607,10 +607,10 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res2$estimate_value,
     c(
-      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0",
-      "0", "2", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1",
-      "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2", "1", "0", "0"
+      "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1",
+      NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2",
+      "1", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA,
+      NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
     )
   )
 
@@ -631,9 +631,9 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res2$estimate_value,
     c(
-      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", "0", "0", "3.5", "2", "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", NA,  NA, "0.25", "0.25", "0", "0"
+      "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "100",
+      "100", NA, NA,  "3.5", "2", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1",
+      NA, NA, "100", "100", "0", "0", "0.25", "0.25"
     )
   )
 
@@ -654,9 +654,9 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res3$estimate_value,
     c(
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
-      NA, NA, "1", "1"
+      "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1",
+      NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1",
+      "1", NA, NA
     )
   )
 
@@ -678,9 +678,9 @@ test_that("NA when min, max and mean works", {
   expect_equal(
     res3$estimate_value,
     c(
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
-      NA, NA, "1", "1"
+      "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1",
+      NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA, "1", "1", NA, NA,
+      "1", "1", NA, NA
     )
   )
 
