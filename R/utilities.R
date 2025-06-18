@@ -46,6 +46,80 @@ addCohortName <- function(cohort) {
     )
 }
 
+#' Add concept name for each concept_id
+#'
+#' @param table cdm_table that contains column.
+#' @param column Column to add the concept names from. If NULL any column that
+#' its name ends with `concept_id` will be used.
+#' @param nameStyle Name of the new column.
+#'
+#' @return table with an extra column with the concept names.
+#'
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' library(PatientProfiles)
+#' library(duckdb)
+#' library(CDMConnector)
+#' library(dplyr, warn.conflicts = FALSE)
+#'
+#' dbName <- "GiBleed"
+#' requireEunomia(datasetName = dbName)
+#' con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = dbName)))
+#' cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+#'
+#' cdm$drug_exposure |>
+#'   addConceptName(column = "drug_concept_id", nameStyle = "drug_name") |>
+#'   glimpse()
+#'
+#' cdm$drug_exposure |>
+#'   addConceptName() |>
+#'   glimpse()
+#' }
+#'
+addConceptName <- function(table,
+                           column = NULL,
+                           nameStyle = "{column}_name") {
+  # initial checks
+  omopgenerics::assertClass(table, class = "cdm_table")
+  if (is.null(column)) {
+    column <- purrr::keep(colnames(table), \(col) endsWith(col, "concept_id"))
+  }
+  omopgenerics::assertCharacter(column)
+  notPresent <- purrr::keep(column, \(col) !col %in% colnames(table))
+  if (length(notPresent) > 0) {
+    cli::cli_inform(c("!" = "{.var {notPresent}} ignored as not present in table."))
+  }
+  column <- purrr::keep(column, \(col) col %in% colnames(table))
+  omopgenerics::validateNameStyle(nameStyle = nameStyle, column = column)
+  cdm <- omopgenerics::cdmReference(table)
+
+  # eliminate existent columns
+  eliminate <- glue::glue(nameStyle) |>
+    as.character() |>
+    purrr::keep(\(col) col %in% colnames(table))
+  if (length(eliminate) > 0) {
+    cli::cli_inform(c("!" = "{.var {eliminate}} will be overwriten."))
+    table <- table |>
+      dplyr::select(!dplyr::all_of(eliminate))
+  }
+
+  # add concept names
+  for (col in column) {
+    cols <- c("concept_id", "concept_name") |>
+      rlang::set_names(c(col, glue::glue(nameStyle, column = col)))
+    table <- table |>
+      dplyr::left_join(
+        cdm$concept |>
+          dplyr::select(dplyr::all_of(cols)),
+        by = col
+      )
+  }
+
+  table
+}
+
 #' Add cdm name
 #'
 #' @param table Table in the cdm

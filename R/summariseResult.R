@@ -134,7 +134,11 @@ summariseResult <- function(table,
 
     # collect if necessary
     if (length(weights) == 0) {
-      estimatesCollect <- "q"
+      if (identical(omopgenerics::sourceType(table), "sql server")) {
+        estimatesCollect <- "q|median"
+      } else {
+        estimatesCollect <- "q"
+      }
     } else {
       estimatesCollect <- "q|median|sd|mean"
     }
@@ -252,15 +256,11 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
     strataGroup <- table |>
       dplyr::select(dplyr::all_of(strataGroupk)) |>
       dplyr::distinct() |>
+      dplyr::arrange(dplyr::across(dplyr::all_of(strataGroupk))) |>
       dplyr::mutate("strata_id" = dplyr::row_number()) |>
       dplyr::compute()
-    if (strataGroup |> dplyr::ungroup() |> dplyr::tally() |> dplyr::pull() == 1) {
-      table <- table |>
-        dplyr::mutate("strata_id" = 1L)
-    } else {
-      table <- table |>
+    table <- table |>
         dplyr::inner_join(strataGroup, by = strataGroupk)
-    }
     # format group strata
     strataGroup <- strataGroup |>
       dplyr::collect() |>

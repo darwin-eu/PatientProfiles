@@ -131,19 +131,64 @@
     ) |>
     dplyr::distinct()
 
+  if (any(value %in% c("count", "flag"))) {
+    idsObs <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
+    qInObservation <- newCols$colnam |>
+      rlang::set_names() |>
+      purrr::map(\(col) {
+        w1 <- newCols$w1[newCols$colnam == col]
+        w2 <- newCols$w2[newCols$colnam == col]
+        if (is.infinite(w1)) {
+          if (is.infinite(w2)) {
+            res <- NULL
+          } else {
+            res <- 'dplyr::if_else(.data${idsObs[1]} <= {sprintf("%.0f", w2)}, .data[["{col}"]], NA)'
+          }
+        } else if (is.infinite(w2)) {
+          res <- 'dplyr::if_else(.data${idsObs[2]} >= {sprintf("%.0f", w1)}, .data[["{col}"]], NA)'
+        } else {
+          res <- 'dplyr::if_else(.data${idsObs[1]} <= {sprintf("%.0f", w2)} & .data${idsObs[2]} >= {sprintf("%.0f", w1)}, .data[["{col}"]], NA)'
+        }
+        glue::glue(res)
+      }) |>
+      unlist() |>
+      rlang::parse_exprs()
+    if (length(qInObservation) > 0) {
+      renamePersonId <- rlang::set_names("person_id", personVariable)
+      renameDates <- rlang::set_names(
+        c("observation_period_start_date", "observation_period_end_date"), idsObs
+      )
+      individualsInObservation <- x |>
+        dplyr::select(dplyr::all_of(c(personVariable, indexDate))) |>
+        dplyr::distinct() |>
+        dplyr::inner_join(
+          cdm$observation_period |>
+            dplyr::select(dplyr::all_of(c(renamePersonId, renameDates))),
+          by = personVariable
+        ) |>
+        dplyr::filter(
+          .data[[indexDate]] >= .data[[idsObs[1]]] &
+            .data[[indexDate]] <= .data[[idsObs[2]]]
+        ) %>%
+        dplyr::mutate(
+          !!idsObs[1] := as.integer(!!CDMConnector::datediff(start = indexDate, end = idsObs[1])),
+          !!idsObs[2] := as.integer(!!CDMConnector::datediff(start = indexDate, end = idsObs[2]))
+        ) |>
+        dplyr::compute(name = omopgenerics::uniqueTableName(prefix = tablePrefix))
+    }
+  }
+
   if (isTRUE(inObservation)) {
+    sel <- c("person_id", "observation_period_start_date", "observation_period_end_date") |>
+      rlang::set_names(c(personVariable, "start_obs", "end_obs"))
     result <- result |>
-      addDemographics(
-        indexDate = "index_date",
-        age = FALSE,
-        sex = FALSE,
-        priorObservation = TRUE,
-        priorObservationName = "start_obs",
-        priorObservationType = "date",
-        futureObservation = TRUE,
-        futureObservationName = "end_obs",
-        futureObservationType = "date",
-        name = omopgenerics::uniqueTableName(tablePrefix)
+      dplyr::inner_join(
+        cdm$observation_period |>
+          dplyr::select(dplyr::all_of(sel)),
+        by = personVariable
+      ) |>
+      dplyr::filter(
+        .data$start_obs <= .data$index_date & .data$index_date <= .data$end_obs
       )
   }
 
@@ -378,53 +423,11 @@
   }
 
   if (any(value %in% c("count", "flag"))) {
-    ids <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
-    q <- newCols$colnam |>
-      rlang::set_names() |>
-      purrr::map(\(col) {
-        w1 <- newCols$w1[newCols$colnam == col]
-        w2 <- newCols$w2[newCols$colnam == col]
-        if (is.infinite(w1)) {
-          if (is.infinite(w2)) {
-            res <- NULL
-          } else {
-            res <- 'dplyr::if_else(.data${ids[1]} <= {sprintf("%.0f", w2)}, .data[["{col}"]], NA)'
-          }
-        } else if (is.infinite(w2)) {
-          res <- 'dplyr::if_else(.data${ids[2]} >= {sprintf("%.0f", w1)}, .data[["{col}"]], NA)'
-        } else {
-          res <- 'dplyr::if_else(.data${ids[1]} <= {sprintf("%.0f", w2)} & .data${ids[2]} >= {sprintf("%.0f", w1)}, .data[["{col}"]], NA)'
-        }
-        glue::glue(res)
-      }) |>
-      unlist() |>
-      rlang::parse_exprs()
-    if (length(q) > 0) {
-      renamePersonId <- rlang::set_names("person_id", personVariable)
-      renameDates <- rlang::set_names(
-        c("observation_period_start_date", "observation_period_end_date"), ids
-      )
+    if (length(qInObservation) > 0) {
       x <- x |>
-        dplyr::left_join(
-          x |>
-            dplyr::distinct(dplyr::across(dplyr::all_of(c(personVariable, indexDate)))) |>
-            dplyr::inner_join(
-              cdm$observation_period |>
-                dplyr::select(dplyr::all_of(c(renamePersonId, renameDates))),
-              by = personVariable
-            ) |>
-            dplyr::filter(
-              .data[[indexDate]] >= .data[[ids[1]]] &
-                .data[[indexDate]] <= .data[[ids[2]]]
-            ) %>%
-            dplyr::mutate(
-              !!ids[1] := as.integer(!!CDMConnector::datediff(start = indexDate, end = ids[1])),
-              !!ids[2] := as.integer(!!CDMConnector::datediff(start = indexDate, end = ids[2]))
-            ),
-          by = c(personVariable, indexDate)
-        ) |>
-        dplyr::mutate(!!!q) |>
-        dplyr::select(!dplyr::all_of(ids))
+        dplyr::left_join(individualsInObservation, by = c(personVariable, indexDate)) |>
+        dplyr::mutate(!!!qInObservation) |>
+        dplyr::select(!dplyr::all_of(idsObs))
     }
   }
 

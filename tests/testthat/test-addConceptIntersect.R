@@ -90,6 +90,14 @@ test_that("addConceptIntersect", {
       )
   )
 
+  cdm$condition_occurrence <- NULL
+  expect_no_error(
+    cdm$my_cohort |>
+      addConceptIntersectCount(
+        conceptSet = list(concept1 = c(0L, 4294548L, 9201L))
+      )
+  )
+
   mockDisconnect(cdm = cdm)
 })
 

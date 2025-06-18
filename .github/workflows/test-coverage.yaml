@@ -25,7 +25,10 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2
+          extra-packages: |
+            any::covr
+            any::xml2
+            url::https://cran.r-project.org/src/contrib/Archive/duckdb/duckdb_1.2.2.tar.gz
           needs: coverage
 
       - name: Test coverage

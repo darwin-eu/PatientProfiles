@@ -97,34 +97,44 @@ subsetTable <- function(x, value) {
 
   # domains
   x <- x |>
-    dplyr::inner_join(
-      cdm[["concept"]] |> dplyr::select("concept_id", "domain_id"),
+    dplyr::left_join(
+      cdm[["concept"]] |>
+        dplyr::select("concept_id", "domain_id") |>
+        dplyr::mutate(domain_id = tolower(.data$domain_id)),
       by = "concept_id"
     ) |>
     dplyr::compute()
-  domains <- x |>
-    dplyr::select("domain_id") |>
-    dplyr::distinct() |>
-    dplyr::pull() |>
-    tolower() |>
-    strsplit(split = "/") |>
-    unlist()
-  domains[domains == "obs"] <- "observation"
-  domains <- unique(domains)
 
+  # check domains
+  supportedDomains <- list(
+    "device" = "device_exposure",
+    "specimen" = "specimen",
+    "measurement" = "measurement",
+    "drug" = "drug_exposure",
+    "condition" = "condition_occurrence",
+    "observation" = "observation",
+    "procedure" = "procedure_occurrence",
+    "episode" = "episode",
+    "visit" = "visit_occurrence"
+  )
+  x <- checkDomainsAndTables(x, supportedDomains)
+
+  domains <- x |>
+    dplyr::distinct(.data$domain_id) |>
+    dplyr::pull()
   if (length(domains) == 0) {
     res <- cdm[["concept"]] |>
       dplyr::select("concept_id") |>
       dplyr::mutate(
         "event_start_date" = as.Date("2000-01-01"),
         "event_end_date" = as.Date("2000-01-01"),
-        "concept_set_id" = as.integer(0),
-        "person_id" = as.integer(0)
+        "concept_set_id" = 0L,
+        "person_id" = 0L
       ) |>
       utils::head(0)
     if (!value %in% c("flag", "count", "date", "days")) {
       res <- res |>
-        dplyr::mutate(!!value := character())
+        dplyr::mutate(!!value := "")
     }
     return(res)
   }
@@ -132,7 +142,7 @@ subsetTable <- function(x, value) {
   # extra column
   if (!value %in% c("flag", "count", "date", "days")) {
     type <- purrr::map(domains, \(x) {
-      nm <- tableFromDomain(x)
+      nm <- supportedDomains[[x]]
       if (!nm %in% names(cdm)) {
         type <- character()
       } else if (value %in% colnames(cdm[[nm]])) {
@@ -170,71 +180,69 @@ subsetTable <- function(x, value) {
   }
 
   purrr::map(domains, \(domain) {
-    tableName <- switch(domain,
-      "device" = "device_exposure",
-      "specimen" = "specimen",
-      "measurement" = "measurement",
-      "drug" = "drug_exposure",
-      "condition" = "condition_occurrence",
-      "observation" = "observation",
-      "procedure" = "procedure_occurrence",
-      "episode" = "episode",
-      NA_character_
+    tableName <- supportedDomains[[domain]]
+    sel <- c(
+      "event_start_date" = startDateColumn(tableName),
+      "event_end_date" = endDateColumn(tableName),
+      "concept_id" = standardConceptIdColumn(tableName),
+      "person_id"
     )
-    if (tableName %in% names(cdm)) {
-      sel <- c(
-        "event_start_date" = startDateColumn(tableName),
-        "event_end_date" = endDateColumn(tableName),
-        "concept_id" = standardConceptIdColumn(tableName),
-        "person_id"
-      )
-      if (extraColumn & value %in% colnames(cdm[[tableName]])) {
-        sel <- c(sel, value)
-      }
-      res <- cdm[[tableName]] |>
-        dplyr::select(dplyr::all_of(sel)) |>
-        dplyr::inner_join(
-          x |> dplyr::select("concept_id", "concept_set_id"),
-          by = "concept_id"
-        )
-      if (extraColumn & !value %in% colnames(cdm[[tableName]])) {
-        res <- dplyr::mutate(res, !!value := .env$val)
-      }
-    } else {
-      if (!is.na(tableName)) {
-        cli::cli_alert_warning("{.pkg tableName} not found in cdm object.")
-      } else {
-        cli::cli_alert_warning("domain {domain} not supported.")
-      }
-      res <- cdm[["concept"]] |>
-        dplyr::select("concept_id") |>
-        dplyr::mutate(
-          "event_start_date" = as.Date("2000-01-01"),
-          "event_end_date" = as.Date("2000-01-01"),
-          "concept_set_id" = as.integer(0),
-          "person_id" = as.integer(0)
-        ) |>
-        utils::head(0)
-      if (extraColumn) {
-        res <- dplyr::mutate(res, !!value := .env$val)
-      }
+    if (extraColumn & value %in% colnames(cdm[[tableName]])) {
+      sel <- c(sel, value)
     }
-    return(res)
+    res <- cdm[[tableName]] |>
+      dplyr::select(dplyr::all_of(sel)) |>
+      dplyr::inner_join(
+        x |> dplyr::select("concept_id", "concept_set_id"),
+        by = "concept_id"
+      )
+    if (extraColumn & !value %in% colnames(cdm[[tableName]])) {
+      res <- dplyr::mutate(res, !!value := .env$val)
+    }
+    res
   }) |>
     purrr::reduce(dplyr::union_all)
 }
-tableFromDomain <- function(domain) {
-  switch(domain,
-         "device" = "device_exposure",
-         "specimen" = "specimen",
-         "measurement" = "measurement",
-         "drug" = "drug_exposure",
-         "condition" = "condition_occurrence",
-         "observation" = "observation",
-         "procedure" = "procedure_occurrence",
-         "episode" = "episode",
-         NA_character_
-  )
+checkDomainsAndTables <- function(x, supportedDomains) {
+  # get cdm reference
+  cdm <- omopgenerics::cdmReference(x)
+  supDom <- names(supportedDomains)
+
+  # get counts
+  counts <- x |>
+    dplyr::group_by(.data$domain_id) |>
+    dplyr::tally() |>
+    dplyr::collect()
+
+  # domains
+  cnd <- counts |>
+    dplyr::filter(!.data$domain_id %in% .env$supDom)
+  if (nrow(cnd) > 0) {
+    mes <- paste0(cnd$n, " concept(s) from domain {.pkg ", cnd$domain_id, "} eliminated as it is not supported.")
+    names(mes) <- rep("!", length(mes))
+    mes <- c(mes, i = "Supported domains are: {.pkg {names(supportedDomains)}}.")
+    cli::cli_inform(message = mes)
+  }
+  x <- x |>
+    dplyr::filter(.data$domain_id %in% .env$supDom)
+
+  # tables
+  presentTables <- x |>
+    dplyr::distinct(.data$domain_id) |>
+    dplyr::pull() |>
+    purrr::keep(\(dom) supportedDomains[[dom]] %in% names(cdm))
+  cnt <- counts |>
+    dplyr::filter(.data$domain_id %in% .env$supDom) |>
+    dplyr::filter(!.data$domain_id %in% .env$presentTables)
+  if (nrow(cnt) > 0) {
+    mes <- paste0(cnt$n, " concept(s) from domain {.pkg ", cnt$domain_id, "} eliminated as table {.var ", supportedDomains[[cnt$domain_id]],"} is not present.")
+    names(mes) <- rep("!", length(mes))
+    cli::cli_inform(message = mes)
+  }
+  x <- x |>
+    dplyr::filter(.data$domain_id %in% .env$presentTables)
+
+  dplyr::compute(x)
 }
 
 #' It creates column to indicate the flag overlap information between a table
