@@ -562,14 +562,11 @@ test_that("NA when min, max and mean works", {
         estimates = c("min", "max", "mean", "median", "percentage", "q25")
       )
   )
-  expect_equal(
-    res1$estimate_value,
-    c(
-      "2", "1", "2", "1", "100", "100", "100", "100", NA, NA, "1", "1", NA,
-      NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
-    )
-  )
+  expect_equal(res1$estimate_value, c(
+    "2", "1", "2", "1", "100", "100", "100", "100", "1", "1", NA, NA, "1", "1",
+    NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1",
+    NA, NA, "2", "1", "0", "0"
+  ))
   expect_no_warning(
     res1 <- dplyr::tibble(
       group = c("N", "N", "V", "C", "C", "D"),
@@ -583,14 +580,11 @@ test_that("NA when min, max and mean works", {
         counts = FALSE
       )
   )
-  expect_equal(
-    res1$estimate_value,
-    c(
-      '100', '100', '100', '100', NA, NA, '1', '1', NA, NA, '1', '1', NA, NA,
-      '1', '1', NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', '0',
-      '0', '3.5', '2'
-    )
-  )
+  expect_equal(res1$estimate_value, c(
+    '100', '100', '100', '100', '1', '1', NA, NA, '1', '1', NA, NA, '1', '1',
+    NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', NA, NA, '3.5',
+    '2', '0', '0'
+  ))
 
   expect_no_warning(
     res2 <- dplyr::tibble(
@@ -604,15 +598,12 @@ test_that("NA when min, max and mean works", {
         counts = FALSE
       )
   )
-  expect_equal(
-    res2$estimate_value,
-    c(
-      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0",
-      "0", "2", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1",
-      "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2", "1", "0", "0"
-    )
-  )
+  expect_equal(res2$estimate_value, c(
+    "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1",
+    NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2",
+    "1", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA,
+    NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
+  ))
 
   expect_no_warning(
     res2 <- dplyr::tibble(
@@ -628,14 +619,11 @@ test_that("NA when min, max and mean works", {
         counts = FALSE
       )
   )
-  expect_equal(
-    res2$estimate_value,
-    c(
-      "100", "100", "100", "100", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", "0", "0", "3.5", "2", "1", "1", NA, NA, "1", "1", NA, NA,
-      "100", "100", NA,  NA, "0.25", "0.25", "0", "0"
-    )
-  )
+  expect_equal(res2$estimate_value, c(
+    "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "100",
+    "100", NA, NA,  "3.5", "2", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1",
+    NA, NA, "100", "100", "0", "0", "0.25", "0.25"
+  ))
 
   # case estimatrs <= variables
   expect_no_warning(
@@ -651,14 +639,11 @@ test_that("NA when min, max and mean works", {
         counts = FALSE
       )
   )
-  expect_equal(
-    res3$estimate_value,
-    c(
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
-      NA, NA, "1", "1"
-    )
-  )
+  expect_equal(res3$estimate_value, c(
+    "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA,
+    NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1",
+    "1", NA, NA
+  ))
 
   expect_no_warning(
     res3 <- dplyr::tibble(
@@ -675,14 +660,11 @@ test_that("NA when min, max and mean works", {
         counts = FALSE
       )
   )
-  expect_equal(
-    res3$estimate_value,
-    c(
-      NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA,
-      "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1",
-      NA, NA, "1", "1"
-    )
-  )
+  expect_equal(res3$estimate_value, c(
+    "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, NA, NA, "1", "1", NA,
+    NA, "1", "1", NA, NA, "1", "1", "1", "1", NA, NA, "1", "1", NA, NA, "1",
+    "1", NA, NA
+  ))
 
   # no group no strata
   expect_no_warning(

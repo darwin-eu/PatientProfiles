@@ -1,4 +1,13 @@
 
+# PatientProfiles 1.4.0
+
+* Fix readme lifecycle badge by @catalamarti in #778
+* create new function `addConceptName` by @catalamarti in #783
+* Support visit domain and drop non supported concepts in `addConceptIntersect` by @catalamarti in #784
+* Collect in SummariseResult if median is asked in a sql server by @catalamarti in #789
+* arrange strata in summariseResult by @catalamarti in #790
+* Improve performance of .addIntersect by @catalamarti in #788
+
 # PatientProfiles 1.3.1
 
 * Validate cohort using class by @catalamarti in #773

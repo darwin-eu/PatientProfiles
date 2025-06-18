@@ -1227,7 +1227,7 @@ test_that("no NA when overwrite column", {
   cdm$cohort1 <- cdm$cohort1 |>
     addCohortIntersectFlag(
       targetCohortTable = "cohort2",
-      window = list(c(-180, -1)),
+      window = list(c(-180, 0)),
       targetCohortId = 1,
       nameStyle = "{cohort_name}"
     )
@@ -1238,7 +1238,7 @@ test_that("no NA when overwrite column", {
     cdm$cohort1 <- cdm$cohort1 |>
       addCohortIntersectFlag(
         targetCohortTable = "cohort2",
-        window = list(c(-180, -1)),
+        window = list(c(-180, 0)),
         targetCohortId = 1,
         nameStyle = "{cohort_name}"
       )
@@ -1256,7 +1256,7 @@ test_that("no NA when overwrite column", {
     cdm$cohort1 <- cdm$cohort1 |>
       addCohortIntersectFlag(
         targetCohortTable = "cohort2",
-        window = list(c(-180, -1)),
+        window = list(c(-180, 0)),
         targetCohortId = 1,
         nameStyle = "{cohort_name}"
       )
