@@ -18,7 +18,7 @@ addObservationPeriodId(
 \item{indexDate}{Variable in x that contains the date to compute the
 observation flag.}
 
-\item{nameObservationPeriodId}{Name of the new colum.}
+\item{nameObservationPeriodId}{Name of the new column.}
 
 \item{name}{Name of the new table, if NULL a temporary table is returned.}
 }
