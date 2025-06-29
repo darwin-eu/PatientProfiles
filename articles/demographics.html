@@ -69,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Adding patient demographics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/vignettes/demographics.rmd" class="external-link"><code>vignettes/demographics.rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.4.1/vignettes/demographics.rmd" class="external-link"><code>vignettes/demographics.rmd</code></a></small>
       <div class="d-none name"><code>demographics.rmd</code></div>
     </div>
 
@@ -412,7 +412,7 @@ period tables.</p>
 <span>  <span class="fu"><a href="../reference/addInObservation.html">addInObservation</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/addPriorObservation.html">addPriorObservation</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/addFutureObservation.html">addFutureObservation</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># Source:   table&lt;og_024_1751200025&gt; [?? x 10]</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># Source:   table&lt;og_024_1751200332&gt; [?? x 10]</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1/:memory:]</span></span></span>
 <span><span class="co">##    cohort_definition_id subject_id cohort_start_date cohort_end_date   age</span></span>
 <span><span class="co">##                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -431,7 +431,7 @@ period tables.</p>
 <span><span class="co">## <span style="color: #949494;">#   prior_observation &lt;int&gt;, future_observation &lt;int&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 1.126 sec elapsed</span></span></code></pre>
+<pre><code><span><span class="co">## 1.133 sec elapsed</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort2</span> <span class="op">|&gt;</span></span>
@@ -463,7 +463,7 @@ period tables.</p>
 <span><span class="co">## $ prior_observation    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 333<span style="color: #949494;">, </span>4167<span style="color: #949494;">, </span>13030<span style="color: #949494;">, </span>6493<span style="color: #949494;">, </span>1641<span style="color: #949494;">, </span>2378<span style="color: #949494;">, </span>8088<span style="color: #949494;">, </span>7594<span style="color: #949494;">, </span>4…</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 0.432 sec elapsed</span></span></code></pre>
+<pre><code><span><span class="co">## 0.439 sec elapsed</span></span></code></pre>
 <p>In our small mock dataset we see a small improvement in performance,
 but this difference will become much more noticeable when working with
 real data that will typically be far larger.</p>

@@ -38,7 +38,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add concept name for each concept_id</h1>
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/R/utilities.R" class="external-link"><code>R/utilities.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.4.1/R/utilities.R" class="external-link"><code>R/utilities.R</code></a></small>
       <div class="d-none name"><code>addConceptName.Rd</code></div>
     </div>
 
@@ -84,11 +84,11 @@ its name ends with `concept_id` will be used.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dbName</span> <span class="op">&lt;-</span> <span class="st">"GiBleed"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/requireEunomia.html" class="external-link">requireEunomia</a></span><span class="op">(</span>datasetName <span class="op">=</span> <span class="va">dbName</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/Rtmpd3FAUj</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/Rtmpfg2ULY</span>.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Download completed!</span>
 <span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span>drv <span class="op">=</span> <span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span>dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span>datasetName <span class="op">=</span> <span class="va">dbName</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Creating CDM database /tmp/Rtmpd3FAUj/GiBleed_5.3.zip</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Creating CDM database /tmp/Rtmpfg2ULY/GiBleed_5.3.zip</span>
 <span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">con</span>, cdmSchema <span class="op">=</span> <span class="st">"main"</span>, writeSchema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cdm</span><span class="op">$</span><span class="va">drug_exposure</span> <span class="op">|&gt;</span></span></span>
@@ -96,7 +96,7 @@ its name ends with `concept_id` will be used.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: ??</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 24</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/Rtmpd3FAUj/file1eb04b644046.duckdb]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/Rtmpfg2ULY/file1d732b9e7d24.duckdb]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ drug_exposure_id             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 26318<span style="color: #949494;">, </span>60926<span style="color: #949494;">, </span>26418<span style="color: #949494;">, </span>54785<span style="color: #949494;">, </span>47027<span style="color: #949494;">, </span>38712<span style="color: #949494;">,</span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ person_id                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 573<span style="color: #949494;">, </span>1332<span style="color: #949494;">, </span>576<span style="color: #949494;">, </span>4550<span style="color: #949494;">, </span>3895<span style="color: #949494;">, </span>3199<span style="color: #949494;">, </span>476<span style="color: #949494;">, </span>11…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ drug_concept_id              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 40213160<span style="color: #949494;">, </span>40213198<span style="color: #949494;">, </span>40213260<span style="color: #949494;">, </span>1118084<span style="color: #949494;">, </span>40…</span>
@@ -127,7 +127,7 @@ its name ends with `concept_id` will be used.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: ??</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/Rtmpd3FAUj/file1eb04b644046.duckdb]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/Rtmpfg2ULY/file1d732b9e7d24.duckdb]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ drug_exposure_id             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 26318<span style="color: #949494;">, </span>60926<span style="color: #949494;">, </span>26418<span style="color: #949494;">, </span>54785<span style="color: #949494;">, </span>47027<span style="color: #949494;">, </span>38712<span style="color: #949494;">,</span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ person_id                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 573<span style="color: #949494;">, </span>1332<span style="color: #949494;">, </span>576<span style="color: #949494;">, </span>4550<span style="color: #949494;">, </span>3895<span style="color: #949494;">, </span>3199<span style="color: #949494;">, </span>476<span style="color: #949494;">, </span>11…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ drug_concept_id              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 40213160<span style="color: #949494;">, </span>40213198<span style="color: #949494;">, </span>40213260<span style="color: #949494;">, </span>1118084<span style="color: #949494;">, </span>40…</span>
