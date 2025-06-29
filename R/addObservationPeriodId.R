@@ -20,7 +20,7 @@
 #' @param x Table with individuals in the cdm.
 #' @param indexDate Variable in x that contains the date to compute the
 #' observation flag.
-#' @param nameObservationPeriodId Name of the new colum.
+#' @param nameObservationPeriodId Name of the new column.
 #' @param name Name of the new table, if NULL a temporary table is returned.
 #'
 #' @return Table with the current observation period id added.
@@ -61,7 +61,7 @@ addObservationPeriodId <- function(x,
 #' @param x Table with individuals in the cdm.
 #' @param indexDate Variable in x that contains the date to compute the
 #' observation flag.
-#' @param nameObservationPeriodId Name of the new colum.
+#' @param nameObservationPeriodId Name of the new column.
 #'
 #' @return Table with the current observation period id added.
 #' @export

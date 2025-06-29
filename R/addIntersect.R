@@ -406,16 +406,16 @@
     dplyr::filter(!.data$colnam %in% colnames(x)) |>
     dplyr::pull("colnam") |>
     rlang::set_names() |>
-    purrr::map(\(x) {
+    purrr::map_chr(\(x) {
       val <- as.character(newCols$value[newCols$colnam == x])
       switch(val,
-             flag = 0,
-             count = 0,
-             days = as.numeric(NA),
-             date = as.Date(NA),
-             as.character(NA)
-      )
-    })
+             flag = "0",
+             count = "0",
+             days = "as.numeric(NA)",
+             date = "as.Date(NA)",
+             "as.character(NA)")
+    }) |>
+    rlang::parse_exprs()
   if (length(createMissingCols) > 0) {
     x <- x |>
       dplyr::mutate(!!!createMissingCols) |>

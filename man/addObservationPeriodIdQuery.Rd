@@ -17,7 +17,7 @@ addObservationPeriodIdQuery(
 \item{indexDate}{Variable in x that contains the date to compute the
 observation flag.}
 
-\item{nameObservationPeriodId}{Name of the new colum.}
+\item{nameObservationPeriodId}{Name of the new column.}
 }
 \value{
 Table with the current observation period id added.

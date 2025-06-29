@@ -1,4 +1,8 @@
 
+# PatientProfiles 1.4.1
+
+* Fix pass type in expression by @edward-burn in #794
+
 # PatientProfiles 1.4.0
 
 * Fix readme lifecycle badge by @catalamarti in #778
