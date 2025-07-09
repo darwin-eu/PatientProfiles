@@ -1,0 +1,105 @@
+---
+title: "Code for the md"
+output: github_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = TRUE}
+library(CDMConnector)
+library(duckdb)
+con <- dbConnect(duckdb(), eunomiaDir())
+cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main") |>
+  generateConceptCohortSet(
+    conceptSet = list(gibleed = 192671), 
+    name = "gibleed") |>
+  generateConceptCohortSet(
+    conceptSet = list(asthma = 317009, ulcerative_colitis = 81893), 
+    name = "conditions")
+cdm
+```
+
+```{r}
+library(PatientProfiles)
+cdm$gibleed |>
+  addDemographics(
+    indexDate = "cohort_start_date", 
+    ageGroup = list("children" = c(0, 17), "adult" = c(18, Inf))
+  ) |>
+  dplyr::glimpse()
+```
+
+```{r}
+cdm$gibleed |>
+  addInObservation(
+    indexDate = "cohort_start_date",
+    window = list("obs_index_date" = c(0, 0), "in_1_year" = c(365, 365)),
+    nameStyle = "{window_name}"
+  ) |>
+  addObservationPeriodId() |>
+  dplyr::glimpse()
+```
+
+```{r}
+cdm$gibleed |>
+  addTableIntersectCount(
+    tableName = "visit_occurrence",
+    window = c(-365, 0),
+    nameStyle = "number_visits"
+  ) |>
+  addCohortIntersectFlag(
+    targetCohortTable = "conditions",
+    targetCohortId = 1,
+    window = c(-Inf, 0),
+    nameStyle = "prior_asthma"
+  ) |>
+  dplyr::glimpse()
+```
+
+```{r}
+cdm$gibleed |>
+  addCohortIntersectDate(
+    targetCohortTable = "conditions",
+    targetCohortId = 2,
+    window = c(1, Inf), 
+    nameStyle = "next_uc"
+  ) |>
+  dplyr::glimpse()
+```
+
+
+```{r}
+cdm$gibleed <- cdm$gibleed |>
+  addDemographics() |>
+  addTableIntersectCount(
+    tableName = "visit_occurrence",
+    window = c(-365, 0),
+    nameStyle = "number_visits"
+  ) |>
+  addCohortIntersectFlag(
+    targetCohortTable = "conditions",
+    targetCohortId = 1,
+    window = c(-Inf, 0),
+    nameStyle = "prior_asthma"
+  ) |>
+  addCohortIntersectDate(
+    targetCohortTable = "conditions",
+    targetCohortId = 2,
+    window = c(1, Inf),
+    nameStyle = "next_uc"
+  ) 
+cdm$gibleed |>
+  addCohortName() |>
+  summariseResult(
+    group = "cohort_name",
+    strata = list("sex", c("sex", "prior_asthma")),
+    variables = list(c("number_visits", "age"), c("next_uc"), "age_group"),
+    estimates = list(c("median", "q25", "q75"), c("min", "max"), "count")
+  ) |>
+  dplyr::glimpse()
+```
+
+
