@@ -1,9 +1,9 @@
 Package: PatientProfiles
 Type: Package
 Title: Identify Characteristics of Patients in the OMOP Common Data Model
-Version: 1.4.1
+Version: 1.4.2
 Authors@R: c(
-    person("Marti", "Catala", , "marti.catalasabate@ndorms.ox.ac.uk", 
+    person("Martí", "Català", , "marti.catalasabate@ndorms.ox.ac.uk", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3308-9905")),
     person("Yuchen", "Guo", , "yuchen.guo@ndorms.ox.ac.uk", role = c("aut"),
     comment = c(ORCID = "0000-0002-0847-4855")),
@@ -20,7 +20,7 @@ Authors@R: c(
     person("Xihang", "Chen", , "xihang.chen@ndorms.ox.ac.uk", role = c("ctb"),
     comment = c(ORCID = "0009-0001-8112-8959"))
     )
-Maintainer: Marti Catala <marti.catalasabate@ndorms.ox.ac.uk>
+Maintainer: Martí Català <marti.catalasabate@ndorms.ox.ac.uk>
 Description: Identify the characteristics of patients in data mapped to the Observational Medical Outcomes Partnership (OMOP) common data model.
 License: Apache License (>= 2)
 Encoding: UTF-8

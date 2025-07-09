@@ -1,4 +1,8 @@
 
+# PatientProfiles 1.4.2
+
+* Allow NA values with density estimate by @catalamarti in #795
+
 # PatientProfiles 1.4.1
 
 * Fix pass type in expression by @edward-burn in #794
