@@ -28,7 +28,6 @@ jobs:
           extra-packages: |
             any::covr
             any::xml2
-            url::https://cran.r-project.org/src/contrib/Archive/duckdb/duckdb_1.2.2.tar.gz
           needs: coverage
 
       - name: Test coverage

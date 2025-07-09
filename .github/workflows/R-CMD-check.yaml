@@ -38,7 +38,6 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            url::https://cran.r-project.org/src/contrib/Archive/duckdb/duckdb_1.2.2.tar.gz
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
