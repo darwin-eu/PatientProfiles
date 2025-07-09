@@ -481,7 +481,12 @@ densityResult <- function(x, w) {
   id <- !is.na(x)
   x <- as.numeric(x[id])
   if (length(x) == 0) {
-    return(NULL)
+    res <- dplyr::tibble(
+      variable_level = character(),
+      estimate_name = character(),
+      estimate_value = numeric()
+    )
+    return(res)
   } else if (length(x) == 1) {
     den <- list(x = c(x - 1, x, x + 1), y = c(0, 1, 0)) # NEEDS DISCUSSION
   } else {
