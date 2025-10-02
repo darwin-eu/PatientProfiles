@@ -19,7 +19,7 @@ Add cohort name for each cohort_definition_id
 \donttest{
 library(PatientProfiles)
 
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 cdm$cohort1 |>
   addCohortName()
 }

@@ -24,18 +24,21 @@
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' x <- dplyr::tibble(
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' x <- tibble(
 #'   person_id = c(1, 2),
 #'   start_date = as.Date(c("2020-05-02", "2021-11-19")),
 #'   asthma = c(0, 1)
 #' )
+#'
 #' variableTypes(x)
 #' }
 #'
 #' @export
 #'
 variableTypes <- function(table) {
-  checkTable(table)
+  omopgenerics::assertTable(x = table, class = "tbl")
   if (ncol(table) > 0) {
     x <- dplyr::tibble(
       "variable_name" = colnames(table),

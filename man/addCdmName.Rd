@@ -21,7 +21,8 @@ Add cdm name
 \donttest{
 library(PatientProfiles)
 
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
+
 cdm$cohort1 |>
   addCdmName()
 }

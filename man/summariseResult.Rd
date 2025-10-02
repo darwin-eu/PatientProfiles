@@ -51,14 +51,16 @@ a formatted summarised_result object.
 \examples{
 \donttest{
 library(PatientProfiles)
-library(dplyr)
 
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
+
 x <- cdm$cohort1 |>
-  addDemographics() |>
-  collect()
+  addDemographics()
+
 result <- summariseResult(x)
-mockDisconnect(cdm = cdm)
+
+result
+
 }
 
 }

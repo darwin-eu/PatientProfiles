@@ -36,6 +36,9 @@
   omopgenerics::assertLogical(inObservation, length = 1)
   omopgenerics::assertCharacter(value)
 
+  # validate names of concept set
+  conceptSet <- validateConceptNames(conceptSet)
+
   tablePrefix <- omopgenerics::tmpPrefix()
 
   nameStyle <- nameStyle |>
@@ -79,6 +82,38 @@
   omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
 
   return(x)
+}
+validateConceptNames <- function(cs) {
+  orig <- names(cs)
+
+  # to lower
+  new <- tolower(orig)
+
+  # replace
+  new <- gsub(pattern = "[^A-Za-z0-9_]", replacement = "_", x = new)
+
+  # replace multiple underscores
+  new <- gsub(pattern = "_+", replacement = "_", x = new)
+
+  # check if names changed
+  idDiff <- new != orig
+  diffNew <- new[idDiff]
+  diffOrig <- orig[idDiff]
+  if (length(diffOrig) > 0) {
+    mes <- paste0("- '", diffOrig, "' -> '", diffNew, "'")
+    c("The following conceptSet names have been modified:", mes) |>
+      paste0(collapse = "\n") |>
+      rlang::inform()
+  }
+
+  # error if uniqueness has been altered
+  if (length(unique(new)) != length(new)) {
+    cli::cli_abort(c(x = "Concept set names are not unique after formatting."))
+  }
+
+  names(cs) <- new
+
+  return(cs)
 }
 getConceptsTable <- function(conceptSet) {
   purrr::map(conceptSet, dplyr::as_tibble) |>
@@ -269,8 +304,12 @@ checkDomainsAndTables <- function(x, supportedDomains) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
-#' concept <- dplyr::tibble(
+#' library(omopgenerics, warn.conflicts = TRUE)
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' concept <- tibble(
 #'   concept_id = c(1125315),
 #'   domain_id = "Drug",
 #'   vocabulary_id = NA_character_,
@@ -281,13 +320,12 @@ checkDomainsAndTables <- function(x, supportedDomains) {
 #'   valid_end_date = as.Date("2099-01-01"),
 #'   invalid_reason = NA_character_
 #' ) |>
-#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'   mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- insertTable(cdm, "concept", concept)
 #'
 #' cdm$cohort1 |>
 #'   addConceptIntersectFlag(conceptSet = list("acetaminophen" = 1125315))
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addConceptIntersectFlag <- function(x,
@@ -340,8 +378,12 @@ addConceptIntersectFlag <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
-#' concept <- dplyr::tibble(
+#' library(omopgenerics, warn.conflicts = TRUE)
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' concept <- tibble(
 #'   concept_id = c(1125315),
 #'   domain_id = "Drug",
 #'   vocabulary_id = NA_character_,
@@ -352,13 +394,12 @@ addConceptIntersectFlag <- function(x,
 #'   valid_end_date = as.Date("2099-01-01"),
 #'   invalid_reason = NA_character_
 #' ) |>
-#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'   mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- insertTable(cdm, "concept", concept)
 #'
 #' cdm$cohort1 |>
 #'   addConceptIntersectCount(conceptSet = list("acetaminophen" = 1125315))
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addConceptIntersectCount <- function(x,
@@ -411,8 +452,12 @@ addConceptIntersectCount <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
-#' concept <- dplyr::tibble(
+#' library(omopgenerics, warn.conflicts = TRUE)
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' concept <- tibble(
 #'   concept_id = c(1125315),
 #'   domain_id = "Drug",
 #'   vocabulary_id = NA_character_,
@@ -423,13 +468,12 @@ addConceptIntersectCount <- function(x,
 #'   valid_end_date = as.Date("2099-01-01"),
 #'   invalid_reason = NA_character_
 #' ) |>
-#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'   mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- insertTable(cdm, "concept", concept)
 #'
 #' cdm$cohort1 |>
 #'   addConceptIntersectDate(conceptSet = list("acetaminophen" = 1125315))
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addConceptIntersectDate <- function(x,
@@ -442,6 +486,11 @@ addConceptIntersectDate <- function(x,
                                     inObservation = TRUE,
                                     nameStyle = "{concept_name}_{window_name}",
                                     name = NULL) {
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
+
   .addConceptIntersect(
     x = x,
     conceptSet = conceptSet,
@@ -482,8 +531,12 @@ addConceptIntersectDate <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
-#' concept <- dplyr::tibble(
+#' library(omopgenerics, warn.conflicts = TRUE)
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' concept <- tibble(
 #'   concept_id = c(1125315),
 #'   domain_id = "Drug",
 #'   vocabulary_id = NA_character_,
@@ -494,13 +547,12 @@ addConceptIntersectDate <- function(x,
 #'   valid_end_date = as.Date("2099-01-01"),
 #'   invalid_reason = NA_character_
 #' ) |>
-#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'   mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- insertTable(cdm, "concept", concept)
 #'
 #' cdm$cohort1 |>
 #'   addConceptIntersectDays(conceptSet = list("acetaminophen" = 1125315))
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addConceptIntersectDays <- function(x,
@@ -513,6 +565,11 @@ addConceptIntersectDays <- function(x,
                                     inObservation = TRUE,
                                     nameStyle = "{concept_name}_{window_name}",
                                     name = NULL) {
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
+
   .addConceptIntersect(
     x = x,
     conceptSet = conceptSet,
@@ -546,8 +603,9 @@ addConceptIntersectDays <- function(x,
 #' @param inObservation If TRUE only records inside an observation period
 #' will be considered.
 #' @param allowDuplicates Whether to allow multiple records with same
-#' conceptSet, person_id and targetDate. If switched to TRUE, it can have a
-#' different and unpredictable behavior depending on the cdm_source.
+#' conceptSet, person_id and targetDate. If switched to TRUE, the created new
+#' columns (field) will be collapsed to a character vector separated by `;` to
+#' account for multiple values per person.
 #' @param nameStyle naming of the added column or columns, should include
 #' required parameters.
 #' @param name Name of the new table, if NULL a temporary table is returned.
@@ -559,8 +617,12 @@ addConceptIntersectDays <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
-#' concept <- dplyr::tibble(
+#' library(omopgenerics, warn.conflicts = TRUE)
+#' library(dplyr, warn.conflicts = TRUE)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' concept <- tibble(
 #'   concept_id = c(1125315),
 #'   domain_id = "Drug",
 #'   vocabulary_id = NA_character_,
@@ -571,8 +633,8 @@ addConceptIntersectDays <- function(x,
 #'   valid_end_date = as.Date("2099-01-01"),
 #'   invalid_reason = NA_character_
 #' ) |>
-#'   dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-#' cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+#'   mutate(concept_name = paste0("concept: ", .data$concept_id))
+#' cdm <- insertTable(cdm, "concept", concept)
 #'
 #' cdm$cohort1 |>
 #'   addConceptIntersectField(
@@ -580,7 +642,6 @@ addConceptIntersectDays <- function(x,
 #'     field = "drug_type_concept_id"
 #'   )
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addConceptIntersectField <- function(x,
@@ -599,6 +660,11 @@ addConceptIntersectField <- function(x,
   nameStyle <- stringr::str_replace(
     string = nameStyle, pattern = "\\{field\\}", replacement = "\\{value\\}"
   )
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
+
   .addConceptIntersect(
     x = x,
     conceptSet = conceptSet,

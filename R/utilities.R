@@ -26,7 +26,7 @@
 #' \donttest{
 #' library(PatientProfiles)
 #'
-#' cdm <- mockPatientProfiles()
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #' cdm$cohort1 |>
 #'   addCohortName()
 #' }
@@ -60,14 +60,10 @@ addCohortName <- function(cohort) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' library(duckdb)
-#' library(CDMConnector)
+#' library(omock)
 #' library(dplyr, warn.conflicts = FALSE)
 #'
-#' dbName <- "GiBleed"
-#' requireEunomia(datasetName = dbName)
-#' con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = dbName)))
-#' cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+#' cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #'
 #' cdm$drug_exposure |>
 #'   addConceptName(column = "drug_concept_id", nameStyle = "drug_name") |>
@@ -133,7 +129,8 @@ addConceptName <- function(table,
 #' \donttest{
 #' library(PatientProfiles)
 #'
-#' cdm <- mockPatientProfiles()
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
 #' cdm$cohort1 |>
 #'   addCdmName()
 #' }

@@ -48,11 +48,12 @@ Same as `addAge()`, except query is not computed to a table.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addAgeQuery()
 
-mockDisconnect(cdm = cdm)
 }
 }

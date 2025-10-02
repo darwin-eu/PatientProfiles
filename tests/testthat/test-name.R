@@ -1,9 +1,8 @@
 test_that("test that name argument works as expected", {
   skip_on_cran()
   # create simple cdm
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
-  prefix <- CDMConnector::cdmWriteSchema(cdm)
-  prefix <- prefix["prefix"] |> unname()
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   # define the different functions
   funs <- list(
@@ -84,24 +83,26 @@ test_that("test that name argument works as expected", {
   k <- 1
   for (fun in funs) {
     # check NULL behavior
-    initialTables <- readTables(cdm)
+    initialTables <- omopgenerics::listSourceTables(cdm)
     x <- cdm$cohort1 |> fun(name = NULL)
-    finalTables <- readTables(cdm)
+    finalTables <- omopgenerics::listSourceTables(cdm)
     expect_identical(setdiff(initialTables, finalTables), character())
     difference <- setdiff(finalTables, initialTables)
-    expect_true(length(difference) == 1)
-    expect_true(substr(difference, 1, 3) == "og_")
+    # the created table is temporal
+    expect_true(length(difference) == 0)
 
     # check permanent behavior
     name <- paste0("my_test_", k)
     k <- k + 1
-    initialTables <- readTables(cdm)
+    initialTables <- omopgenerics::listSourceTables(cdm)
     x <- cdm$cohort1 |> fun(name = name)
-    finalTables <- readTables(cdm)
+    finalTables <- omopgenerics::listSourceTables(cdm)
     expect_identical(setdiff(initialTables, finalTables), character())
     difference <- setdiff(finalTables, initialTables)
-    expect_identical(difference, paste0(prefix, name))
+    if (dbToTest != "local") {
+      expect_identical(difference, name)
+    }
   }
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

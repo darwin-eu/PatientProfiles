@@ -30,12 +30,12 @@ test_that("test checkCategory with length 1 ", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     person = person,
-    observation_period = op
-  )
+    observation_period = op,
+    source = "local"
+  ) |>
+    copyCdm()
 
   categories <- list("age_group" = list(c(0, 69), c(70)))
 
@@ -58,17 +58,11 @@ test_that("test checkCategory with length 1 ", {
 
   expect_error(checkX(cdm$person |> dplyr::select(-"person_id")))
 
-  expect_error(checkCdm(list()))
-
   expect_warning(checkValue(
     "flag", cdm$person |> dplyr::mutate("flag" = 1), "person"
   ))
 
   expect_error(checkCohortNames(dplyr::tibble()))
-
-  expect_error(checkExclude(1))
-
-  expect_error(checkTable(1))
 
   expect_error(checkStrata(1))
 
@@ -99,7 +93,7 @@ test_that("test checkCategory with length 1 ", {
 
   expect_error(omopgenerics::assertChoice(2, c("asd", "sad")))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that(" test checkNewName renames duplicate column names in addInObservation  ", {
@@ -129,12 +123,12 @@ test_that(" test checkNewName renames duplicate column names in addInObservation
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     person = person,
-    observation_period = op
-  )
+    observation_period = op,
+    source = "local"
+  ) |>
+    copyCdm()
 
   expect_true(all(c(
     "cohort_definition_id", "subject_id", "cohort_start_date",
@@ -151,16 +145,15 @@ test_that(" test checkNewName renames duplicate column names in addInObservation
     "cohort_definition_id", "subject_id", "cohort_start_date",
     "cohort_end_date", "flag", "flag_new"
   ) == colnames(y)))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that(" test checkWindow in addIntersect", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 2
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 2, source = "local") |>
+    copyCdm()
 
   expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-NA, 0)), value = "date"))
   expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-365, 0, 1)), value = "date"))
@@ -170,19 +163,7 @@ test_that(" test checkWindow in addIntersect", {
   expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(Inf, Inf)), value = "date"))
   expect_error(cdm$cohort1 |> .addIntersect(tableName = "cohort2", window = list(c(-Inf, -Inf)), value = "date"))
 
-  mockDisconnect(cdm = cdm)
-})
-
-test_that("test checkSnakeCase", {
-  skip_on_cran()
-  expect_true(checkSnakeCase("Age") == "age")
-  expect_true(checkSnakeCase("age groups") == "age_groups")
-  expect_true(checkSnakeCase("new-var") == "new_var")
-  expect_true(checkSnakeCase("this_is_snake") == "this_is_snake")
-  expect_true(checkSnakeCase("this_Is_Not_Snake") == "this_is_not_snake")
-  expect_true(checkSnakeCase("thisIsNotSnake") == "thisisnotsnake")
-  expect_true(checkSnakeCase("this-is-not-snake") == "this_is_not_snake")
-  expect_true(checkSnakeCase("this_is_alm@st_snake") == "this_is_alm_st_snake")
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("checkNameStyle", {
@@ -219,18 +200,20 @@ test_that("checkNameStyle", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     person = person,
     observation_period = op,
-    cohort2 = cohort2
-  )
+    cohort2 = cohort2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   expect_true(all(c("count_all", "flag_all") %in% colnames(cdm$cohort1 |> .addIntersect(
     tableName = "cohort2", value = c("flag", "count"),
     nameStyle = "{value}_{id_name}"
   ))))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test assertNameStyle", {

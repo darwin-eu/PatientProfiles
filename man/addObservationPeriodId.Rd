@@ -31,12 +31,13 @@ is in.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addObservationPeriodId()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

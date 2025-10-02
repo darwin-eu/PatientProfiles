@@ -53,12 +53,13 @@ Compute a flag intersect with an omop table.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addTableIntersectFlag(tableName = "visit_occurrence")
 
-mockDisconnect(cdm = cdm)
 }
 
 }

@@ -1,19 +1,20 @@
 test_that("addCategories, functionality", {
   skip_on_cran()
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = dplyr::tibble(
-      "person_id" = 1:3, "gender_concept_id" = 0L, "year_of_birth" = 2000L,
+      "person_id" = 1:3, "gender_concept_id" = 0L, "year_of_birth" = 1950L,
       "race_concept_id" = 0L, "ethnicity_concept_id" = 0L
     ),
     cohort1 = dplyr::tibble(
       "cohort_definition_id" = 1L,
       "subject_id" = c(1L, 2L, 3L),
-      "cohort_start_date" = as.Date(c("2045-01-01", "2052-01-01", "2060-01-01")),
-      "cohort_end_date" = as.Date(c("2045-01-01", "2052-01-01", "2060-01-01"))
-    )
-  )
+      "cohort_start_date" = as.Date(c("1995-01-01", "2002-01-01", "2010-01-01")),
+      "cohort_end_date" = as.Date(c("1995-01-01", "2002-01-01", "2010-01-01"))
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
+
   agegroup <- cdm$cohort1 |>
     addAge() |>
     addCategories(
@@ -62,12 +63,14 @@ test_that("addCategories, functionality", {
       dplyr::arrange(subject_id, cohort_start_date)
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm)
 })
 
 test_that("addCategory with both upper and lower infinite, age", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_no_error(
     agegroup <- cdm$cohort1 |>
       addAge() |>
@@ -99,7 +102,7 @@ test_that("addCategory with both upper and lower infinite, age", {
     )
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm)
 })
 
 test_that("addCategories with infinity", {
@@ -111,12 +114,10 @@ test_that("addCategories with infinity", {
       "2020-01-01", NA, "2020-12-21", "2020-08-01", "2025-01-01", "2020-01-18"
     ))
   )
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
+
   cdm <- omopgenerics::insertTable(cdm = cdm, name = "table", table = table)
   table <- cdm$table |>
     addCategories(
@@ -148,15 +149,15 @@ test_that("addCategories with infinity", {
     "2019-01-01 to 2022-12-31", "2023-01-01 to 2028-12-31",
     "2019-01-01 to 2022-12-31"
   )))
-  mockDisconnect(cdm)
+
+  dropCreatedTables(cdm)
 })
 
 test_that("addCategories check naming", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-  )
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   table <- cdm$cohort1 |> addCategories(
     variable = "cohort_start_date", categories = list(
       "date_dummy" = list(
@@ -167,4 +168,6 @@ test_that("addCategories check naming", {
   )
 
   expect_true(all(table |> dplyr::pull(date_dummy) |> unique() %in% c("a", "b", "None")))
+
+  dropCreatedTables(cdm = cdm)
 })

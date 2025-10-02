@@ -3,10 +3,9 @@ test_that("output format - one outcome cohort", {
   # additional column should be added
   # with the name as specified
 
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 10,
-    seed = 1
-  )
+  set.seed(seed = 1)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   cdm$cohort1a <- cdm$cohort1 |>
     addCohortIntersectDays(
@@ -67,7 +66,7 @@ test_that("output format - one outcome cohort", {
   expect_true("cohort_1_minf_to_inf" %in% colnames(cdm$cohort1d))
   expect_true("cohort_2_minf_to_inf" %in% colnames(cdm$cohort1d))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("first vs last event - cohort table", {
@@ -94,13 +93,11 @@ test_that("first vs last event - cohort table", {
     )
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   # first
   cdm$cohort1a <- cdm$cohort1 |>
@@ -178,7 +175,7 @@ test_that("first vs last event - cohort table", {
     dplyr::filter(subject_id == 2) |>
     dplyr::pull(5) == as.Date("2013-01-03"))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("multiple cohort entries per person", {
@@ -209,13 +206,11 @@ test_that("multiple cohort entries per person", {
     )
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   # 100 days from index
   cdm$cohort1a <- cdm$cohort1 |>
@@ -270,7 +265,7 @@ test_that("multiple cohort entries per person", {
     cdm$cohort1b |> dplyr::tally() |> dplyr::pull("n")
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("output names", {
@@ -278,10 +273,9 @@ test_that("output names", {
   # additional column should be added
   # with the name as specified
 
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 10,
-    seed = 1
-  )
+  set.seed(seed = 1)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   # default naming
   cdm$cohort1a <- cdm$cohort1 |>
@@ -346,12 +340,13 @@ test_that("output names", {
       nameStyle = "study"
     ))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("expected errors ", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   # missing outcome table
   expect_error(cdm$cohort1 |>
@@ -391,7 +386,7 @@ test_that("expected errors ", {
       censorDate = "subject_id"
     ))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples", {
@@ -447,13 +442,11 @@ test_that("working examples", {
     ),
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   result0 <- cdm$cohort1 |>
     addCohortIntersectCount(targetCohortTable = "cohort2") |>
@@ -502,7 +495,7 @@ test_that("working examples", {
   expect_true(all(result2$covid_minf_to_0 == c(0, 0, 0, 0, 1)))
   expect_true(all(result2$tb_minf_to_0 == c(0, 0, 0, 0, 1)))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples", {
@@ -558,12 +551,11 @@ test_that("working examples", {
     ),
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   result0 <- cdm$cohort1 |>
     addCohortIntersectFlag(targetCohortTable = "cohort2") |>
@@ -593,7 +585,7 @@ test_that("working examples", {
 
   expect_true(all(result1$cohort_2_0_to_inf == c(1, 1, 1, 1, 0)))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples", {
@@ -623,13 +615,11 @@ test_that("working examples", {
     ))
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   expect_no_error(
     result2 <- cdm$cohort1 |>
@@ -653,7 +643,7 @@ test_that("working examples", {
       dplyr::arrange(subject_id, cohort_start_date)
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("censorDate functionality", {
@@ -682,13 +672,11 @@ test_that("censorDate functionality", {
     ))
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 5
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 5,
+                             source = "local") |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -727,16 +715,20 @@ test_that("censorDate functionality", {
     c(0, 0, NA, NA)
   )))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("casing of empty dates", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 3,
-    seed = 1
-  )
-  cdm$cohort1 <- cdm$cohort1 |> dplyr::filter(cohort_definition_id == 1)
+  cdm <- omock::mockPerson() |>
+    omock::mockObservationPeriod() |>
+    omock::mockCohort(name = "cohort1", numberCohorts = 2) |>
+    omock::mockCohort(name = "cohort2", numberCohorts = 1) |>
+    copyCdm()
+
+  cdm$cohort1 <- cdm$cohort1 |>
+    dplyr::filter(cohort_definition_id == 1L)
+
   expect_false(
     cdm$cohort2 |>
       addCohortIntersectDate(targetCohortTable = "cohort1") |>
@@ -745,14 +737,12 @@ test_that("casing of empty dates", {
       is.numeric()
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("cohortIntersect after observation", {
   skip_on_cran()
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = dplyr::tibble(
       cohort_definition_id = 1L,
       subject_id = 1L,
@@ -780,8 +770,10 @@ test_that("cohortIntersect after observation", {
       observation_period_start_date = as.Date("2006-03-11"),
       observation_period_end_date = as.Date("2102-04-02"),
       period_type_concept_id = 0L
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
 
   windows <- list(
     c(-Inf, Inf), c(0, 0), c(0, Inf), c(5000, 31000), c(31000, Inf),
@@ -831,7 +823,7 @@ test_that("cohortIntersect after observation", {
     }
   }
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("issue 612", {
@@ -864,13 +856,11 @@ test_that("issue 612", {
     observation_period_end_date = as.Date("2020-12-31"),
     period_type_concept_id = 32880L
   )
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    observation_period = observation_period,
-    person = person,
-    cohort1 = cohort
-  )
+  cdm <- mockPatientProfiles(observation_period = observation_period,
+                             person = person,
+                             cohort1 = cohort,
+                             source = "local") |>
+    copyCdm()
 
   x <- cdm$cohort1 |>
     addCohortIntersectFlag(
@@ -887,7 +877,7 @@ test_that("issue 612", {
   expect_true(all(x$cohort_2 == c(0, 0, 0, 1, 1, 1, 0, 1)))
   expect_true(all(x$cohort_3 == c(1, 0, 0, 1, 0, 0, 1, 1)))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("targetCohortId being a name", {
@@ -917,13 +907,11 @@ test_that("targetCohortId being a name", {
     ))
   )
 
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    cohort1 = cohort1,
-    cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+  cdm <- mockPatientProfiles(cohort1 = cohort1,
+                             cohort2 = cohort2,
+                             numberIndividuals = 2,
+                             source = "local") |>
+    copyCdm()
 
   intersectTargetId <- function(targetCohortId) {
     x <- cdm$cohort1 |>
@@ -947,7 +935,7 @@ test_that("targetCohortId being a name", {
     intersectTargetId(c(1L, 3L))
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("duplicated measurment results", {
@@ -967,11 +955,8 @@ test_that("duplicated measurment results", {
       cohort_start_date = as.Date("2000-01-01"),
       cohort_end_date = as.Date("2010-01-01")
     )
-  ))
-  src <- CDMConnector::dbSource(
-    con = duckdb::dbConnect(duckdb::duckdb()), writeSchema = "main"
-  )
-  cdm <- omopgenerics::insertCdmTo(cdm = cdm, to = src)
+  )) |>
+    copyCdm()
 
   concept <- list(a = 44810792L)
   expect_equal(
@@ -999,12 +984,14 @@ test_that("duplicated measurment results", {
       addConceptIntersectField(conceptSet = concept, field = "value_as_concept_id")
   )
   expect_no_error(
-    cdm$cohort1 |>
+    x <- cdm$cohort1 |>
       addConceptIntersectField(
         conceptSet = concept, field = "value_as_concept_id",
         allowDuplicates = TRUE
-      )
+      ) |>
+      dplyr::pull("value_as_concept_id_a_0_to_inf")
   )
+  expect_true(is.character(x))
 
-  omopgenerics::cdmDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

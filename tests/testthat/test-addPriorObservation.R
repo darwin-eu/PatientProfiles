@@ -1,18 +1,21 @@
 test_that("check input length and type for each of the arguments", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   expect_error(addPriorObservation("cdm$cohort1"))
 
   expect_error(addPriorObservation(cdm$cohort1, indexDate = "end_date"))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check condition_occurrence and cohort1 work", {
   skip_on_cran()
   # mock data
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   # check it works with cohort1 table in mockdb
   expect_true(typeof(cdm$cohort1 |> addPriorObservation() |> dplyr::collect()) == "list")
   expect_true("prior_observation" %in% colnames(cdm$cohort1 |> addPriorObservation()))
@@ -20,7 +23,7 @@ test_that("check condition_occurrence and cohort1 work", {
   expect_true(typeof(cdm$condition_occurrence |> addPriorObservation(indexDate = "condition_start_date") |> dplyr::collect()) == "list")
   expect_true("prior_observation" %in% colnames(cdm$condition_occurrence |> addPriorObservation(indexDate = "condition_start_date")))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check working example with cohort1", {
@@ -45,14 +48,14 @@ test_that("check working example with cohort1", {
     period_type_concept_id = 0L
   )
 
+  set.seed(seed = 1)
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 1,
     cohort1 = cohort1,
     observation_period = obs1,
-    cohort2 = cohort1
-  )
+    cohort2 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm$cohort1 |>
     addPriorObservation() |>
@@ -66,7 +69,7 @@ test_that("check working example with cohort1", {
       dplyr::pull("prior_observation") == c(28, 28, 31)
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check working example with condition_occurrence", {
@@ -93,13 +96,13 @@ test_that("check working example with condition_occurrence", {
     period_type_concept_id = 0L
   )
 
+  set.seed(seed = 1)
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 1,
     condition_occurrence = condition_occurrence,
-    observation_period = obs1
-  )
+    observation_period = obs1,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm$condition_occurrence |>
     addPriorObservation(indexDate = "condition_start_date") |>
@@ -111,7 +114,7 @@ test_that("check working example with condition_occurrence", {
       dplyr::pull("prior_observation") == c(28, 28, 31)
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("different name", {
@@ -138,12 +141,11 @@ test_that("different name", {
     period_type_concept_id = 0L
   )
 
+  set.seed(seed = 1)
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 1,
     condition_occurrence = conditionOccurrence,
-    observation_period = obs1
+    observation_period = obs1,
+    source = "local"
   )
 
   cdm$condition_occurrence <- cdm$condition_occurrence |>
@@ -164,16 +166,18 @@ test_that("different name", {
           "obs_start" = "observation_period_start_date"
         ),
       by = "subject_id"
-    ) %>%
-    dplyr::mutate("diff" = !!CDMConnector::datediff(
-      "cohort_start_date", "obs_start"
+    ) |>
+    dplyr::mutate("diff" = clock::date_count_between(
+      start = .data$cohort_start_date,
+      end = .data$obs_start,
+      precision = "day"
     )) |>
     dplyr::collect()
 
   expect_equal(x$prior_observation, -x$diff)
   expect_equal(x$col, x$obs_start)
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("multiple observation periods", {
@@ -209,12 +213,12 @@ test_that("multiple observation periods", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     observation_period = observation_period,
-    cohort1 = cohort1
-  )
+    cohort1 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
 
   cdm$cohort1a <- cdm$cohort1 |>
     addPriorObservation(indexDate = "cohort_start_date")
@@ -228,5 +232,5 @@ test_that("multiple observation periods", {
     ))
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

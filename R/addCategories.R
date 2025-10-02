@@ -33,7 +33,9 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' result <- cdm$cohort1 |>
 #'   addAge() |>
@@ -43,7 +45,7 @@
 #'       "0 to 39" = c(0, 39), "40 to 79" = c(40, 79), "80 to 150" = c(80, 150)
 #'     ))
 #'   )
-#' mockDisconnect(cdm = cdm)
+#'
 #' }
 addCategories <- function(x,
                           variable,
@@ -91,8 +93,8 @@ addCategories <- function(x,
   if (date) {
     id <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
     x <- x |>
-      dplyr::mutate(!!id[1] := as.Date("1970-01-01")) %>%
-      dplyr::mutate(!!id[2] := !!CDMConnector::datediff(id[1], variable)) |>
+      dplyr::mutate(!!id[1] := !!as.Date("1970-01-01", format = "%Y-%m-%d")) |>
+      dplyr::mutate(!!id[2] := clock::date_count_between(start = .data[[id[1]]], end = .data[[variable]], precision = "day")) |>
       dplyr::select(-dplyr::all_of(id[1]))
     variable <- id[2]
     categories <- categories |>

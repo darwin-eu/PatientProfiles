@@ -54,12 +54,13 @@ Date of cohorts that are present in a certain window
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addCohortIntersectDate(targetCohortTable = "cohort2")
 
-mockDisconnect(cdm = cdm)
 }
 
 }

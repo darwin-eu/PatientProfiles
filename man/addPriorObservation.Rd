@@ -36,11 +36,12 @@ at a certain date
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addPriorObservation()
 
-mockDisconnect(cdm = cdm)
 }
 }

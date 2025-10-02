@@ -37,13 +37,15 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addCohortIntersectFlag(
 #'     targetCohortTable = "cohort2"
 #'   )
-#' mockDisconnect(cdm = cdm)
+#'
 #' }
 #'
 addCohortIntersectFlag <- function(x,
@@ -58,7 +60,7 @@ addCohortIntersectFlag <- function(x,
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
-  checkCdm(cdm, tables = targetCohortTable)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
   parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
@@ -105,14 +107,15 @@ addCohortIntersectFlag <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addCohortIntersectCount(
 #'     targetCohortTable = "cohort2"
 #'   )
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addCohortIntersectCount <- function(x,
@@ -127,7 +130,7 @@ addCohortIntersectCount <- function(x,
                                     name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
-  checkCdm(cdm, tables = targetCohortTable)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
   parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
 
@@ -177,12 +180,13 @@ addCohortIntersectCount <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addCohortIntersectDays(targetCohortTable = "cohort2")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addCohortIntersectDays <- function(x,
@@ -197,9 +201,13 @@ addCohortIntersectDays <- function(x,
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
-  checkCdm(cdm, tables = targetCohortTable)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
   parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
 
   x <- x |>
     .addIntersect(
@@ -248,12 +256,13 @@ addCohortIntersectDays <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addCohortIntersectDate(targetCohortTable = "cohort2")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addCohortIntersectDate <- function(x,
@@ -268,9 +277,13 @@ addCohortIntersectDate <- function(x,
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
-  checkCdm(cdm, tables = targetCohortTable)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
   parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
   nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
 
   x <- x |>
     .addIntersect(

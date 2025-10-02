@@ -52,8 +52,12 @@ and a concept
 \examples{
 \donttest{
 library(PatientProfiles)
-cdm <- mockPatientProfiles()
-concept <- dplyr::tibble(
+library(omopgenerics, warn.conflicts = TRUE)
+library(dplyr, warn.conflicts = TRUE)
+
+cdm <- mockPatientProfiles(source = "duckdb")
+
+concept <- tibble(
   concept_id = c(1125315),
   domain_id = "Drug",
   vocabulary_id = NA_character_,
@@ -64,13 +68,12 @@ concept <- dplyr::tibble(
   valid_end_date = as.Date("2099-01-01"),
   invalid_reason = NA_character_
 ) |>
-  dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+  mutate(concept_name = paste0("concept: ", .data$concept_id))
+cdm <- insertTable(cdm, "concept", concept)
 
 cdm$cohort1 |>
   addConceptIntersectCount(conceptSet = list("acetaminophen" = 1125315))
 
-mockDisconnect(cdm = cdm)
 }
 
 }

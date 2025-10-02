@@ -61,9 +61,8 @@ test_that("test filterInObservation", {
     ),
     cdmName = "test db",
     cdmVersion = "5.3"
-  )
-  src <- CDMConnector::dbSource(con = connection(), writeSchema = writeSchema())
-  cdm <- omopgenerics::insertCdmTo(cdm = cdm, to = src)
+  ) |>
+    copyCdm()
 
   expect_no_error(
     xS <- cdm$drug_exposure |>
@@ -80,5 +79,5 @@ test_that("test filterInObservation", {
   )
   expect_identical(xE, c(1L, 2L, 3L, 4L))
 
-  omopgenerics::cdmDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

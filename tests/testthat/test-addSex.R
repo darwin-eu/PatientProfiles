@@ -1,31 +1,37 @@
 test_that("addSex, check imput length and type", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_error(addSex("cdm$cohort1"))
   expect_error(addSex(cdm$drug_strength))
   expect_error(addSex(cdm$cohort1, name = 2))
   expect_error(addSex(cdm$cohort1, name = c("name1", "name2")))
   expect_error(addSex(cdm))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addSex, works in both cohort and condition tables", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
-  cdm$cohort1 <- cdm$cohort1 |> addSex()
-  cdm$condition_occurrence <- cdm$condition_occurrence |> addSex()
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  cdm$cohort1 <- cdm$cohort1 |>
+    addSex()
+  cdm$condition_occurrence <- cdm$condition_occurrence |>
+    addSex()
   expect_true("sex" %in% colnames(cdm$cohort1))
   expect_true(all(cdm$cohort1 |> dplyr::pull("sex") %in% c("Female", "Male")))
   expect_true("sex" %in% colnames(cdm$condition_occurrence))
   expect_true(all(cdm$condition_occurrence |> dplyr::pull("sex") %in% c("Female", "Male")))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addSex, desired result for all parameters", {
   skip_on_cran()
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = dplyr::tibble(
       person_id = 1:5,
       gender_concept_id = c(8507, 8532, 0, NA, 123456789),
@@ -38,8 +44,11 @@ test_that("addSex, desired result for all parameters", {
       subject_id = 1:5,
       cohort_start_date = as.Date("2020-01-01"),
       cohort_end_date = as.Date("2020-01-01")
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
+
   cdm$cohort1 <- cdm$cohort1 |> addSex()
   expect_true("sex" %in% colnames(cdm$cohort1))
   expect_true(all(
@@ -59,27 +68,30 @@ test_that("addSex, desired result for all parameters", {
       dplyr::pull("gender") ==
       c("Male", "Female", "Missing", "Missing", "Missing")
   ))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("allow NA in missing sex", {
   skip_on_cran()
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = dplyr::tibble(
       person_id = 1:5,
       gender_concept_id = c(8507, NA, 8507, 8507, 8507),
       year_of_birth = 2000,
       race_concept_id = 0,
       ethnicity_concept_id = 0
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
+
   expect_no_error(
     x <- cdm$cohort1 |> addSex(missingSexValue = NA_character_)
   )
   expect_true(is.na(
     x |> dplyr::filter(.data$subject_id == 2) |> dplyr::pull("sex")
   ))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })

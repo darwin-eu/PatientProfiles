@@ -54,12 +54,13 @@ Compute date of intersect with an omop table.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addTableIntersectDate(tableName = "visit_occurrence")
 
-mockDisconnect(cdm = cdm)
 }
 
 }

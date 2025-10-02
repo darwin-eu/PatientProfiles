@@ -20,11 +20,14 @@ Classify the variables between 5 types: "numeric", "categorical", "binary",
 \examples{
 \donttest{
 library(PatientProfiles)
-x <- dplyr::tibble(
+library(dplyr, warn.conflicts = TRUE)
+
+x <- tibble(
   person_id = c(1, 2),
   start_date = as.Date(c("2020-05-02", "2021-11-19")),
   asthma = c(0, 1)
 )
+
 variableTypes(x)
 }
 

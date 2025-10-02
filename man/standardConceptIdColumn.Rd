@@ -18,6 +18,7 @@ Get the name of the standard concept_id column for a certain table in the cdm
 \examples{
 \donttest{
 library(PatientProfiles)
+
 standardConceptIdColumn("condition_occurrence")
 }
 

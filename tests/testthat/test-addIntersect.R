@@ -61,12 +61,12 @@ test_that("working examples", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm$cohort1 |>
     .addIntersect(tableName = "cohort2", value = "date", nameStyle = "xx")
@@ -219,7 +219,7 @@ test_that("working examples", {
     "2020-01-26", "2020-01-26", "2020-02-16", "2020-01-29", "2020-01-29"
   ))))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples with cohort_end_date", {
@@ -250,12 +250,12 @@ test_that("working examples with cohort_end_date", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm$cohort1 |>
     .addIntersect(
@@ -270,7 +270,7 @@ test_that("working examples with cohort_end_date", {
     ))
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples with extra column", {
@@ -301,19 +301,19 @@ test_that("working examples with extra column", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   cdm$cohort2 <- cdm$cohort2 |>
-    dbplyr::window_order(
+    dplyr::arrange(
       .data$cohort_definition_id, .data$subject_id, .data$cohort_start_date
     ) |>
     dplyr::mutate(measurment_result = dplyr::row_number()) |>
-    dbplyr::window_order() |>
+    dplyr::arrange() |>
     dplyr::compute()
 
   result <- cdm$cohort1 |>
@@ -354,19 +354,19 @@ test_that("working examples with extra column", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   cdm$cohort2 <- cdm$cohort2 |>
-    dbplyr::window_order(
+    dplyr::arrange(
       .data$cohort_definition_id, .data$subject_id, .data$cohort_start_date
     ) |>
     dplyr::mutate(measurment_result = dplyr::row_number()) |>
-    dbplyr::window_order() |>
+    dplyr::arrange() |>
     dplyr::compute()
 
   result2 <- cdm$cohort1 |>
@@ -391,7 +391,7 @@ test_that("working examples with extra column", {
   expect_true(all(result2$measurment_result_0_to_inf == c("1", "1", 3, 5, 7)))
   expect_true(all(is.na(result3$measurment_result_m400_to_m200)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples with multiple cohort Ids", {
@@ -422,12 +422,12 @@ test_that("working examples with multiple cohort Ids", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -495,7 +495,7 @@ test_that("working examples with multiple cohort Ids", {
   expect_true(all(result2$days_id3_0_to_inf == c(46, 32, 27, 23, 43)))
   expect_true(all(result2$flag_id3_0_to_inf == c(1, 1, 1, 1, 1)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples calculating as incidence target cohort", {
@@ -516,11 +516,11 @@ test_that("working examples calculating as incidence target cohort", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    cohort2 = cohort2
-  )
+    cohort2 = cohort2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -551,7 +551,7 @@ test_that("working examples calculating as incidence target cohort", {
   expect_true(all(result$test_all_minf_to_inf == as.Date("2020-01-01")))
   expect_true(("date_all_minf_to_inf" %in% colnames(result1)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples with more than one window", {
@@ -582,12 +582,12 @@ test_that("working examples with more than one window", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -619,7 +619,7 @@ test_that("working examples with more than one window", {
     result$date_all_minf_to_0, result1$date_all_minf_to_0
   )))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("working examples with tables, not cohorts", {
@@ -687,13 +687,13 @@ test_that("working examples with tables, not cohorts", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     condition_occurrence = conditionOccurrence,
     drug_exposure = drugExposure,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -768,7 +768,7 @@ test_that("working examples with tables, not cohorts", {
   # test output all zero column when no result found
   expect_true(all(is.na(result4$days_id2_0_to_inf)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check input length and type for each of the arguments", {
@@ -824,11 +824,10 @@ test_that("check input length and type for each of the arguments", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
+    numberIndividuals = 2,
+    source = "local"
   )
 
   expect_error(.addIntersect("cdm$cohort1"))
@@ -849,12 +848,13 @@ test_that("check input length and type for each of the arguments", {
 
   expect_error(.addIntersect(cdm$cohort1, tableName = "cohort2", value = "flag", nameStyle = "test_{nowindow}_{cohortName}"))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test checkWindow function", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   expect_error(cdm$cohort1 |>
     .addIntersect(
@@ -864,6 +864,8 @@ test_that("test checkWindow function", {
       tableName = "cohort2",
       window = c(150, -90)
     ))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test if column exist, overwrite", {
@@ -892,12 +894,12 @@ test_that("test if column exist, overwrite", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   expect_message(
     result <- cdm$cohort1 |>
@@ -933,7 +935,7 @@ test_that("test if column exist, overwrite", {
       dplyr::arrange(cohort_start_date, subject_id) |>
       dplyr::select(date_all_0_to_30), na.rm = TRUE))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("overlapTable is empty, check return columns", {
@@ -990,13 +992,12 @@ test_that("overlapTable is empty, check return columns", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 2
-  )
-
+    numberIndividuals = 2,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm$cohort1 |>
     .addIntersect(
@@ -1020,7 +1021,7 @@ test_that("overlapTable is empty, check return columns", {
 
   expect_true(all(is.na(result$date_id2_0_to_inf)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("overlap is empty or not, multiple ids, check return columns", {
@@ -1079,12 +1080,12 @@ test_that("overlap is empty or not, multiple ids, check return columns", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    numberIndividuals = 3
-  )
+    numberIndividuals = 3,
+    source = "local"
+  ) |>
+    copyCdm()
 
   compareNA <- function(v1, v2) {
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -1201,27 +1202,29 @@ test_that("overlap is empty or not, multiple ids, check return columns", {
   expect_true(all(is.na(result$cohort_1_m30_to_m1)))
   expect_true(all(is.na(result$cohort_1_0_to_inf)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("non snake columns not repeated in output", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
-  attr(cdm$cohort1, "cohort_set") <- attr(cdm$cohort1, "cohort_set") |> dplyr::mutate(cohort_name = toupper(cohort_name))
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  attr(cdm$cohort1, "cohort_set") <- attr(cdm$cohort1, "cohort_set") |>
+    dplyr::mutate(cohort_name = toupper(cohort_name))
   cdm$cohort2 <- cdm$cohort2 |>
     addCohortIntersectFlag(targetCohortTable = "cohort1")
 
   expect_true("cohort_1_0_to_inf" %in% colnames(cdm$cohort2))
   expect_false("COHORT_1_0_to_inf" %in% colnames(cdm$cohort2))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("no NA when overwrite column", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    numberIndividuals = 1000
-  )
+  cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
+    copyCdm()
 
   # Presence in characteristis 'cohort 1' in 180 days before cohort start
   cdm$cohort1 <- cdm$cohort1 |>
@@ -1231,7 +1234,6 @@ test_that("no NA when overwrite column", {
       targetCohortId = 1,
       nameStyle = "{cohort_name}"
     )
-
 
   # Trying to overwrite the previous created variable, for example because the characteristics cohort has changed.
   expect_message(
@@ -1264,5 +1266,5 @@ test_that("no NA when overwrite column", {
 
   expect_true(!any(is.na(cdm$cohort1 |> dplyr::pull("cohort_1"))))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

@@ -18,6 +18,7 @@ Get the name of the start date column for a certain table in the cdm
 \examples{
 \donttest{
 library(PatientProfiles)
+
 startDateColumn("condition_occurrence")
 }
 

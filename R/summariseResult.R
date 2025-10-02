@@ -39,14 +39,16 @@
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' library(dplyr)
 #'
-#' cdm <- mockPatientProfiles()
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
 #' x <- cdm$cohort1 |>
-#'   addDemographics() |>
-#'   collect()
+#'   addDemographics()
+#'
 #' result <- summariseResult(x)
-#' mockDisconnect(cdm = cdm)
+#'
+#' result
+#'
 #' }
 #'
 summariseResult <- function(table,
@@ -59,7 +61,7 @@ summariseResult <- function(table,
                             counts = TRUE,
                             weights = NULL) {
   # initial checks
-  checkTable(table)
+  omopgenerics::assertTable(x = table, class = "tbl")
   if (length(variables) == 0 & length(estimates) == 0 & counts == FALSE) {
     cli::cli_inform("No analyses were selected.")
     return(omopgenerics::emptySummarisedResult())
@@ -135,16 +137,18 @@ summariseResult <- function(table,
     # collect if necessary
     if (length(weights) == 0) {
       if (identical(omopgenerics::sourceType(table), "sql server")) {
-        estimatesCollect <- "q|median"
+        estimatesCollect <- "q|median|density"
       } else {
-        estimatesCollect <- "q"
+        estimatesCollect <- "q|density"
       }
     } else {
-      estimatesCollect <- "q|median|sd|mean"
+      estimatesCollect <- "q|median|sd|mean|density"
     }
     collectFlag <- functions |>
       dplyr::filter(grepl(estimatesCollect, .data$estimate_name)) |>
       nrow() > 0
+    # collect also if dates are present
+    collectFlag <- collectFlag | any(functions$variable_type == "date")
     if (collectFlag) {
       cli::cli_inform(c(
         "!" = "Table is collected to memory as not all requested estimates are

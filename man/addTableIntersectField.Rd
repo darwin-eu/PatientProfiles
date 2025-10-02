@@ -50,8 +50,9 @@ will be considered.}
 required for date and days options).}
 
 \item{allowDuplicates}{Whether to allow multiple records with same
-conceptSet, person_id and targetDate. If switched to TRUE, it can have a
-different and unpredictable behavior depending on the cdm_source.}
+conceptSet, person_id and targetDate. If switched to TRUE, the created new
+columns (field) will be collapsed to a character vector separated by `;` to
+account for multiple values per person.}
 
 \item{nameStyle}{naming of the added column or columns, should include
 required parameters.}
@@ -68,7 +69,10 @@ entries with the target columns in a window of the user's choice.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
+
 cdm$cohort1 |>
   addTableIntersectField(
     tableName = "visit_occurrence",
@@ -76,7 +80,7 @@ cdm$cohort1 |>
     order = "last",
     window = c(-Inf, -1)
   )
-mockDisconnect(cdm = cdm)
+
 }
 
 }

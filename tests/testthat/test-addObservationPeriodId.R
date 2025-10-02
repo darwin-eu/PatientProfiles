@@ -22,11 +22,11 @@ test_that("add observation period id", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   my_cohort <- dplyr::tibble(
     cohort_definition_id = c(1L, 2L, 1L, 1L),
@@ -39,14 +39,11 @@ test_that("add observation period id", {
     ))
   )
 
-  cdm <- omopgenerics::insertTable(
-    cdm = cdm, name = "my_cohort", table = my_cohort
-  )
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "my_cohort", table = my_cohort)
 
   # note we have a cohort entry outside of observation to test expected NA
-  cdm$my_cohort <- omopgenerics::newCohortTable(cdm$my_cohort,
-    .softValidation = TRUE
-  )
+  cdm$my_cohort <- cdm$my_cohort |>
+    omopgenerics::newCohortTable(.softValidation = TRUE)
 
   cdm$my_cohort_obs <- cdm$my_cohort |>
     addObservationPeriodId()
@@ -166,7 +163,7 @@ test_that("add observation period id", {
   )
   expect_identical(x, y)
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check when there is the same record in multiple cohorts", {
@@ -191,11 +188,11 @@ test_that("check when there is the same record in multiple cohorts", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   my_cohort <- dplyr::tibble(
     cohort_definition_id = c(1L, 2L, 1L, 2L),
@@ -208,14 +205,11 @@ test_that("check when there is the same record in multiple cohorts", {
     ))
   )
 
-  cdm <- omopgenerics::insertTable(
-    cdm = cdm, name = "my_cohort", table = my_cohort
-  )
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "my_cohort", table = my_cohort)
 
   # note we have a cohort entry outside of observation to test expected NA
-  cdm$my_cohort <- omopgenerics::newCohortTable(cdm$my_cohort,
-                                                .softValidation = TRUE
-  )
+  cdm$my_cohort <- cdm$my_cohort |>
+    omopgenerics::newCohortTable(.softValidation = TRUE)
 
   cdm$my_cohort_obs <- cdm$my_cohort |>
     addObservationPeriodId()
@@ -241,6 +235,5 @@ test_that("check when there is the same record in multiple cohorts", {
     cdm$my_cohort |> dplyr::summarise(n = dplyr::n()) |> dplyr::pull("n") |> as.character()
   )
 
+  dropCreatedTables(cdm = cdm)
 })
-
-

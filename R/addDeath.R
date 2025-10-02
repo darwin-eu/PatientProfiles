@@ -29,12 +29,13 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDeathDate()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addDeathDate <- function(x,
@@ -69,12 +70,13 @@ addDeathDate <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDeathDays()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addDeathDays <- function(x,
@@ -110,12 +112,13 @@ addDeathDays <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDeathFlag()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addDeathFlag <- function(x,
