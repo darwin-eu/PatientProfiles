@@ -1,4 +1,12 @@
 
+# PatientProfiles 1.4.3
+
+* validate concept set names to be appropiate by @catalamarti in #806
+* explicit message for order by @catalamarti in #807
+* allowDuplicated documentation by @catalamarti in #805
+* Support local datasets by @catalamarti in #810
+* Deprecrate mockDisconnect by @catalamarti in #811
+
 # PatientProfiles 1.4.2
 
 * Allow NA values with density estimate by @catalamarti in #795
