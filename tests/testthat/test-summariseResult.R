@@ -1,4 +1,7 @@
 test_that("test all functions", {
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   x <- dplyr::tibble(
     s = c("g1", "g1", "g2", "g12", "g2", "g12"),
     v_1 = c(1, 2, 3, 4, 6, 3),
@@ -9,6 +12,10 @@ test_that("test all functions", {
       "1993-04-190"
     ))
   )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   s1 <- summariseResult(x)
   s2 <- summariseResult(x, strata = list("s"))
   s3 <- summariseResult(
@@ -31,17 +38,25 @@ test_that("test all functions", {
     headache_minf_to_0 = c(0, 1, 0),
     covid_minf_to_0 = c(1, 1, 0)
   )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_error(
     x1 <- summariseResult(
       x,
       strata = list()
     ))
+
+  x <- x |>
+    dplyr::collect() |>
+    dplyr::mutate(w = c(0.5, 0.25, 0.25))
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_error(
-    x2 <- summariseResult(
-      x |> dplyr::mutate(w = c(0.5, 0.25, 0.25)),
-      strata = list(),
-      weights = "w"
-    ))
+    x2 <- summariseResult(table = x, strata = list(), weights = "w")
+  )
   expect_true(nrow(x1) == nrow(x2))
 
   expect_no_error(
@@ -74,6 +89,10 @@ test_that("test all functions", {
     prior_history = c(365, 25, 14, 48),
     number_visits = c(0, 1, 0, 0)
   )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = cohort)
+  cohort <- cdm$test_table
+
   variables <- c("age", "number_visits", "prior_history", "sex")
   functions <- c(
     "mean", "sd", "median", "q25", "q75", "count_missing", "percentage_missing",
@@ -85,9 +104,18 @@ test_that("test all functions", {
     )
   )
 
+  cohort <- cohort |>
+    dplyr::collect() |>
+    dplyr::mutate(w = c(3, 0, 1, 2))
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = cohort)
+  cohort <- cdm$test_table
+
   expect_no_error(
     result <- summariseResult(
-      table = cohort |> dplyr::mutate(w = c(3, 0, 1, 2)), variables = variables, estimates = functions, weights = "w"
+      table = cohort,
+      variables = variables,
+      estimates = functions,
+      weights = "w"
     )
   )
 
@@ -96,12 +124,13 @@ test_that("test all functions", {
     omopgenerics::emptySummarisedResult(),
     ignore_attr = TRUE
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("groups and strata", {
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 1000
-  )
+  cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
+    copyCdm()
 
   result <- cdm$condition_occurrence |>
     addDemographics(
@@ -181,13 +210,12 @@ test_that("groups and strata", {
       summariseResult(weights = "sex")
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("table in db or local", {
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 1000
-  )
+  cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
+    copyCdm()
 
   # in db
   expect_no_error(cdm$condition_occurrence |>
@@ -220,14 +248,13 @@ test_that("table in db or local", {
       )
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("with and with overall groups and strata", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 1000
-  )
+  cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
+    copyCdm()
 
   test_data <- cdm$condition_occurrence |>
     addDemographics(
@@ -266,7 +293,7 @@ test_that("with and with overall groups and strata", {
                     dplyr::pull("group_name") %in%
                     c("overall")))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("obscure", {
@@ -281,6 +308,12 @@ test_that("obscure", {
       "1993-04-190"
     ))
   )
+
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
 
   # minCellCount = 1
   s <- summariseResult(x) |>
@@ -324,11 +357,14 @@ test_that("obscure", {
     suppress(minCellCount = 7)
   expect_true(nrow(s) == 34)
   expect_true(sum(s$estimate_value == "-") == 34)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test empty cohort", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   expect_no_error(
     cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
@@ -348,7 +384,6 @@ test_that("test empty cohort", {
       )
   )
 
-
   expect_no_error(
     cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
       summariseResult(
@@ -367,12 +402,13 @@ test_that("test empty cohort", {
       )
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test summary table naming", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   dat <-
     cdm$cohort1 |>
@@ -388,7 +424,7 @@ test_that("test summary table naming", {
     c("age_age", "age", "age_age_age", "age_age_age_age") %in% dat$variable_name
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("misisng counts", {
@@ -401,10 +437,12 @@ test_that("misisng counts", {
     prior_history = c(365, 25, 14, 48),
     number_visits = c(NA, 1, 0, 0)
   )
-  name <- CDMConnector::inSchema(writeSchema(), "test_table")
-  con <- connection()
-  DBI::dbWriteTable(con, name = name, value = cohort)
-  cohort <- dplyr::tbl(con, name)
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = cohort)
+  cohort <- cdm$test_table
+
   variables <- list(
     numeric = c(
       "age", "number_visits", "prior_history"
@@ -462,8 +500,8 @@ test_that("misisng counts", {
       is.na() |>
       all()
   )
-  DBI::dbRemoveTable(con, name = name)
-  DBI::dbDisconnect(conn = con, shutdown = TRUE)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("data is ordered", {
@@ -476,10 +514,13 @@ test_that("data is ordered", {
     prior_history = c(365, 25, 14, 48),
     number_visits = c(5, 1, 0, 0)
   )
-  name <- CDMConnector::inSchema(writeSchema(), "test_table")
-  con <- connection()
-  DBI::dbWriteTable(con, name = name, value = cohort)
-  testTable <- dplyr::tbl(con, name)
+
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = cohort)
+  testTable <- cdm$test_table
+
   variables <- list(
     numeric = c("age", "number_visits", "prior_history"),
     categorical = c("sex")
@@ -507,7 +548,6 @@ test_that("data is ordered", {
   order <- unique(result$variable_level[result$variable_name == "sex"])
   order <- order[!is.na(order)]
   expect_identical(order, c("Female", "Male"))
-  DBI::dbRemoveTable(con, name = name)
 
   cohort <- dplyr::tibble(
     cohort_definition_id = c(1, 1, 1, 2),
@@ -517,9 +557,10 @@ test_that("data is ordered", {
     prior_history = c(365, 25, 14, 48),
     number_visits = c(5, 1, 0, 0)
   )
-  name <- CDMConnector::inSchema(writeSchema(), "test_table")
-  DBI::dbWriteTable(con, name = name, value = cohort)
-  testTable <- dplyr::tbl(con, name)
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = cohort)
+  testTable <- cdm$test_table
+
   variables <- list(
     numeric = c("age", "number_visits", "prior_history"),
     categorical = c("sex")
@@ -547,17 +588,24 @@ test_that("data is ordered", {
   order <- unique(result$variable_level[result$variable_name == "sex"])
   order <- order[!is.na(order)]
   expect_identical(order, c("Male", "xFemale"))
-  DBI::dbRemoveTable(con, name = name)
 
-  DBI::dbDisconnect(conn = con, shutdown = TRUE)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("NA when min, max and mean works", {
   skip_on_cran()
   # case estimatrs > variables
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  x <- dplyr::tibble(group = c("N", "N", "V", "C", "C", "D"), var = c(NA, NA, NA, 1, 1, 1) |> as.integer())
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_warning(
-    res1 <- dplyr::tibble(group = c("N", "N", "V", "C", "C", "D"), var = c(NA, NA, NA, 1, 1, 1) |> as.integer()) |>
-      PatientProfiles::summariseResult(
+    res1 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "max", "mean", "median", "percentage", "q25")
       )
@@ -567,13 +615,19 @@ test_that("NA when min, max and mean works", {
     NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1",
     NA, NA, "2", "1", "0", "0"
   ))
+
+  x <- dplyr::tibble(
+    group = c("N", "N", "V", "C", "C", "D"),
+    var = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    w = c(0.25, 0, 0.25, 3, 0.5, 2)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_warning(
-    res1 <- dplyr::tibble(
-      group = c("N", "N", "V", "C", "C", "D"),
-      var = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      w = c(0.25, 0, 0.25, 3, 0.5, 2)
-    ) |>
-      PatientProfiles::summariseResult(
+    res1 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "max", "mean", "median", "percentage", "q25"),
         weights = "w",
@@ -586,13 +640,18 @@ test_that("NA when min, max and mean works", {
     '2', '0', '0'
   ))
 
+  x <- dplyr::tibble(
+    group = c("N", "N", "V", "C", "C", "D"),
+    var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    var2 = c(1, 1, 1, NA, NA, NA) |> as.integer()
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_warning(
-    res2 <- dplyr::tibble(
-      group = c("N", "N", "V", "C", "C", "D"),
-      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer()
-    ) |>
-      PatientProfiles::summariseResult(
+    res2 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "max", "mean", "median", "percentage", "q25"),
         counts = FALSE
@@ -605,14 +664,19 @@ test_that("NA when min, max and mean works", {
     NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
   ))
 
+  x <- dplyr::tibble(
+    group = c("N", "N", "V", "C", "C", "D"),
+    var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
+    w = c(0.25, 0, 0.25, 3, 0.5, 2)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_warning(
-    res2 <- dplyr::tibble(
-      group = c("N", "N", "V", "C", "C", "D"),
-      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
-      w = c(0.25, 0, 0.25, 3, 0.5, 2)
-    ) |>
-      PatientProfiles::summariseResult(
+    res2 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "mean", "percentage"),
         weights = "w",
@@ -625,15 +689,20 @@ test_that("NA when min, max and mean works", {
     NA, NA, "100", "100", "0", "0", "0.25", "0.25"
   ))
 
+  x <- dplyr::tibble(
+    group = c("N", "N", "V", "C", "C", "D"),
+    var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
+    var3 = c(NA, NA, NA, 1, 1, 1) |> as.integer()
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   # case estimatrs <= variables
   expect_no_warning(
-    res3 <- dplyr::tibble(
-      group = c("N", "N", "V", "C", "C", "D"),
-      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
-      var3 = c(NA, NA, NA, 1, 1, 1) |> as.integer()
-    ) |>
-      PatientProfiles::summariseResult(
+    res3 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "max", "mean"),
         counts = FALSE
@@ -645,15 +714,20 @@ test_that("NA when min, max and mean works", {
     "1", NA, NA
   ))
 
+  x <- dplyr::tibble(
+    group = c("N", "N", "V", "C", "C", "D"),
+    var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
+    var3 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
+    w = c(0.25, 0, 0.25, 3, 0.5, 2)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_warning(
-    res3 <- dplyr::tibble(
-      group = c("N", "N", "V", "C", "C", "D"),
-      var1 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      var2 = c(1, 1, 1, NA, NA, NA) |> as.integer(),
-      var3 = c(NA, NA, NA, 1, 1, 1) |> as.integer(),
-      w = c(0.25, 0, 0.25, 3, 0.5, 2)
-    ) |>
-      PatientProfiles::summariseResult(
+    res3 <- x |>
+      summariseResult(
         group = "group",
         estimates = c("min", "max", "mean"),
         weights = "w",
@@ -669,11 +743,13 @@ test_that("NA when min, max and mean works", {
   # no group no strata
   expect_no_warning(
     res4 <- dplyr::tibble(var1 = c(NA, NA, NA) |> as.integer()) |>
-      PatientProfiles::summariseResult(
+      summariseResult(
         estimates = c("min", "max", "mean")
       )
   )
   expect_equal(res4$estimate_value, c("3", NA, NA, NA))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("density works correctly", {
@@ -688,6 +764,13 @@ test_that("density works correctly", {
       "1993-04-190"
     ))
   )
+
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   est <- c("density", "mean", "count")
   var <- c("group", "age1", "age2", "asthma", "birth")
   expect_no_error(s <- summariseResult(x, estimates = est, variables = var))
@@ -747,10 +830,17 @@ test_that("density works correctly", {
     sw |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric()
   )
 
-  x <- x |> dplyr::mutate(w = c(0, 1, rep(0, 4)))
+  x <- x |>
+    dplyr::collect() |>
+    dplyr::mutate(w = c(0, 1, rep(0, 4)))
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test_table", table = x)
+  x <- cdm$test_table
+
   expect_no_error(sw <- summariseResult(x, estimates = "density", variables = "age1", weights = "w"))
   expect_false(
     all(s |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric() ==
     sw |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric())
   )
+
+  dropCreatedTables(cdm = cdm)
 })

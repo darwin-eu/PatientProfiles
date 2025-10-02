@@ -28,19 +28,20 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addObservationPeriodId()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addObservationPeriodId <- function(x,
                                    indexDate = "cohort_start_date",
                                    nameObservationPeriodId = "observation_period_id",
                                    name = NULL) {
-  x <- validateX(x)
+  x <- omopgenerics::validateCdmTable(table = x)
   name <- omopgenerics::validateNameArgument(
     name = name,
     cdm = omopgenerics::cdmReference(x),
@@ -68,19 +69,20 @@ addObservationPeriodId <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addObservationPeriodIdQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addObservationPeriodIdQuery <- function(x,
                                         indexDate = "cohort_start_date",
                                         nameObservationPeriodId = "observation_period_id") {
   x |>
-    validateX() |>
+    omopgenerics::validateCdmTable() |>
     .addObservationPeriodIdQuery(
       indexDate = indexDate,
       nameObservationPeriodId = nameObservationPeriodId
@@ -129,7 +131,7 @@ addObservationPeriodIdQuery <- function(x,
     dplyr::mutate(!!nameObservationPeriodId := as.integer(dplyr::row_number())) |>
     dplyr::ungroup() |>
     dplyr::filter(
-      .data[[indexDate]] <= .data[[cols[2]]] &&
+      .data[[indexDate]] <= .data[[cols[2]]] &
         .data[[indexDate]] >= .data[[cols[1]]]
     ) |>
     dplyr::select(dplyr::all_of(c(

@@ -40,12 +40,13 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addTableIntersectFlag(tableName = "visit_occurrence")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addTableIntersectFlag <- function(x,
@@ -60,7 +61,7 @@ addTableIntersectFlag <- function(x,
                                   name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tables = tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
   x <- x |>
@@ -110,12 +111,13 @@ addTableIntersectFlag <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addTableIntersectCount(tableName = "visit_occurrence")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addTableIntersectCount <- function(x,
@@ -130,7 +132,7 @@ addTableIntersectCount <- function(x,
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tables = tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
 
   x <- x |>
@@ -180,12 +182,13 @@ addTableIntersectCount <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addTableIntersectDate(tableName = "visit_occurrence")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addTableIntersectDate <- function(x,
@@ -200,8 +203,12 @@ addTableIntersectDate <- function(x,
                                   name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tables = tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
 
   x <- x |>
     .addIntersect(
@@ -250,12 +257,13 @@ addTableIntersectDate <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addTableIntersectDays(tableName = "visit_occurrence")
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addTableIntersectDays <- function(x,
@@ -270,8 +278,12 @@ addTableIntersectDays <- function(x,
                                   name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tables = tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
 
   x <- x |>
     .addIntersect(
@@ -317,8 +329,9 @@ addTableIntersectDays <- function(x,
 #' @param order which record is considered in case of multiple records (only
 #' required for date and days options).
 #' @param allowDuplicates Whether to allow multiple records with same
-#' conceptSet, person_id and targetDate. If switched to TRUE, it can have a
-#' different and unpredictable behavior depending on the cdm_source.
+#' conceptSet, person_id and targetDate. If switched to TRUE, the created new
+#' columns (field) will be collapsed to a character vector separated by `;` to
+#' account for multiple values per person.
 #' @param nameStyle naming of the added column or columns, should include
 #' required parameters.
 #' @param name Name of the new table, if NULL a temporary table is returned.
@@ -328,7 +341,10 @@ addTableIntersectDays <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
 #' cdm$cohort1 |>
 #'   addTableIntersectField(
 #'     tableName = "visit_occurrence",
@@ -336,7 +352,7 @@ addTableIntersectDays <- function(x,
 #'     order = "last",
 #'     window = c(-Inf, -1)
 #'   )
-#' mockDisconnect(cdm = cdm)
+#'
 #' }
 #'
 addTableIntersectField <- function(x,
@@ -353,9 +369,13 @@ addTableIntersectField <- function(x,
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tables = tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
   nameStyle <- gsub("\\{extra_value\\}", "\\{value\\}", nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
 
   x <- x |>
     .addIntersect(

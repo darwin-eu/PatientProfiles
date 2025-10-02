@@ -18,6 +18,7 @@ Get the name of the end date column for a certain table in the cdm
 \examples{
 \donttest{
 library(PatientProfiles)
+
 endDateColumn("condition_occurrence")
 }
 

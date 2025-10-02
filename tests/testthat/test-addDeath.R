@@ -1,10 +1,8 @@
 test_that("addDeathDate", {
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
+
   cdm$cohort1 <- addDeathDate(
     x = cdm$cohort1,
     indexDate = "cohort_start_date",
@@ -28,7 +26,6 @@ test_that("addDeathDate", {
     deathFlagName = "dflag"
   )
   expect_true("dflag" %in% colnames(cdm$cohort1))
-
 
   # warning if variable already exists
   expect_warning(cdm$cohort1 |>
@@ -97,17 +94,14 @@ test_that("addDeathDate", {
   expect_error(addDeathDays(x = cdm$cohort1))
   expect_error(addDeathFlag(x = cdm$cohort1))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check alternative index date", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   # test simple working example
   deathTable <- cdm$cohort1 |>
@@ -142,7 +136,7 @@ test_that("check alternative index date", {
     dplyr::filter(!is.na(ddays))
   expect_true(all(local_df$ddays == 0))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check window logic", {
@@ -165,13 +159,13 @@ test_that("check window logic", {
     death_date = as.Date("2022-06-30")
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     observation_period = observation_period,
     cohort2 = cohort1,
-    death = deathTable
-  )
+    death = deathTable,
+    source = "local"
+  ) |>
+    copyCdm()
 
   # with window of zero days around cohort end, we should only have death days for last cohort entry
   cdm$cohort1 <- cdm$cohort1 |>
@@ -240,17 +234,14 @@ test_that("check window logic", {
     dplyr::tally() |>
     dplyr::pull("n") == 1)
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check with omop table", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   cdm$condition_occurrence <- addDeathDate(
     x = cdm$condition_occurrence,
@@ -283,7 +274,7 @@ test_that("check with omop table", {
     deathDateName = "ddate"
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check functionality in presence of multiple death records", {
@@ -314,12 +305,13 @@ test_that("check functionality in presence of multiple death records", {
     period_type_concept_id = 0L
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     observation_period = observation_period,
-    cohort2 = cohort1
-  )
+    cohort2 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
+
   deathTable <- dplyr::tibble(
     person_id = as.integer(c(1, 1, 2)),
     death_date = c(as.Date("2022-06-30"), as.Date("2022-07-30"), as.Date("2020-01-01"))
@@ -364,5 +356,5 @@ test_that("check functionality in presence of multiple death records", {
     dplyr::distinct() |>
     dplyr::pull()), 2)
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

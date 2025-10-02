@@ -15,47 +15,6 @@
 # limitations under the License.
 
 #' @noRd
-checkX <- function(x) {
-  if (!isTRUE(inherits(x, "tbl_dbi"))) {
-    cli::cli_abort("x is not a valid table")
-  }
-  if ("person_id" %in% colnames(x) && "subject_id" %in% colnames(x)) {
-    cli::cli_abort(paste0(
-      "x can only contain an individual identifier, please remove 'person_id'",
-      " or 'subject_id'"
-    ))
-  }
-  if (!("person_id" %in% colnames(x)) && !("subject_id" %in% colnames(x))) {
-    cli::cli_abort(paste0(
-      "x must contain an individual identifier ('person_id'",
-      " or 'subject_id')"
-    ))
-  }
-  personVariable <- dplyr::if_else(
-    "person_id" %in% colnames(x), "person_id", "subject_id"
-  )
-  invisible(personVariable)
-}
-
-#' @noRd
-checkCdm <- function(cdm, tables = NULL) {
-  if (!isTRUE(inherits(cdm, "cdm_reference"))) {
-    cli::cli_abort("cdm a cdm_reference object.")
-  }
-  if (!is.null(tables)) {
-    tables <- tables[!(tables %in% names(cdm))]
-    if (length(tables) > 0) {
-      cli::cli_abort(paste0(
-        "tables: ",
-        paste0(tables, collapse = ", "),
-        " are not present in the cdm object"
-      ))
-    }
-  }
-  invisible(NULL)
-}
-
-#' @noRd
 checkVariableInX <- function(indexDate, x, nullOk = FALSE, name = "indexDate") {
   omopgenerics::assertCharacter(indexDate, length = 1, null = nullOk)
   if (!is.null(indexDate) && !(indexDate %in% colnames(x))) {
@@ -93,9 +52,7 @@ checkFilter <- function(filterVariable, filterId, idName, x) {
 #' @noRd
 checkValue <- function(value, x, name) {
   omopgenerics::assertCharacter(value, na = FALSE)
-  omopgenerics::assertTrue(all(value %in%
-                                 c("flag", "count", "date", "days",
-                                   colnames(x))))
+  omopgenerics::assertTrue(all(value %in% c("flag", "count", "date", "days", colnames(x))))
   valueOptions <- c("flag", "count", "date", "days")
   valueOptions <- valueOptions[valueOptions %in% colnames(x)]
   if (length(valueOptions) > 0) {
@@ -127,51 +84,6 @@ checkCohortNames <- function(x, targetCohortId, name) {
     "id_name" = set$cohort_name
   )
   invisible(parameters)
-}
-
-#' @noRd
-checkSnakeCase <- function(name, verbose = TRUE, null = FALSE, call = parent.frame()) {
-  omopgenerics::assertCharacter(name, call = call, null = null)
-  if (is.null(name)) {
-    return(invisible(name))
-  }
-  wrong <- FALSE
-  for (i in seq_along(name)) {
-    n <- name[i]
-    n <- gsub("[a-z]", "", n)
-    n <- gsub("[0-9]", "", n)
-    n <- gsub("_", "", n)
-    if (nchar(n) > 0) {
-      oldname <- name[i]
-      name[i] <- gsub("([[:upper:]])", "\\L\\1", perl = TRUE, name[i])
-      name[i] <- gsub("[^a-z,0-9.-]", "_", name[i])
-      name[i] <- gsub("-", "_", name[i])
-      if (verbose) {
-        cli::cli_alert(paste0(oldname, " has been changed to ", name[i]))
-      }
-      wrong <- TRUE
-    }
-  }
-  if (wrong && verbose) {
-    cli::cli_alert("some provided names were not in snake_case")
-    cli::cli_alert("names have been changed to lower case")
-    cli::cli_alert("special symbols in names have been changed to '_'")
-  }
-  return(invisible(name))
-}
-
-#' @noRd
-checkExclude <- function(exclude) {
-  if (!is.null(exclude) & !is.character(exclude)) {
-    cli::cli_abort("eclude must a character vector or NULL")
-  }
-}
-
-#' @noRd
-checkTable <- function(table) {
-  if (!("tbl" %in% class(table))) {
-    cli::cli_abort("table should be a tibble")
-  }
 }
 
 #' @noRd
@@ -350,24 +262,6 @@ warnOverwriteColumns <- function(x, nameStyle, values = list()) {
 }
 
 # checks demographics
-validateX <- function(x, call = parent.frame()) {
-  omopgenerics::assertClass(x, class = "cdm_table", call = call)
-  cols <- colnames(x)
-  n <- sum(c("person_id", "subject_id") %in% cols)
-  if (n == 0) cli::cli_abort("No person indentifier (person_id/subject_id) found in x.", call = call)
-  if (n == 2) cli::cli_abort("Only person_id or subject_id can be present in x.", call = call)
-  return(x)
-}
-validateLogical <- function(x, null = FALSE, call) {
-  if (null) {
-    return(NULL)
-  }
-  err <- paste(substitute(x), "must be TRUE or FALSE") |> rlang::set_names("!")
-  if (!is.logical(x)) cli::cli_abort(message = err, call = call)
-  if (length(x) != 1) cli::cli_abort(message = err, call = call)
-  if (is.na(x)) cli::cli_abort(message = err, call = call)
-  return(x)
-}
 validateIndexDate <- function(indexDate, null, x, call) {
   if (null) {
     return(NULL)

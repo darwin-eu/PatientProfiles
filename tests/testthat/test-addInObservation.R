@@ -1,6 +1,8 @@
 test_that("addInObservation, input length and type", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_error(addInObservation(2))
   expect_error(addInObservation(cdm$concept_ancestor))
   expect_error(addInObservation(cdm$cohort1, indexDate = 3))
@@ -9,12 +11,13 @@ test_that("addInObservation, input length and type", {
   expect_error(addInObservation(cdm$cohort2, nameStyle = 3))
   expect_error(addInObservation(cdm$cohort2, nameStyle = c("name1", "name2")))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addInObservation, cohort and condition_occurrence", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   result1 <- addInObservation(cdm$cohort1)
   expect_true("in_observation" %in% colnames(result1))
@@ -26,7 +29,6 @@ test_that("addInObservation, cohort and condition_occurrence", {
       dplyr::pull() == c(1, 1)
   ))
   result2 <- addInObservation(cdm$cohort2)
-
 
   expect_true("in_observation" %in% colnames(result2))
   expect_true(all(result2 |> dplyr::collect() |> dplyr::arrange(cohort_definition_id, cohort_start_date) |> dplyr::select(in_observation) |> dplyr::pull() == 1))
@@ -40,12 +42,13 @@ test_that("addInObservation, cohort and condition_occurrence", {
   expect_true("in_observation" %in% colnames(result4))
   expect_true(all(result4 |> dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) |> dplyr::select(in_observation) |> dplyr::pull() == 1))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addInObservation, parameters", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   result1 <- addInObservation(cdm$condition_occurrence, indexDate = "condition_end_date", nameStyle = "observ")
   expect_true("observ" %in% colnames(result1))
@@ -53,13 +56,11 @@ test_that("addInObservation, parameters", {
 
   expect_true(all(result1 |> dplyr::collect() |> dplyr::arrange(condition_occurrence_id, condition_start_date) |> dplyr::select(observ) |> dplyr::pull() == 1))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addInObservation, window", {
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = dplyr::tibble(
       cohort_definition_id = 1L,
       subject_id = 1L,
@@ -72,8 +73,10 @@ test_that("addInObservation, window", {
       observation_period_end_date = as.Date("2050-12-31"),
       observation_period_id = 1L,
       period_type_concept_id = 0L
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
 
   # both true
   expect_true(all(
@@ -163,12 +166,14 @@ test_that("addInObservation, window", {
       dplyr::pull(in_observation) == c(1, 1)
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("query gives same result as main function", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   # we should get the same results if compute was internal or not
   result_1 <- cdm$cohort1 |>
     addInObservation() |>
@@ -185,11 +190,11 @@ test_that("query gives same result as main function", {
   expect_equal(result_1, result_2)
 
   # check no tables are created along the way with query
-  start_tables <- CDMConnector::listSourceTables(cdm)
+  start_tables <- omopgenerics::listSourceTables(cdm)
   cdm$cohort1 |>
     addInObservationQuery()
-  end_tables <- CDMConnector::listSourceTables(cdm)
+  end_tables <- omopgenerics::listSourceTables(cdm)
   expect_equal(start_tables, end_tables)
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

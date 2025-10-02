@@ -21,14 +21,14 @@ is in observation.
 }
 \examples{
 \dontrun{
-con <- duckdb::dbConnect(duckdb::duckdb(CDMConnector::eunomiaDir()))
-cdm <- CDMConnector::cdmFromCon(
-  con = con, cdmSchema = "main", writeSchema = "main"
-)
+library(PatientProfiles)
+library(omock)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm$condition_occurrence |>
-  filterInObservation(indexDate = "condition_start_date") |>
-  dplyr::compute()
+  filterInObservation(indexDate = "condition_start_date")
+
 }
 
 }

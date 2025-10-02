@@ -59,12 +59,12 @@
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDemographicsQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addDemographicsQuery <- function(x,
@@ -138,12 +138,13 @@ addDemographicsQuery <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addAgeQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addAgeQuery <- function(x,
                         indexDate = "cohort_start_date",
@@ -199,12 +200,13 @@ addAgeQuery <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addFutureObservationQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addFutureObservationQuery <- function(x,
                                       indexDate = "cohort_start_date",
@@ -256,12 +258,13 @@ addFutureObservationQuery <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addPriorObservationQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addPriorObservationQuery <- function(x,
                                      indexDate = "cohort_start_date",
@@ -308,12 +311,13 @@ addPriorObservationQuery <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addSexQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addSexQuery <- function(x,
@@ -366,12 +370,12 @@ addSexQuery <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDateOfBirthQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addDateOfBirthQuery <- function(x,
                                 dateOfBirthName = "date_of_birth",
@@ -427,12 +431,12 @@ addDateOfBirthQuery <- function(x,
                                   dateOfBirthName,
                                   call = parent.frame()) {
   # initial checks
-  x <- validateX(x, call = call)
-  age <- validateLogical(age, call = call)
-  sex <- validateLogical(sex, call = call)
-  priorObservation <- validateLogical(priorObservation, call = call)
-  futureObservation <- validateLogical(futureObservation, call = call)
-  dateOfBirth <- validateLogical(dateOfBirth, call = call)
+  x <- omopgenerics::validateCdmTable(table = x)
+  omopgenerics::assertLogical(age, length = 1, call = call)
+  omopgenerics::assertLogical(sex, length = 1, call = call)
+  omopgenerics::assertLogical(priorObservation, length = 1, call = call)
+  omopgenerics::assertLogical(futureObservation, length = 1, call = call)
+  omopgenerics::assertLogical(dateOfBirth, length = 1, call = call)
   ageGroup <- omopgenerics::validateAgeGroupArgument(ageGroup, call = call)
   notIndexDate <- !any(c(
     age, !is.null(ageGroup), priorObservation, futureObservation
@@ -446,8 +450,8 @@ addDateOfBirthQuery <- function(x,
   noAge <- !age & length(ageGroup) == 0 & !dateOfBirth
   ageMissingMonth <- validateAgeMissingMonth(ageMissingMonth, null = noAge, call = call)
   ageMissingDay <- validateAgeMissingDay(ageMissingDay, null = noAge, call = call)
-  ageImposeMonth <- validateLogical(ageImposeMonth, null = noAge, call = call)
-  ageImposeDay <- validateLogical(ageImposeDay, null = noAge, call = call)
+  omopgenerics::assertLogical(ageImposeMonth, length = 1, call = call)
+  omopgenerics::assertLogical(ageImposeDay, length = 1, call = call)
   missingAgeGroupValue <- validateMissingValue(missingAgeGroupValue, null = !age & length(ageGroup) == 0, call = call)
   missingSexValue <- validateMissingValue(missingSexValue, null = !sex, call = call)
   priorObservationType <- validateType(priorObservationType, null = !priorObservation, call = call)
@@ -482,7 +486,7 @@ addDateOfBirthQuery <- function(x,
     if (priorObservation == TRUE) {
       if (priorObservationType == "days") {
         pHQ <- glue::glue(
-          'as.integer(local(CDMConnector::datediff("start_date","{indexDate}")))'
+          'as.integer(clock::date_count_between(start = .data$start_date, end = .data[["{indexDate}"]], precision = "day"))'
         )
       } else {
         pHQ <- ".data$start_date"
@@ -498,7 +502,7 @@ addDateOfBirthQuery <- function(x,
     if (futureObservation == TRUE) {
       if (futureObservationType == "days") {
         fOQ <- glue::glue(
-          'as.integer(local(CDMConnector::datediff("{indexDate}","end_date")))'
+          'as.integer(clock::date_count_between(start = .data[["{indexDate}"]], end = .data$end_date, precision = "day"))'
         )
       } else {
         fOQ <- ".data$end_date"
@@ -525,7 +529,7 @@ addDateOfBirthQuery <- function(x,
       dplyr::filter(
         .data$start_date <= .data[[indexDate]] &
           .data$end_date >= .data[[indexDate]]
-      ) %>%
+      ) |>
       dplyr::mutate(!!!pHQ, !!!fOQ) |>
       dplyr::select(dplyr::all_of(c(
         personVariable, indexDate, priorObservationName, futureObservationName
@@ -556,11 +560,16 @@ addDateOfBirthQuery <- function(x,
       if (!dateOfBirth) {
         dateOfBirthName <- newCols[1]
       }
+      if (inherits(x, "data.frame")) {
+        ft <- ", format = '%Y-%m-%d'"
+      } else {
+        ft <- ""
+      }
       dtBQ <- "dplyr::if_else(
         is.na(.data$year_of_birth),
         as.Date(NA),
         as.Date(paste0(as.character(as.integer(.data$year_of_birth)), '-',
-          as.character(as.integer({mB})), '-', as.character(as.integer({dB}))))
+          as.character(as.integer({mB})), '-', as.character(as.integer({dB}))){ft})
       )" |>
         glue::glue() |>
         rlang::parse_exprs() |>
@@ -569,7 +578,12 @@ addDateOfBirthQuery <- function(x,
         if (!age) {
           ageName <- newCols[2]
         }
-        aQ <- "as.integer(local(CDMConnector::datediff('{dateOfBirthName}', '{indexDate}', interval = 'year')))" |>
+        aQ <- "as.integer(floor(
+        (
+          (clock::get_year(.data[['{indexDate}']]) * 10000 + clock::get_month(.data[['{indexDate}']]) * 100 + clock::get_day(.data[['{indexDate}']])) -
+          (clock::get_year(.data[['{dateOfBirthName}']]) * 10000 + clock::get_month(.data[['{dateOfBirthName}']]) * 100 + clock::get_day(.data[['{dateOfBirthName}']]))
+        ) / 10000
+        ))" |>
           glue::glue() |>
           rlang::parse_exprs() |>
           rlang::set_names(ageName)
@@ -613,7 +627,7 @@ addDateOfBirthQuery <- function(x,
             sexName, dateOfBirthName
           ))),
         by = personVariable
-      ) %>%
+      ) |>
       dplyr::mutate(!!!c(aQ, agQ))
   }
 
@@ -631,7 +645,7 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
         paste0(ageName, " >= ", x[1], "L ~ '", nm, "'")
       } else {
         paste0(
-          ageName, " >= ", x[1], "L && ", ageName, "<= ", x[2], "L ~ '", nm, "'"
+          ageName, " >= ", x[1], "L & ", ageName, "<= ", x[2], "L ~ '", nm, "'"
         )
       }
     })
@@ -666,12 +680,13 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addInObservationQuery()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addInObservationQuery <- function(x,
@@ -696,7 +711,7 @@ addInObservationQuery <- function(x,
                                    nameStyle = "in_observation",
                                    tmpName = NULL,
                                    call = parent.frame()) {
-  x <- validateX(x, call = call)
+  x <- omopgenerics::validateCdmTable(table = x)
   indexDate <- validateIndexDate(indexDate, null = FALSE, x = x, call = call)
   if (!is.list(window)) window <- list(window)
   window <- omopgenerics::validateWindowArgument(window, call = call)
@@ -732,11 +747,11 @@ addInObservationQuery <- function(x,
       by = personVariable
     ) |>
     dplyr::filter(
-      .data[[indexDate]] <= .data[[end]] && .data[[indexDate]] >= .data[[start]]
-    ) %>%
+      .data[[indexDate]] <= .data[[end]] & .data[[indexDate]] >= .data[[start]]
+    ) |>
     dplyr::mutate(
-      !!startDif := !!CDMConnector::datediff(indexDate, start),
-      !!endDif := !!CDMConnector::datediff(indexDate, end)
+      !!startDif := clock::date_count_between(start = .data[[indexDate]], end = .data[[start]], precision = "day"),
+      !!endDif := clock::date_count_between(start = .data[[indexDate]], end = .data[[end]], precision = "day")
     )
   if(!is.null(tmpName)){
     xnew <- xnew |> dplyr::compute(name = tmpName, temporary = FALSE)

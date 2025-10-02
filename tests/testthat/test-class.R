@@ -17,11 +17,11 @@ test_that("test class consistency across cohort operations", {
     period_type_concept_id = c(0, 0)
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     dus_cohort = dus_cohort,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   operations <- list(
     "addInObservation" = addInObservation,
@@ -75,5 +75,5 @@ test_that("test class consistency across cohort operations", {
     info = "Testing sequence with addSex, addAge, and addCategories"
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

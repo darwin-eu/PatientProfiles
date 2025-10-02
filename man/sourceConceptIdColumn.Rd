@@ -18,6 +18,7 @@ Get the name of the source concept_id column for a certain table in the cdm
 \examples{
 \donttest{
 library(PatientProfiles)
+
 sourceConceptIdColumn("condition_occurrence")
 }
 

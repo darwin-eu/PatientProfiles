@@ -56,12 +56,12 @@
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDemographics()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addDemographics <- function(x,
@@ -135,11 +135,13 @@ addDemographics <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addAge()
-#' mockDisconnect(cdm = cdm)
+#'
 #' }
 addAge <- function(x,
                    indexDate = "cohort_start_date",
@@ -195,12 +197,13 @@ addAge <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addFutureObservation()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addFutureObservation <- function(x,
                                  indexDate = "cohort_start_date",
@@ -252,12 +255,13 @@ addFutureObservation <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addPriorObservation()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addPriorObservation <- function(x,
                                 indexDate = "cohort_start_date",
@@ -307,12 +311,13 @@ addPriorObservation <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addInObservation()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addInObservation <- function(x,
@@ -354,12 +359,13 @@ addInObservation <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockPatientProfiles()
+#' library(PatientProfiles)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addSex()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 addSex <- function(x,
@@ -412,12 +418,12 @@ addSex <- function(x,
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' cdm <- mockPatientProfiles()
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
 #'
 #' cdm$cohort1 |>
 #'   addDateOfBirth()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 addDateOfBirth <- function(x,
                            dateOfBirthName = "date_of_birth",

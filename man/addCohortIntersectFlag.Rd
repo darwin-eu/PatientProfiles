@@ -51,13 +51,15 @@ It creates columns to indicate the presence of cohorts
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2"
   )
-mockDisconnect(cdm = cdm)
+
 }
 
 }

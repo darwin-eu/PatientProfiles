@@ -92,12 +92,12 @@ Same as `addDemographics()`, except query is not computed to a table.
 \examples{
 \donttest{
 library(PatientProfiles)
-cdm <- mockPatientProfiles()
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDemographicsQuery()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

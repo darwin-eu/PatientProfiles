@@ -23,12 +23,13 @@ Compute the sex of the individuals
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addSex()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

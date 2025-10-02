@@ -56,12 +56,13 @@ and a target cohort
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addCohortIntersectDays(targetCohortTable = "cohort2")
 
-mockDisconnect(cdm = cdm)
 }
 
 }

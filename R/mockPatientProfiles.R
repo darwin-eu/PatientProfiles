@@ -16,14 +16,14 @@
 
 #' It creates a mock database for testing PatientProfiles package
 #'
-#' @param con A DBI connection to create the cdm mock object.
-#' @param writeSchema Name of an schema on the same connection with writing
-#' permisions.
 #' @param numberIndividuals Number of individuals to create in the cdm
 #' reference.
 #' @param ... User self defined tables to put in cdm, it can input as many
 #' as the user want.
-#' @param seed A number to set the seed. If NULL seed is not used.
+#' @param source Source for the mock cdm, it can either be 'local' or 'duckdb'.
+#' @param con deprecated.
+#' @param writeSchema deprecated.
+#' @param seed deprecated.
 #'
 #' @return A mock cdm_reference object created following user's specifications.
 #'
@@ -32,35 +32,43 @@
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
-#' library(CDMConnector)
 #'
 #' cdm <- mockPatientProfiles()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
-mockPatientProfiles <- function(con = NULL,
-                                writeSchema = NULL,
-                                numberIndividuals = 10,
+mockPatientProfiles <- function(numberIndividuals = 10,
                                 ...,
-                                seed = NULL) {
-  if (is.null(con)) {
-    rlang::check_installed("duckdb")
-    con <- duckdb::dbConnect(duckdb::duckdb(), ":memory:")
+                                source = "local",
+                                con = lifecycle::deprecated(),
+                                writeSchema = lifecycle::deprecated(),
+                                seed = lifecycle::deprecated()) {
+  if (lifecycle::is_present(con)) {
+    lifecycle::deprecate_soft(
+      when = "1.4.3",
+      what = "mockPatientProfiles(con= )",
+      with = "omopgenerics::insertCdmTo()"
+    )
   }
-  if (!inherits(con, "DBIConnection")) {
-    cli::cli_abort(c("!" = "`con` must be a DBI connection"))
+  if (lifecycle::is_present(writeSchema)) {
+    lifecycle::deprecate_soft(
+      when = "1.4.3",
+      what = "mockPatientProfiles(writeSchema= )",
+      with = "omopgenerics::insertCdmTo()"
+    )
   }
-  if (is.null(writeSchema) & inherits(con, "duckdb_connection")) {
-    writeSchema <- "main"
-  }
-  if (!is.null(seed)) {
-    set.seed(seed = seed)
+  if (lifecycle::is_present(seed)) {
+    lifecycle::deprecate_soft(
+      when = "1.4.3",
+      what = "mockPatientProfiles(seed= )",
+      with = "set.seed()"
+    )
   }
 
   # Put ... into a list
   tables <- list(...)
   omopgenerics::assertList(tables, named = TRUE, class = "data.frame")
+  omopgenerics::assertChoice(source, choices = c("local", "duckdb"), length = 1)
 
   # get persons
   if (length(tables) == 0) {
@@ -308,33 +316,33 @@ mockPatientProfiles <- function(con = NULL,
                     "cohort_start_date", "cohort_end_date")
   }
 
-  # into database
-  tablesToInsert <- names(tables)
-  src <- CDMConnector::dbSource(con = con, writeSchema = writeSchema)
+  # identify table types
+  ot <- names(tables)[names(tables) %in% omopgenerics::omopTables()]
+  ct <- tables[!names(tables) %in% ot] |>
+    purrr::keep(\(x) all(omopgenerics::cohortColumns(table = "cohort") %in% colnames(x))) |>
+    names()
+  oth <- names(tables)[!names(tables) %in% c(ot, ct)]
 
-  for (tab in names(tables)) {
-    x <- tables[[tab]]
-    for (col in c("subject_id", "person_id", "cohort_definition_id")) {
-      if (col %in% colnames(x)) {
-        x <- x |>
-          dplyr::mutate(!!col := as.integer(.data[[col]]))
-      }
-    }
-    omopgenerics::insertTable(
-      cdm = src, name = tab, table = x, overwrite = TRUE
-    ) |>
-      invisible()
+  # local cdm
+  cdm <- omopgenerics::cdmFromTables(tables = tables[ot],
+                                     cdmName = "PP_MOCK",
+                                     cohortTables = tables[ct])
+
+  # add other tables
+  for (nm in oth) {
+    cdm[[nm]] <- tables[[nm]]
   }
 
-  # create the cdm object
-  cdm <- CDMConnector::cdmFromCon(
-    con = con,
-    cdmSchema = writeSchema,
-    writeSchema = writeSchema,
-    cohortTables = names(tables)[!names(tables) %in% omopgenerics::omopTables()],
-    .softValidation = TRUE,
-    cdmName = "PP_MOCK"
-  )
+  # insert to duckdb if needed
+  if (source == "duckdb") {
+    rlang::check_required("duckdb")
+    rlang::check_required("CDMConnector")
+    to <- CDMConnector::dbSource(
+      con = duckdb::dbConnect(drv = duckdb::duckdb()),
+      writeSchema = "main"
+    )
+    cdm <- omopgenerics::insertCdmTo(cdm = cdm, to = to)
+  }
 
   return(cdm)
 }
@@ -375,13 +383,14 @@ addDate <- function(x, cols) {
   return(x)
 }
 
-#' Function to disconnect from the mock
+#' Deprecated
 #'
 #' @param cdm A cdm_reference object.
 #'
 #' @export
 #'
 mockDisconnect <- function(cdm) {
+  lifecycle::deprecate_soft(when = "1.4.3", what = "mockDisconnect()")
   cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::everything())
   if ("db_cdm" %in% class(omopgenerics::cdmSource(cdm))) {
     con <- CDMConnector::cdmCon(cdm = cdm)

@@ -36,12 +36,13 @@ Indicate if a certain record is within the observation period
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addInObservation()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

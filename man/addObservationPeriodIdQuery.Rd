@@ -28,12 +28,13 @@ is in. Result is not computed, only query is added.
 }
 \examples{
 \donttest{
-cdm <- mockPatientProfiles()
+library(PatientProfiles)
+
+cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addObservationPeriodIdQuery()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

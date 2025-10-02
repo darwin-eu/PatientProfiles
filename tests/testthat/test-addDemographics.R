@@ -1,9 +1,11 @@
 test_that("addInObservtaion, Inf windows, completeInterval T", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_no_error(
     cdm$cohort1 |>
-      PatientProfiles::addInObservation(
+      addInObservation(
         window = c(0, Inf),
         completeInterval = T
       )
@@ -11,23 +13,20 @@ test_that("addInObservtaion, Inf windows, completeInterval T", {
 
   expect_no_error(
     cdm$cohort1 |>
-      PatientProfiles::addInObservation(
+      addInObservation(
         window = c(-Inf, 0),
         completeInterval = T
       )
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addDemographics, input length, type", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   expect_error(addDemographics(2))
   expect_error(addDemographics(cdm$cohort1, indexDate = "condition_start_date"))
@@ -39,15 +38,14 @@ test_that("addDemographics, input length, type", {
       addDemographics(age = FALSE, sex = FALSE, priorObservation = FALSE, futureObservation = FALSE) |>
       dplyr::collect()
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addDemographics, cohort and condition_occurrence", {
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   oldcohort <- cdm$cohort1
   cdm$cohort1 <- cdm$cohort1 |>
@@ -77,13 +75,11 @@ test_that("addDemographics, cohort and condition_occurrence", {
     c("age", "sex", "prior_observation") %in% colnames(cdm$condition_occurrence)
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addDemographics, parameters", {
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = dplyr::tibble(
       person_id = as.integer(c(1, 3)),
       year_of_birth = as.integer(c(1998, 1998)),
@@ -105,8 +101,11 @@ test_that("addDemographics, parameters", {
       observation_period_start_date = as.Date(c("2006-05-09", "2010-01-01")),
       observation_period_end_date = as.Date(c("2028-05-09", "2055-01-01")),
       period_type_concept_id = 0L
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
+
   cdm$cohort1 <- cdm$cohort1 |>
     addDemographics(
       indexDate = "cohort_end_date",
@@ -143,15 +142,14 @@ test_that("addDemographics, parameters", {
   expect_true(s$sex == "Female")
   expect_true(s$prior_observation == 14610)
   expect_true(s$age_group == "41 or above")
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("partial demographics - cohorts", {
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   # only age
   cdm$cohort1a <- cdm$cohort1 |>
@@ -246,15 +244,14 @@ test_that("partial demographics - cohorts", {
       "future_observation"
     )
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("partial demographics - omop tables", {
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 11,
-    numberIndividuals = 10
-  )
+  set.seed(seed = 11)
+  cdm <- mockPatientProfiles(numberIndividuals = 10, source = "local") |>
+    copyCdm()
 
   # only age
   cdm$condition_occurrence1a <- cdm$condition_occurrence |>
@@ -308,6 +305,8 @@ test_that("partial demographics - omop tables", {
   # age and age group
   expect_true(all(c("age", "sex", "prior_observation")
   %in% colnames(cdm$condition_occurrence1d)))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("priorObservation and future_observation - outside of observation period", {
@@ -322,8 +321,6 @@ test_that("priorObservation and future_observation - outside of observation peri
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     condition_occurrence = condition_occurrence,
     observation_period = dplyr::tibble(
       observation_period_id = 1:2,
@@ -331,8 +328,10 @@ test_that("priorObservation and future_observation - outside of observation peri
       observation_period_start_date = as.Date("2005-01-01"),
       observation_period_end_date = as.Date("2025-01-01"),
       period_type_concept_id = 0L
-    )
-  )
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
 
   cdm$condition_occurrence <- cdm$condition_occurrence |>
     addDemographics(
@@ -346,6 +345,8 @@ test_that("priorObservation and future_observation - outside of observation peri
   # both should be missing
   expect_true(all(is.na(cdm$condition_occurrence |> dplyr::pull(prior_observation))))
   expect_true(all(is.na(cdm$condition_occurrence |> dplyr::pull(future_observation))))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("priorObservation - multiple observation periods", {
@@ -385,13 +386,13 @@ test_that("priorObservation - multiple observation periods", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     observation_period = observation_period,
     cohort1 = cohort1,
-    cohort2 = cohort1
-  )
+    cohort2 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
 
   cdm$cohort1a <- cdm$cohort1 |>
     addDemographics(
@@ -413,6 +414,8 @@ test_that("priorObservation - multiple observation periods", {
       as.Date("2012-02-01"),
       units = "days"
     ))))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("check that no extra rows are added", {
@@ -431,12 +434,13 @@ test_that("check that no extra rows are added", {
     period_type_concept_id = 0L
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     observation_period = observation_period,
-    cohort2 = cohort1
-  )
+    cohort2 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
+
   # using temp
   cdm$cohort1_new <- cdm$cohort1 |>
     addDemographics(
@@ -509,6 +513,8 @@ test_that("check that no extra rows are added", {
         dplyr::tally() |>
         dplyr::pull()
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("age at cohort end, no missing, check age computation", {
@@ -538,13 +544,13 @@ test_that("age at cohort end, no missing, check age computation", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     observation_period = observation_period,
-    cohort2 = cohort1
-  )
+    cohort2 = cohort1,
+    source = "local"
+  ) |>
+    copyCdm()
 
   # check if exact age is computed, ie, dob 2000-01-01, target date 2000-12-01  --> age 0
   # dob 2000-01-01, target date 2001-01-02  --> age 1
@@ -571,6 +577,8 @@ test_that("age at cohort end, no missing, check age computation", {
   expect_true(result |>
     dplyr::filter(subject_id == 2) |>
     dplyr::pull("age") == 1)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("age at cohort entry, missing year/month/day of birth", {
@@ -600,13 +608,13 @@ test_that("age at cohort entry, missing year/month/day of birth", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     cohort2 = cohort1,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- addAge(
     x = cdm$cohort1, ageImposeMonth = FALSE, ageImposeDay = FALSE,
@@ -625,6 +633,8 @@ test_that("age at cohort entry, missing year/month/day of birth", {
   ) |> dplyr::collect()
 
   expect_equal(result, resultB)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("multiple cohortIds, check age at cohort end", {
@@ -653,13 +663,13 @@ test_that("multiple cohortIds, check age at cohort end", {
     ethnicity_concept_id = 0L
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     cohort2 = cohort1,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   result <- cdm[["cohort1"]] |>
     addAge(indexDate = "cohort_end_date") |>
@@ -679,6 +689,8 @@ test_that("multiple cohortIds, check age at cohort end", {
     dplyr::collect()
 
   expect_equal(result, resultB)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("age group checks", {
@@ -708,13 +720,13 @@ test_that("age group checks", {
     ethnicity_concept_id = 0L
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     cohort2 = cohort1,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   x <- cdm$cohort1 |>
     addAge()
@@ -795,13 +807,14 @@ test_that("age group checks", {
     ethnicity_concept_id = 0L
   )
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     cohort2 = cohort1,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
+
   result1 <- cdm$cohort1 |>
     addAge() |>
     addCategories(
@@ -828,11 +841,14 @@ test_that("age group checks", {
   expect_true(result2 |>
     dplyr::filter(age == 10) |>
     dplyr::pull("age_group") == "None")
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("age variable names", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   result <- addAge(
     x = cdm[["cohort1"]],
@@ -846,17 +862,16 @@ test_that("age variable names", {
     ) |>
     dplyr::collect()
   expect_true(all(c("current_age", "working_age") %in% colnames(result)))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("expected errors", {
   skip_on_cran()
   # check input length and type for each of the arguments
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 1,
-    numberIndividuals = 5
-  )
+  set.seed(seed = 1)
+  cdm <- mockPatientProfiles(numberIndividuals = 5, source = "local") |>
+    copyCdm()
 
   expect_error(addAge("cdm$cohort1"))
   expect_error(addAge(cdm$cohort1, indexDate = "subject_id"))
@@ -877,7 +892,8 @@ test_that("expected errors", {
     ageImposeDay = "TRUE"
   ))
 
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   expect_error(result <- addAge())
   expect_error(result <- addAge(
@@ -900,7 +916,6 @@ test_that("expected errors", {
     x = cdm[["cohort1"]],
     ageMissingDay = 1.1
   ))
-
 
   cohort1 <- dplyr::tibble(
     cohort_definition_id = 1L,
@@ -928,15 +943,16 @@ test_that("expected errors", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     cohort1 = cohort1,
     cohort2 = cohort1,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
-  cdm$cohort1 <- cdm$cohort1 |> addAge()
+  cdm$cohort1 <- cdm$cohort1 |>
+    addAge()
 
   # error if overlapping ageGroups
   expect_error(addCategories(
@@ -958,16 +974,15 @@ test_that("expected errors", {
     "age",
     list("age_group" = list(c(1, 2)))
   ))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addCategories input", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
-    seed = 1,
-    numberIndividuals = 5
-  )
+  set.seed(seed = 1)
+  cdm <- mockPatientProfiles(numberIndividuals = 5, source = "local") |>
+    copyCdm()
 
   # overwrite when categories named same as variable, throw warning
   expect_error(
@@ -1036,7 +1051,7 @@ test_that("addCategories input", {
       )
   )
 
-  # Error when x is not a cdm object
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test if column exist, overwrite", {
@@ -1104,12 +1119,12 @@ test_that("test if column exist, overwrite", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
     cohort2 = cohort2,
-    observation_period = observation_period
-  )
+    observation_period = observation_period,
+    source = "local"
+  ) |>
+    copyCdm()
 
   expect_warning(
     result <- cdm$cohort1 |>
@@ -1149,6 +1164,8 @@ test_that("test if column exist, overwrite", {
       dplyr::collect() |>
       dplyr::arrange(cohort_start_date, subject_id) |>
       dplyr::select(future_observation), na.rm = TRUE))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("date of birth", {
@@ -1162,9 +1179,8 @@ test_that("date of birth", {
     race_concept_id = 0L,
     ethnicity_concept_id = 0L
   )
-  cdm <- mockPatientProfiles(
-    con = connection(), writeSchema = writeSchema(), person = person
-  )
+  cdm <- mockPatientProfiles(person = person, source = "local") |>
+    copyCdm()
 
   personDOB <- cdm$person |>
     addDateOfBirth() |>
@@ -1214,11 +1230,14 @@ test_that("date of birth", {
     "2001-01-01")
   expect_true(cohortDOB2 |> dplyr::filter(subject_id == 2) |> dplyr::pull(date_of_birth) ==
     "2005-01-01")
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("missing levels", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   result <- cdm[["cohort1"]] |>
     addDemographics(
@@ -1240,11 +1259,14 @@ test_that("missing levels", {
     addSex() |>
     dplyr::collect()
   expect_true(all(!is.na(result$sex)))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("overwriting obs period variables", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   cdm$cohort1 <- cdm$cohort1 |>
     addDateOfBirth() |>
@@ -1267,11 +1289,15 @@ test_that("overwriting obs period variables", {
     cdm$cohort2 |> dplyr::pull("observation_period_start_date") |> unique(),
     "a"
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addDemographics, date of birth option", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_no_error(x <- cdm$cohort1 |> addDemographics(dateOfBirth = T))
   expect_true("date_of_birth" %in% colnames(x))
   expect_no_error(
@@ -1282,23 +1308,29 @@ test_that("addDemographics, date of birth option", {
   expect_false("date_of_birth" %in% colnames(x))
   expect_no_error(x <- cdm$cohort1 |> addDemographics(dateOfBirth = F))
   expect_false("date_of_birth" %in% colnames(x))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("allow NA as age_group", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_no_error(
     cdm$cohort1 <- cdm$cohort1 |>
       addAge(ageGroup = list(c(1500, 1500)), missingAgeGroupValue = NA_character_)
   )
   expect_true(all(is.na(cdm$cohort1 |> dplyr::pull("age_group"))))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("allow age_group only", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_no_error(
     cdm$cohort1 <- cdm$cohort1 |>
       addDemographics(
@@ -1311,15 +1343,18 @@ test_that("allow age_group only", {
   )
   expect_true("age_group" %in% colnames(cdm$cohort1))
   expect_false("age" %in% colnames(cdm$cohort1))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("query gives same result as main function", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   # we should get the same results if compute was internal or not
   result_1 <- cdm$cohort1 |>
-    PatientProfiles::addDemographics() |>
+    addDemographics() |>
     dplyr::collect()|>
     dplyr::arrange(cohort_definition_id,
                    subject_id,
@@ -1333,36 +1368,39 @@ test_that("query gives same result as main function", {
   expect_equal(result_1, result_2)
 
   # check no tables are created along the way with query
-  start_tables <- CDMConnector::listSourceTables(cdm)
+  start_tables <- omopgenerics::listSourceTables(cdm)
   cdm$cohort1 |>
     addDemographicsQuery()
-  end_tables <- CDMConnector::listSourceTables(cdm)
+  end_tables <- omopgenerics::listSourceTables(cdm)
   expect_equal(start_tables, end_tables)
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("table names", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   # we should get the same results if compute was internal or not
 
   # by default will create a temp table if no name supplied
   expect_no_error(cdm$cohort2 <- cdm$cohort1 |>
-    PatientProfiles::addDemographics())
+    addDemographics())
 
   # providing a name will create a table with that name
   # must be the same on both sides of assinment
   expect_error(cdm$cohort2 <- cdm$cohort1 |>
-    PatientProfiles::addDemographics(name = "cohort_3"))
+    addDemographics(name = "cohort_3"))
   expect_no_error(cdm$cohort_3 <- cdm$cohort1 |>
-    PatientProfiles::addDemographics(name = "cohort_3"))
+    addDemographics(name = "cohort_3"))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test query functions", {
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
 
   fun1 <- list(
     addAge,
@@ -1395,5 +1433,5 @@ test_that("test query functions", {
     expect_identical(x, y)
   }
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

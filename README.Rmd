@@ -43,15 +43,17 @@ citation("PatientProfiles")
 The PatientProfiles package is designed to work with data in the OMOP CDM format, so our first step is to create a reference to the data using the CDMConnector package. 
 
 ```{r, message=FALSE}
-library(CDMConnector)
 library(PatientProfiles)
 library(dplyr)
 ```
 
 Creating a connection to a Postgres database would for example look like:
 ```{r, eval=FALSE}
-con <- DBI::dbConnect(
-  RPostgres::Postgres(),
+library(RPostgres)
+library(CDMConnector)
+
+con <- dbConnect(
+  drv = Postgres(),
   dbname = Sys.getenv("CDM5_POSTGRESQL_DBNAME"),
   host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
   user = Sys.getenv("CDM5_POSTGRESQL_USER"),
@@ -59,7 +61,7 @@ con <- DBI::dbConnect(
 )
 
 cdm <- cdmFromCon(
-  con,
+  con = con,
   cdmSchema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
   writeSchema = Sys.getenv("CDM5_POSTGRESQL_RESULT_SCHEMA")
 )
@@ -67,7 +69,7 @@ cdm <- cdmFromCon(
 To see how you would create a reference to your database please consult the CDMConnector package [documentation](https://darwin-eu.github.io/CDMConnector/articles/a04_DBI_connection_examples.html). For this example though we'll work with simulated data, and we'll generate an example cdm reference like so:
 
 ```{r}
-cdm <- mockPatientProfiles(numberIndividuals = 1000)
+cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "duckdb")
 ```
 
 ### Adding individuals´ characteristics
@@ -127,7 +129,7 @@ cdm$cohort1 |>
 We can use `addCohortIntersectFlag` to add a flag for the presence (or not) of a cohort in a certain window.
 
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>
@@ -147,7 +149,7 @@ cdm$cohort1 |>
 If we wanted the number of appearances, we could instead use the `addCohortIntersectCount` function
 
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>
@@ -169,7 +171,7 @@ Say we wanted the date at which an individual was in another cohort then we can 
 
 First occurrence:
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>
@@ -189,7 +191,7 @@ cdm$cohort1 |>
 
 Last occurrence:
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>
@@ -211,7 +213,7 @@ cdm$cohort1 |>
 Instead of returning a date, we could return the days to the intersection by using `addCohortIntersectDays`
 
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>
@@ -234,7 +236,7 @@ cdm$cohort1 |>
 If we want to combine multiple cohort intersects we can concatenate the operations using the `pipe` operator:
 
 ```{r, echo = FALSE}
-cdm <- mockPatientProfiles()
+cdm <- mockPatientProfiles(source = "duckdb")
 ```
 ```{r}
 cdm$cohort1 |>

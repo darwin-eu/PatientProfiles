@@ -20,13 +20,11 @@ Cohorts are often a key component in studies that use the OMOP CDM. They may be 
 Cohorts have a particular format in the OMOP CDM, which we can see for two cohort tables created by the `mockPatientProfiles()` function provided by PatientProfiles, which mimics a database in the OMOP CDM format. We can see the first cohort table contains 2 cohorts while the second contains 3 cohorts.
 
 ```{r, message= FALSE, warning=FALSE}
-library(CDMConnector)
 library(PatientProfiles)
-library(duckdb)
 library(dplyr)
 library(ggplot2)
 
-cdm <- mockPatientProfiles(numberIndividuals = 1000)
+cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "duckdb")
 
 cdm$cohort1 |>
   glimpse()
@@ -96,14 +94,14 @@ cdm$cohort1 |>
 To consider the impact of the different options we can choose when identifying cohort intersections let´s consider a toy example with a single patient with common cold (diagnosed on the 1st February 2020 and ending on the 15th February 2020). This person had two records for aspirin, one ending shortly before their start date for common cold and the other starting during their record for common cold.
 
 ```{r, message= FALSE, warning=FALSE}
-common_cold <- dplyr::tibble(
+common_cold <- tibble(
   cohort_definition_id = 1,
   subject_id = 1,
   cohort_start_date = as.Date("2020-02-01"),
   cohort_end_date = as.Date("2020-02-15")
 )
 
-aspirin <- dplyr::tibble(
+aspirin <- tibble(
   cohort_definition_id = c(1, 1),
   subject_id = c(1, 1),
   cohort_start_date = as.Date(c("2020-01-01", "2020-02-10")),
@@ -143,7 +141,8 @@ Whether we consider there to be a cohort intersection between the common cold an
 cdm <- mockPatientProfiles(
   cohort1 = common_cold,
   cohort2 = aspirin,
-  numberIndividuals = 2
+  numberIndividuals = 2,
+  source = "duckdb"
 )
 ```
 

@@ -1,5 +1,7 @@
 test_that("basic structures", {
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   cdm$ati_visit <- cdm$cohort1 |>
     addTableIntersectCount(
       tableName = "visit_occurrence",
@@ -21,12 +23,15 @@ test_that("basic structures", {
     "visit_occurrence_flag_0_to_inf", "visit_occurrence_count_0_to_inf",
     "visit_occurrence_date_0_to_inf", "visit_occurrence_days_0_to_inf"
   ) %in% colnames(cdm$ati_visit)))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("input validation", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   expect_error(expect_warning(cdm$cohort1 |>
     addTableIntersect(
       tableName = "visit_occurrence",
@@ -104,7 +109,8 @@ test_that("input validation", {
       tableName = "visit_occurrence",
       nameStyle = "table_name_value_window_name"
     )))
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addTableIntersectCount example", {
@@ -160,13 +166,14 @@ test_that("addTableIntersectCount example", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    drug_exposure = drug_exposure
-  )
+    drug_exposure = drug_exposure,
+    source = "local"
+  ) |>
+    copyCdm()
+
   de_count <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectCount(
+    addTableIntersectCount(
       tableName = "drug_exposure",
       window = list(c(-50, 50))
     ) |>
@@ -202,7 +209,7 @@ test_that("addTableIntersectCount example", {
     0
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addTableIntersectFlag example", {
@@ -254,13 +261,14 @@ test_that("addTableIntersectFlag example", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    drug_exposure = drug_exposure
-  )
+    drug_exposure = drug_exposure,
+    source = "local"
+  ) |>
+    copyCdm()
+
   de_flag <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectFlag(
+    addTableIntersectFlag(
       tableName = "drug_exposure",
       window = list(
         c(-50, 50),
@@ -309,7 +317,7 @@ test_that("addTableIntersectFlag example", {
     dplyr::pull("drug_exposure_minf_to_0") |>
     as.numeric()) == 1))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addTableIntersectDate example", {
@@ -361,13 +369,14 @@ test_that("addTableIntersectDate example", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    drug_exposure = drug_exposure
-  )
+    drug_exposure = drug_exposure,
+    source = "local"
+  ) |>
+    copyCdm()
+
   de_date <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectDate(
+    addTableIntersectDate(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0))
     ) |>
@@ -405,7 +414,7 @@ test_that("addTableIntersectDate example", {
     as.Date("2020-01-15")
   )
   de_date2 <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectDate(
+    addTableIntersectDate(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0)),
       order = "last"
@@ -444,7 +453,7 @@ test_that("addTableIntersectDate example", {
     as.Date("2023-02-16")
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addTableIntersectDays example", {
@@ -496,13 +505,14 @@ test_that("addTableIntersectDays example", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    drug_exposure = drug_exposure
-  )
+    drug_exposure = drug_exposure,
+    source = "local"
+  ) |>
+    copyCdm()
+
   de_days <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectDays(
+    addTableIntersectDays(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0))
     ) |>
@@ -538,7 +548,7 @@ test_that("addTableIntersectDays example", {
   )
 
   de_days2 <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectDays(
+    addTableIntersectDays(
       tableName = "drug_exposure",
       window = list(c(0, Inf)),
       order = "last"
@@ -574,7 +584,7 @@ test_that("addTableIntersectDays example", {
     as.numeric(as.Date("2023-02-16") - as.Date("2020-01-01"))
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("addTableIntersectFields example", {
@@ -626,14 +636,14 @@ test_that("addTableIntersectFields example", {
   )
 
   cdm <- mockPatientProfiles(
-    con = connection(),
-    writeSchema = writeSchema(),
     cohort1 = cohort1,
-    drug_exposure = drug_exposure
-  )
+    drug_exposure = drug_exposure,
+    source = "local"
+  ) |>
+    copyCdm()
 
   de_field <- cdm$cohort1 |>
-    PatientProfiles::addTableIntersectField(
+    addTableIntersectField(
       tableName = "drug_exposure",
       window = list(c(-Inf, 0)),
       field = "drug_concept_id"
@@ -662,5 +672,5 @@ test_that("addTableIntersectFields example", {
     dplyr::pull("drug_exposure_drug_concept_id_minf_to_0") |>
     as.integer()) %in% c(1, 2, 3)))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

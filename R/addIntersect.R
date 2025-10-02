@@ -38,13 +38,14 @@
   targetStartDate <- eval(targetStartDate)
   targetEndDate <- eval(targetEndDate)
 
-  cdm <- omopgenerics::cdmReference(x)
   # initial checks
-  personVariable <- checkX(x)
+  omopgenerics::validateCdmTable(table = x)
+  personVariable <- omopgenerics::getPersonIdentifier(x = x)
+  cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName, length = 1, na = FALSE)
   omopgenerics::assertCharacter(tableName)
-  checkCdm(cdm, tableName)
-  personVariableTable <- checkX(cdm[[tableName]])
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
+  personVariableTable <- omopgenerics::getPersonIdentifier(x = cdm[[tableName]])
   extraValue <- checkValue(value, cdm[[tableName]], tableName)
   filterTbl <- checkFilter(filterVariable, filterId, idName, cdm[[tableName]])
   window <- omopgenerics::validateWindowArgument(window)
@@ -59,7 +60,7 @@
     checkCensorDate(x, censorDate)
   }
   if (!is.null(idName)) {
-    idName <- checkSnakeCase(idName)
+    idName <- omopgenerics::toSnakeCase(idName)
   }
 
   tablePrefix <- omopgenerics::tmpPrefix()
@@ -101,7 +102,7 @@
       id_name = .data$id_name,
       window_name = .data$window_name
     ))) |>
-    dplyr::mutate(colnam = checkSnakeCase(.data$colnam, verbose = F)) |>
+    dplyr::mutate(colnam = omopgenerics::toSnakeCase(.data$colnam)) |>
     dplyr::inner_join(
       dplyr::tibble(
         window_name = names(window),
@@ -169,10 +170,10 @@
         dplyr::filter(
           .data[[indexDate]] >= .data[[idsObs[1]]] &
             .data[[indexDate]] <= .data[[idsObs[2]]]
-        ) %>%
+        ) |>
         dplyr::mutate(
-          !!idsObs[1] := as.integer(!!CDMConnector::datediff(start = indexDate, end = idsObs[1])),
-          !!idsObs[2] := as.integer(!!CDMConnector::datediff(start = indexDate, end = idsObs[2]))
+          !!idsObs[1] := as.integer(clock::date_count_between(start = .data[[indexDate]], end = .data[[idsObs[1]]], precision = "day")),
+          !!idsObs[2] := as.integer(clock::date_count_between(start = .data[[indexDate]], end = .data[[idsObs[2]]], precision = "day"))
         ) |>
         dplyr::compute(name = omopgenerics::uniqueTableName(prefix = tablePrefix))
     }
@@ -207,10 +208,10 @@
       )
   }
 
-  result <- result %>%
+  result <- result |>
     dplyr::mutate(
-      "start" = !!CDMConnector::datediff("index_date", "start_date"),
-      "end" = !!CDMConnector::datediff("index_date", "end_date")
+      "start" = clock::date_count_between(start = .data$index_date, end = .data$start_date, precision = "day"),
+      "end" = clock::date_count_between(start = .data$index_date, end = .data$end_date, precision = "day")
     ) |>
     dplyr::select(!dplyr::any_of(c(
       "censor_date", "start_date", "end_date", "start_obs", "end_obs"
@@ -284,9 +285,18 @@
           resultDTO <- resultDTO |>
             dplyr::filter(.data$days == max(.data$days, na.rm = TRUE))
         }
+        if (allowDuplicates) {
+          qs <- extraValue |>
+            rlang::set_names() |>
+            purrr::map_chr(\(x) paste0('stringr::str_flatten(.data[["', x, '"]], collapse = "; ")')) |>
+            rlang::parse_exprs()
+          resultDTO <- resultDTO |>
+            dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id_name, .data$days) |>
+            dplyr::summarise(!!!qs, .groups = "drop")
+        }
         if ("date" %in% value) {
-          resultDTO <- resultDTO %>%
-            dplyr::mutate(date = as.Date(!!CDMConnector::dateadd("index_date", "days")))
+          resultDTO <- resultDTO |>
+            dplyr::mutate(date = as.Date(clock::add_days(x = .data$index_date, n = .data$days)))
         }
       } else {
         resultDTO <- resultW |>
@@ -303,8 +313,8 @@
             )
         }
         if ("date" %in% value) {
-          resultDTO <- resultDTO %>%
-            dplyr::mutate(date = as.Date(!!CDMConnector::dateadd("index_date", "days")))
+          resultDTO <- resultDTO |>
+            dplyr::mutate(date = as.Date(clock::add_days(x = .data$index_date, n = .data$days)))
         }
       }
 
@@ -440,9 +450,6 @@
 
   return(x)
 }
-filterWindow <- function(w1, w2, col) {
-
-}
 
 #' Get the name of the start date column for a certain table in the cdm
 #'
@@ -455,6 +462,7 @@ filterWindow <- function(w1, w2, col) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
+#'
 #' startDateColumn("condition_occurrence")
 #' }
 #'
@@ -478,6 +486,7 @@ startDateColumn <- function(tableName) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
+#'
 #' endDateColumn("condition_occurrence")
 #' }
 #'
@@ -501,6 +510,7 @@ endDateColumn <- function(tableName) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
+#'
 #' standardConceptIdColumn("condition_occurrence")
 #' }
 #'
@@ -524,6 +534,7 @@ standardConceptIdColumn <- function(tableName) {
 #' @examples
 #' \donttest{
 #' library(PatientProfiles)
+#'
 #' sourceConceptIdColumn("condition_occurrence")
 #' }
 #'
@@ -534,4 +545,11 @@ sourceConceptIdColumn <- function(tableName) {
     col <- NA_character_
   }
   return(col)
+}
+
+messageOrder <- function(order) {
+  cli::cli_inform(c("i" = "`order` argument is populated by default to
+                    {.pkg {order}}, which means {order} ever record in the
+                    window will be considered. Populate the argument explicitly
+                    to silence this message."))
 }

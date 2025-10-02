@@ -2,7 +2,7 @@
 % Please edit documentation in R/mockPatientProfiles.R
 \name{mockDisconnect}
 \alias{mockDisconnect}
-\title{Function to disconnect from the mock}
+\title{Deprecated}
 \usage{
 mockDisconnect(cdm)
 }
@@ -10,5 +10,5 @@ mockDisconnect(cdm)
 \item{cdm}{A cdm_reference object.}
 }
 \description{
-Function to disconnect from the mock
+Deprecated
 }

@@ -1,17 +1,12 @@
 test_that("addConceptIntersect", {
   skip_on_cran()
-  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(
-    con = con, cdmSchema = "main", writeSchema = "main"
-  )
-  cdm <- CDMConnector::copyCdmTo(
-    con = connection(), cdm = cdm, schema = writeSchema()
-  )
-  DBI::dbDisconnect(conn = con, shutdown = TRUE)
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
 
   # create a cohort
-  cdm <- CDMConnector::generateConceptCohortSet(
-    cdm = cdm, conceptSet = list("sinusitis" = c(4294548L, 40481087L, 257012L)),
+  cdm$my_cohort <- CohortConstructor::conceptCohort(
+    cdm = cdm,
+    conceptSet =  list("sinusitis" = c(4294548L, 40481087L, 257012L)),
     name = "my_cohort"
   )
 
@@ -98,28 +93,20 @@ test_that("addConceptIntersect", {
       )
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("conceptSetExpression", {
   skip_on_cran()
   skip_if_not_installed("omopgenerics", minimum_version = "1.1.0")
-  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(
-    con = con, cdmSchema = "main", writeSchema = "main"
-  )
-  cdm <- CDMConnector::copyCdmTo(
-    con = connection(), cdm = cdm, schema = writeSchema()
-  )
-  DBI::dbDisconnect(conn = con, shutdown = TRUE)
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
 
   # create a cohort
-  cdm <- CDMConnector::generateConceptCohortSet(
+  cdm$my_cohort <- CohortConstructor::conceptCohort(
     cdm = cdm,
     conceptSet = list("sinusitis" = c(4294548L, 40481087L, 257012L)),
-    name = "my_cohort",
-    limit = "all",
-    end = 0
+    name = "my_cohort"
   )
 
   # get as codelist
@@ -157,11 +144,15 @@ test_that("conceptSetExpression", {
       dplyr::arrange(dplyr::across(dplyr::all_of(ord)))
   }
   expect_identical(prepareData(x1), prepareData(x2))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("unsupported domain name", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   concept <- dplyr::tibble(
     concept_id = c(1125315),
     domain_id = "random",
@@ -173,7 +164,7 @@ test_that("unsupported domain name", {
     invalid_reason = NA_character_
   ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-  cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "concept", table = concept)
 
   expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
@@ -197,12 +188,14 @@ test_that("unsupported domain name", {
  expect_true(all(cdm$cohort1a |>
     dplyr::pull("new_col") == 0L))
 
-  mockDisconnect(cdm = cdm)
+ dropCreatedTables(cdm = cdm)
 })
 
 test_that("NA domain name", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   concept <- dplyr::tibble(
     concept_id = c(1125315),
     domain_id = NA_character_,
@@ -214,7 +207,7 @@ test_that("NA domain name", {
     invalid_reason = NA_character_
   ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-  cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "concept", table = concept)
 
   expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
@@ -227,12 +220,15 @@ test_that("NA domain name", {
       (result |>
         colnames())
   )
-  mockDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("domain name not in cdm", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(con = connection(), writeSchema = writeSchema())
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   concept <- dplyr::tibble(
     concept_id = c(1125315L),
     domain_id = "device",
@@ -244,7 +240,7 @@ test_that("domain name not in cdm", {
     invalid_reason = NA_character_
   ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-  cdm <- CDMConnector::insertTable(cdm, "concept", concept)
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "concept", table = concept)
 
   expect_no_warning(result <- cdm$cohort1 |>
     addConceptIntersectFlag(
@@ -258,12 +254,13 @@ test_that("domain name not in cdm", {
         colnames())
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("missing event end date", {
   skip_on_cran()
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
 
   cohort <- dplyr::tibble(
     cohort_definition_id = 1L,
@@ -271,66 +268,64 @@ test_that("missing event end date", {
     cohort_start_date = as.Date("2012-10-10"),
     cohort_end_date = as.Date("2013-10-10")
   )
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "cohort", table = cohort)
+  cdm$cohort <- omopgenerics::newCohortTable(table = cdm$cohort)
 
-  DBI::dbWriteTable(con, "cohort", cohort)
-  cdm <- CDMConnector::cdmFromCon(
-    con = con, cdmSchema = "main", writeSchema = "main", cohortTables = "cohort"
-  )
-
-  cdm <- cdm |>
-    CDMConnector::cdmSubset(personId = 273L)
-
+  for (nm in names(cdm)) {
+    if ("person_id" %in% colnames(cdm[[nm]])) {
+      cdm[[nm]] <- cdm[[nm]] |>
+        dplyr::filter(.data$person_id == 273L)
+    }
+  }
 
   expect_true(cdm$cohort |>
-    PatientProfiles::addConceptIntersectFlag(
+    addConceptIntersectFlag(
       conceptSet = list(a = 192671L),
       window = c(-Inf, 0)
     ) |>
     dplyr::pull("a_minf_to_0") == 1)
 
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("records out of observation", {
 
-  cdm <- mockPatientProfiles(con = connection(),
-                             writeSchema = writeSchema())
-  cdm <- omopgenerics::insertTable(
-    cdm, "observation_period",
-    table = data.frame(observation_period_id = 1L,
-                       person_id = 1L,
-                       observation_period_start_date = as.Date("2000-01-01"),
-                       observation_period_end_date  = as.Date("2010-01-01"),
-                       period_type_concept_id = 1L))
-  cdm <- omopgenerics::insertTable(
-    cdm, "my_cohort",
-    table = data.frame(cohort_definition_id = 1L,
-                       subject_id = 1L,
-                       cohort_start_date = as.Date("2000-01-01"),
-                       cohort_end_date = as.Date("2010-01-01")))
-  # add a concept to put out of observation
-  cdm <- omopgenerics::insertTable(cdm, "concept",
-                            table = data.frame(concept_id = 99L,
-                                               concept_name = "concept",
-                                               domain_id = "condition",
-                                               vocabulary_id = "test",
-                                               concept_class_id = 1L,
-                                               concept_code = 99L,
-                                               valid_start_date = as.Date("1900-01-01"),
-                                               valid_end_date = as.Date("2099-01-01")))
-
-  cdm <- omopgenerics::insertTable(cdm, "condition_occurrence",
-                                   table = data.frame(condition_occurrence_id = c(1L, 2L),
-                                                      person_id = c(1L, 1L),
-                                                      condition_concept_id = c(99L, 99L),
-                                                      condition_start_date = c(as.Date("1990-01-01"),
-                                                                               as.Date("1991-01-01")),
-                                                      condition_end_date= c(as.Date("1990-01-01"),
-                                                                            as.Date("1991-01-01")),
-                                                      condition_type_concept_id = c(1L, 1L))
-  )
-
+  cdm <- mockPatientProfiles(
+    observation_period = dplyr::tibble(
+      observation_period_id = 1L,
+      person_id = 1L,
+      observation_period_start_date = as.Date("2000-01-01"),
+      observation_period_end_date  = as.Date("2010-01-01"),
+      period_type_concept_id = 1L
+    ),
+    my_cohort = dplyr::tibble(
+      cohort_definition_id = 1L,
+      subject_id = 1L,
+      cohort_start_date = as.Date("2000-01-01"),
+      cohort_end_date = as.Date("2010-01-01")
+    ),
+    concept = dplyr::tibble(
+      concept_id = 99L,
+      concept_name = "concept",
+      domain_id = "condition",
+      vocabulary_id = "test",
+      concept_class_id = "1",
+      concept_code = "99",
+      valid_start_date = as.Date("1900-01-01"),
+      valid_end_date = as.Date("2099-01-01")
+    ),
+    condition_occurrence = dplyr::tibble(
+      condition_occurrence_id = c(1L, 2L),
+      person_id = c(1L, 1L),
+      condition_concept_id = c(99L, 99L),
+      condition_start_date = as.Date(c("1990-01-01", "1991-01-01")),
+      condition_end_date= as.Date(c("1990-01-01", "1991-01-01")),
+      condition_type_concept_id = c(1L, 1L)
+    ),
+    source = "local"
+  ) |>
+    copyCdm()
 
   # default - record out of observation will be excluded
   cdm$my_cohort <- cdm$my_cohort |>
@@ -358,7 +353,7 @@ test_that("records out of observation", {
   expect_true(cdm$my_cohort |>
                 dplyr::pull("intersect") == 0)
 
-expect_error(cdm$my_cohort |>
+  expect_error(cdm$my_cohort |>
     addConceptIntersectFlag(conceptSet = list(a = 99L),
                             window = list(c(-Inf, Inf)),
                             inObservation = "not_logical", # should cause error
@@ -415,5 +410,22 @@ expect_error(cdm$my_cohort |>
                 as.integer(difftime(as.Date("1990-01-01"),
                                     as.Date("2000-01-01"))))
 
+  dropCreatedTables(cdm = cdm)
+})
 
+test_that("validate concept set names", {
+  cs <- list("concept_1" = c(1, 2))
+  expect_no_error(validateConceptNames(cs))
+  expect_identical(validateConceptNames(cs), cs)
+
+  cs <- list("concept 1" = 1, "nWx{]4" = 2)
+  expect_message(ncs <- validateConceptNames(cs))
+  expect_identical(names(ncs), c("concept_1", "nwx_4"))
+
+  cs <- list("concept_1" = 1, "nWx{]4" = 2)
+  expect_message(ncs <- validateConceptNames(cs))
+  expect_identical(names(ncs), c("concept_1", "nwx_4"))
+
+  cs <- list("concept 1" = 1, "concept_1" = 2)
+  expect_error(expect_message(ncs <- validateConceptNames(cs)))
 })

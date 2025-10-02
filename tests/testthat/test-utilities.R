@@ -1,6 +1,8 @@
 test_that("addCdmName and addCohortName work", {
   skip_on_cran()
-  cdm <- mockPatientProfiles()
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
   person <- cdm$person |> addCdmName()
   expect_equal(c("cdm_name", colnames(cdm$person)) |> sort(), colnames(person) |> sort())
 
@@ -11,4 +13,6 @@ test_that("addCdmName and addCohortName work", {
 
   expect_message(cohort <- cdm$cohort2 |> addCohortName() |> addCohortName())
   expect_equal(c("cohort_name", colnames(cdm$cohort2)) |> sort(), colnames(cohort) |> sort())
+
+  dropCreatedTables(cdm = cdm)
 })
