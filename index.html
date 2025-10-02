@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">PatientProfiles</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,17 +89,17 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"PatientProfiles"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'PatientProfiles' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Catala M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N</span></span>
+<span><span class="co">#&gt;   Català M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N</span></span>
 <span><span class="co">#&gt;   (????). _PatientProfiles: Identify Characteristics of Patients in the</span></span>
-<span><span class="co">#&gt;   OMOP Common Data Model_. R package version 1.3.1,</span></span>
+<span><span class="co">#&gt;   OMOP Common Data Model_. R package version 1.4.3,</span></span>
 <span><span class="co">#&gt;   &lt;https://darwin-eu.github.io/PatientProfiles/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Manual{,</span></span>
 <span><span class="co">#&gt;     title = {PatientProfiles: Identify Characteristics of Patients in the OMOP Common Data Model},</span></span>
-<span><span class="co">#&gt;     author = {Marti Catala and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},</span></span>
-<span><span class="co">#&gt;     note = {R package version 1.3.1},</span></span>
+<span><span class="co">#&gt;     author = {Martí Català and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.4.3},</span></span>
 <span><span class="co">#&gt;     url = {https://darwin-eu.github.io/PatientProfiles/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
@@ -111,13 +111,15 @@
 </h3>
 <p>The PatientProfiles package is designed to work with data in the OMOP CDM format, so our first step is to create a reference to the data using the CDMConnector package.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/PatientProfiles/">PatientProfiles</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/PatientProfiles/">PatientProfiles</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <p>Creating a connection to a Postgres database would for example look like:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span></span>
-<span>  <span class="fu">RPostgres</span><span class="fu">::</span><span class="fu"><a href="https://rpostgres.r-dbi.org/reference/Postgres.html" class="external-link">Postgres</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rpostgres.r-dbi.org" class="external-link">RPostgres</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span></span>
+<span>  drv <span class="op">=</span> <span class="fu"><a href="https://rpostgres.r-dbi.org/reference/Postgres.html" class="external-link">Postgres</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  dbname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CDM5_POSTGRESQL_DBNAME"</span><span class="op">)</span>,</span>
 <span>  host <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CDM5_POSTGRESQL_HOST"</span><span class="op">)</span>,</span>
 <span>  user <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CDM5_POSTGRESQL_USER"</span><span class="op">)</span>,</span>
@@ -125,13 +127,13 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span></span>
-<span>  <span class="va">con</span>,</span>
+<span>  con <span class="op">=</span> <span class="va">con</span>,</span>
 <span>  cdmSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CDM5_POSTGRESQL_CDM_SCHEMA"</span><span class="op">)</span>,</span>
 <span>  writeSchema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"CDM5_POSTGRESQL_RESULT_SCHEMA"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>To see how you would create a reference to your database please consult the CDMConnector package <a href="https://darwin-eu.github.io/CDMConnector/articles/a04_DBI_connection_examples.html" class="external-link">documentation</a>. For this example though we’ll work with simulated data, and we’ll generate an example cdm reference like so:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mockPatientProfiles.html">mockPatientProfiles</a></span><span class="op">(</span>numberIndividuals <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mockPatientProfiles.html">mockPatientProfiles</a></span><span class="op">(</span>numberIndividuals <span class="op">=</span> <span class="fl">1000</span>, source <span class="op">=</span> <span class="st">"duckdb"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="adding-individuals-characteristics">Adding individuals´ characteristics<a class="anchor" aria-label="anchor" href="#adding-individuals-characteristics"></a>
@@ -145,12 +147,12 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ person_id                 &lt;int&gt; 156, 458, 327, 609, 621, 173, 549, 381, 578,…</span></span>
-<span><span class="co">#&gt; $ condition_start_date      &lt;date&gt; 1955-09-02, 1942-08-31, 1995-07-25, 1981-07…</span></span>
-<span><span class="co">#&gt; $ condition_end_date        &lt;date&gt; 1965-08-19, 1953-11-24, 1998-09-22, 1987-04…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ person_id                 &lt;int&gt; 814, 640, 731, 853, 505, 817, 270, 313, 138,…</span></span>
+<span><span class="co">#&gt; $ condition_start_date      &lt;date&gt; 2008-02-05, 1920-08-28, 1970-04-23, 1915-04…</span></span>
+<span><span class="co">#&gt; $ condition_end_date        &lt;date&gt; 2009-10-30, 1928-01-13, 1970-08-02, 1924-02…</span></span>
 <span><span class="co">#&gt; $ condition_occurrence_id   &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1…</span></span>
-<span><span class="co">#&gt; $ condition_concept_id      &lt;int&gt; 2, 9, 5, 5, 3, 3, 4, 1, 9, 9, 9, 3, 10, 8, 4…</span></span>
+<span><span class="co">#&gt; $ condition_concept_id      &lt;int&gt; 5, 6, 8, 2, 7, 9, 2, 4, 2, 1, 5, 4, 3, 6, 8,…</span></span>
 <span><span class="co">#&gt; $ condition_type_concept_id &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">condition_occurrence</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">condition_occurrence</span> <span class="op">|&gt;</span></span>
@@ -161,35 +163,28 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 8</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ person_id                 &lt;int&gt; 156, 621, 173, 381, 557, 963, 653, 998, 719,…</span></span>
-<span><span class="co">#&gt; $ condition_start_date      &lt;date&gt; 1955-09-02, 1969-04-08, 1970-04-30, 1981-01…</span></span>
-<span><span class="co">#&gt; $ condition_end_date        &lt;date&gt; 1965-08-19, 1972-10-10, 1971-01-03, 1983-02…</span></span>
-<span><span class="co">#&gt; $ condition_occurrence_id   &lt;int&gt; 1, 5, 6, 8, 13, 14, 15, 19, 20, 22, 23, 24, …</span></span>
-<span><span class="co">#&gt; $ condition_concept_id      &lt;int&gt; 2, 3, 3, 1, 10, 8, 4, 10, 8, 10, 9, 1, 6, 8,…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ person_id                 &lt;int&gt; 138, 174, 207, 216, 239, 270, 276, 313, 317,…</span></span>
+<span><span class="co">#&gt; $ condition_start_date      &lt;date&gt; 1939-09-09, 1912-06-21, 1926-12-14, 1928-05…</span></span>
+<span><span class="co">#&gt; $ condition_end_date        &lt;date&gt; 1948-11-09, 1927-04-21, 1937-09-29, 1931-04…</span></span>
+<span><span class="co">#&gt; $ condition_occurrence_id   &lt;int&gt; 9, 12, 23, 13, 32, 7, 20, 8, 24, 33, 14, 28,…</span></span>
+<span><span class="co">#&gt; $ condition_concept_id      &lt;int&gt; 2, 4, 3, 3, 7, 2, 10, 4, 4, 2, 6, 9, 5, 8, 7…</span></span>
 <span><span class="co">#&gt; $ condition_type_concept_id &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span><span class="co">#&gt; $ age                       &lt;int&gt; 3, 6, 5, 19, 21, 11, 30, 9, 21, 7, 13, 5, 2,…</span></span>
-<span><span class="co">#&gt; $ sex                       &lt;chr&gt; "Female", "Female", "Female", "Female", "Mal…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ age                       &lt;int&gt; 6, 4, 13, 8, 32, 18, 0, 25, 19, 34, 45, 38, …</span></span>
+<span><span class="co">#&gt; $ sex                       &lt;chr&gt; "Female", "Male", "Female", "Male", "Male", …</span></span></code></pre></div>
 <p>We could, for example, then limit our data to only males aged between 18 and 65</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">condition_occurrence</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">18</span> <span class="op">&amp;</span> <span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">65</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">sex</span> <span class="op">==</span> <span class="st">"Male"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # Source:   SQL [?? x 8]</span></span>
-<span><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt;    person_id condition_start_date condition_end_date condition_occurrence_id</span></span>
-<span><span class="co">#&gt;        &lt;int&gt; &lt;date&gt;               &lt;date&gt;                               &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1       557 1944-07-25           1952-04-19                              13</span></span>
-<span><span class="co">#&gt;  2       351 1983-06-01           1994-12-31                              27</span></span>
-<span><span class="co">#&gt;  3       194 2000-03-09           2000-09-29                              29</span></span>
-<span><span class="co">#&gt;  4       199 1980-10-21           1982-04-19                              42</span></span>
-<span><span class="co">#&gt;  5       833 1985-11-19           1989-08-19                              45</span></span>
-<span><span class="co">#&gt;  6       444 1968-07-28           1968-10-27                              49</span></span>
-<span><span class="co">#&gt;  7       131 1975-12-15           1977-06-01                              60</span></span>
-<span><span class="co">#&gt;  8       345 1963-03-31           1964-08-23                              70</span></span>
-<span><span class="co">#&gt;  9       273 1994-05-07           1996-06-21                              71</span></span>
-<span><span class="co">#&gt; 10       495 1993-08-14           1998-04-26                              85</span></span>
-<span><span class="co">#&gt; # ℹ more rows</span></span>
+<span><span class="co">#&gt; # Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt;   person_id condition_start_date condition_end_date condition_occurrence_id</span></span>
+<span><span class="co">#&gt;       &lt;int&gt; &lt;date&gt;               &lt;date&gt;                               &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1       239 1991-12-11           1996-11-27                              32</span></span>
+<span><span class="co">#&gt; 2       404 1982-10-31           1984-12-04                              28</span></span>
+<span><span class="co">#&gt; 3       682 1932-09-09           1937-08-15                              10</span></span>
+<span><span class="co">#&gt; 4       814 2008-02-05           2009-10-30                               1</span></span>
 <span><span class="co">#&gt; # ℹ 4 more variables: condition_concept_id &lt;int&gt;,</span></span>
 <span><span class="co">#&gt; #   condition_type_concept_id &lt;int&gt;, age &lt;int&gt;, sex &lt;chr&gt;</span></span></code></pre></div>
 </div>
@@ -202,11 +197,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 1, 1, 1, 1, 3, 2, 2, 2, 2, 1, 3, 1, 3, 1, 3, 2…</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 306, 387, 912, 870, 878, 45, 833, 149, 110, 616, …</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1930-04-19, 1989-05-12, 1973-08-21, 1915-07-03, …</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1942-01-05, 1998-01-16, 1977-03-13, 1929-02-26, …</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 2, 3, 1, 3, 3, 2, 2, 2, 2, 2, 3, 2, 1, 1, 2, 1…</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 415, 780, 507, 560, 948, 940, 194, 643, 119, 298,…</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1916-09-02, 1906-05-02, 1944-06-11, 1950-05-29, …</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1937-04-16, 1928-07-12, 1948-03-30, 1961-06-14, …</span></span></code></pre></div>
 <p>We can add age, age groups, sex, and days of prior observation to a cohort like so</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
@@ -221,33 +216,33 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 8</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 1, 3, 2, 2, 1, 1, 3, 2, 2, 2, 3, 3, 1, 3, 1, 1…</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 387, 878, 45, 149, 616, 875, 508, 581, 268, 579, …</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1989-05-12, 1972-03-14, 1957-09-03, 1937-05-06, …</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1998-01-16, 1979-09-21, 1959-02-08, 1942-05-13, …</span></span>
-<span><span class="co">#&gt; $ age                  &lt;int&gt; 22, 7, 8, 5, 31, 20, 9, 21, 22, 9, 7, 10, 18, 8, …</span></span>
-<span><span class="co">#&gt; $ age_group            &lt;chr&gt; "19 to 65", "0 to 18", "0 to 18", "0 to 18", "19 …</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 1, 1, 2, 3, 2, 3, 3, 3, 3, 1, 1, 1, 2, 3, 2, 3…</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1946-09-18, 1955-11-24, 1953-06-04, 1925-11-12, …</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1974-02-24, 1960-02-26, 1955-11-09, 1930-06-10, …</span></span>
+<span><span class="co">#&gt; $ age                  &lt;int&gt; 1, 33, 9, 6, 29, 10, 21, 23, 8, 18, 8, 5, 24, 7, …</span></span>
+<span><span class="co">#&gt; $ age_group            &lt;chr&gt; "0 to 18", "19 to 65", "0 to 18", "0 to 18", "19 …</span></span>
 <span><span class="co">#&gt; $ sex                  &lt;chr&gt; "Male", "Female", "Male", "Female", "Male", "Male…</span></span>
-<span><span class="co">#&gt; $ prior_observation    &lt;int&gt; 8167, 2629, 3167, 1952, 11535, 7502, 3411, 7839, …</span></span></code></pre></div>
+<span><span class="co">#&gt; $ prior_observation    &lt;int&gt; 625, 12380, 3442, 2507, 10630, 3733, 7745, 8553, …</span></span></code></pre></div>
 <p>We could use this information to subset the cohort. For example limiting to those with at least 365 days of prior observation available before their cohort start date like so</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">prior_observation</span> <span class="op">&gt;=</span> <span class="fl">365</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # Source:   SQL [?? x 8]</span></span>
-<span><span class="co">#&gt; # Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; # Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
 <span><span class="co">#&gt;    cohort_definition_id subject_id cohort_start_date cohort_end_date   age</span></span>
 <span><span class="co">#&gt;                   &lt;int&gt;      &lt;int&gt; &lt;date&gt;            &lt;date&gt;          &lt;int&gt;</span></span>
-<span><span class="co">#&gt;  1                    1        387 1989-05-12        1998-01-16         22</span></span>
-<span><span class="co">#&gt;  2                    1        878 1972-03-14        1979-09-21          7</span></span>
-<span><span class="co">#&gt;  3                    3         45 1957-09-03        1959-02-08          8</span></span>
-<span><span class="co">#&gt;  4                    2        149 1937-05-06        1942-05-13          5</span></span>
-<span><span class="co">#&gt;  5                    2        616 1970-08-01        1974-02-04         31</span></span>
-<span><span class="co">#&gt;  6                    1        875 1990-07-17        1993-06-17         20</span></span>
-<span><span class="co">#&gt;  7                    1        508 1939-05-05        1952-11-20          9</span></span>
-<span><span class="co">#&gt;  8                    3        581 1989-06-18        1994-05-29         21</span></span>
-<span><span class="co">#&gt;  9                    2        268 1944-10-25        1952-11-04         22</span></span>
-<span><span class="co">#&gt; 10                    2        579 1939-01-29        1962-07-06          9</span></span>
+<span><span class="co">#&gt;  1                    1          1 1946-09-18        1974-02-24          1</span></span>
+<span><span class="co">#&gt;  2                    1          2 1955-11-24        1960-02-26         33</span></span>
+<span><span class="co">#&gt;  3                    1          3 1953-06-04        1955-11-09          9</span></span>
+<span><span class="co">#&gt;  4                    2          4 1925-11-12        1930-06-10          6</span></span>
+<span><span class="co">#&gt;  5                    3          5 1960-02-08        1960-10-07         29</span></span>
+<span><span class="co">#&gt;  6                    2          6 1918-03-22        1922-05-22         10</span></span>
+<span><span class="co">#&gt;  7                    3          7 1942-03-17        1944-07-08         21</span></span>
+<span><span class="co">#&gt;  8                    3          8 1982-06-02        1990-11-15         23</span></span>
+<span><span class="co">#&gt;  9                    3          9 1929-02-06        1936-07-28          8</span></span>
+<span><span class="co">#&gt; 10                    3         10 1955-11-17        1958-12-22         18</span></span>
 <span><span class="co">#&gt; # ℹ more rows</span></span>
 <span><span class="co">#&gt; # ℹ 3 more variables: age_group &lt;chr&gt;, sex &lt;chr&gt;, prior_observation &lt;int&gt;</span></span></code></pre></div>
 </div>
@@ -264,11 +259,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 2, 2, 3, 2, 2, 2, 1, 1, 1</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 2, 1, 7, 10, 4, 8, 3, 6, 9</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1968-12-04, 1938-06-13, 1906-07-16, 1945-11-11, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1968-12-27, 1948-07-14, 1907-02-09, 1946-08-25, 1…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 2, 3, 1, 2, 2, 3, 2, 2, 2</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 1, 2, 10, 9, 3, 7, 6, 8, 4, 5</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1992-07-20, 1979-03-29, 1987-04-30, 1982-04-23, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 2000-07-17, 1984-08-07, 1987-05-10, 1985-05-08, 1…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectFlag.html">addCohortIntersectFlag</a></span><span class="op">(</span></span>
@@ -280,14 +275,14 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 7</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 2, 1, 2, 2, 3, 2, 2, 1, 1</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 4, 6, 2, 1, 7, 10, 8, 3, 9</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1968-12-04, 1926-12-18, 1966-04-26, 1938-06-13, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1968-12-27, 1939-10-18, 1985-01-13, 1948-07-14, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_3_minf_to_m1  &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0</span></span>
-<span><span class="co">#&gt; $ cohort_1_minf_to_m1  &lt;dbl&gt; 0, 1, 1, 0, 0, 0, 0, 0, 0, 0</span></span>
-<span><span class="co">#&gt; $ cohort_2_minf_to_m1  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 1, 2, 3, 1, 2, 2, 2, 2, 2</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 10, 9, 3, 6, 1, 2, 7, 8, 4, 5</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1987-04-30, 1982-04-23, 1962-01-26, 2012-07-24, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1987-05-10, 1985-05-08, 1962-11-06, 2014-06-17, 2…</span></span>
+<span><span class="co">#&gt; $ cohort_2_minf_to_m1  &lt;dbl&gt; 0, 1, 0, 1, 0, 0, 0, 0, 0, 0</span></span>
+<span><span class="co">#&gt; $ cohort_1_minf_to_m1  &lt;dbl&gt; 1, 0, 1, 0, 0, 0, 0, 0, 0, 0</span></span>
+<span><span class="co">#&gt; $ cohort_3_minf_to_m1  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="count-appearances-of-a-certain-cohort-in-a-certain-window">Count appearances of a certain cohort in a certain window<a class="anchor" aria-label="anchor" href="#count-appearances-of-a-certain-cohort-in-a-certain-window"></a>
@@ -298,11 +293,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 3, 3, 3, 3, 1, 3, 1, 1, 2</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 2, 3, 7, 10, 1, 5, 8, 6, 4, 9</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 2015-12-01, 1987-07-03, 1953-10-15, 1968-10-21, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 2019-03-15, 2002-10-16, 1957-02-19, 1979-11-29, 1…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 1, 3, 2, 1, 1, 1, 2, 2, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 2, 3, 6, 8, 4, 7, 5, 1, 9, 10</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1938-06-21, 1993-11-29, 1977-10-21, 1968-11-30, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1948-04-26, 1994-01-01, 1985-11-25, 1972-09-03, 1…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectCount.html">addCohortIntersectCount</a></span><span class="op">(</span></span>
@@ -315,13 +310,13 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 2, 2, 3, 3, 3, 3, 1, 3, 1</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 4, 9, 2, 3, 7, 10, 1, 5, 8, 6</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1953-04-13, 1977-10-03, 2015-12-01, 1987-07-03, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1974-09-21, 1981-04-22, 2019-03-15, 2002-10-16, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_1_mid_term    &lt;dbl&gt; 1, 1, 0, 0, 0, 0, 0, 0, 0, 0</span></span>
-<span><span class="co">#&gt; $ cohort_1_short_term  &lt;dbl&gt; 1, 1, 0, 0, 0, 0, 0, 0, 0, 0</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 1, 1, 2, 3, 2, 1, 2, 2, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 3, 4, 7, 2, 6, 8, 5, 1, 9, 10</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1993-11-29, 1989-12-28, 1952-08-05, 1938-06-21, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1994-01-01, 1995-07-31, 1953-05-23, 1948-04-26, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_1_mid_term    &lt;dbl&gt; 1, 1, 1, 0, 0, 0, 0, 0, 0, 0</span></span>
+<span><span class="co">#&gt; $ cohort_1_short_term  &lt;dbl&gt; 1, 1, 1, 0, 0, 0, 0, 0, 0, 0</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="add-a-column-with-the-firstlast-event-in-a-certain-window">Add a column with the first/last event in a certain window<a class="anchor" aria-label="anchor" href="#add-a-column-with-the-firstlast-event-in-a-certain-window"></a>
@@ -333,11 +328,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 3, 1, 3, 1, 3, 1, 3, 2, 1</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 4, 9, 7, 2, 8, 3, 1, 10, 6</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1941-08-04, 1945-09-24, 1937-10-13, 1929-07-16, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1942-06-25, 1981-02-18, 1937-11-05, 1929-11-22, 1…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 2, 2, 2, 1, 3, 1, 3, 1, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 4, 5, 7, 6, 9, 8, 3, 2, 1, 10</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1938-11-11, 1922-07-20, 1950-02-23, 1985-12-16, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1943-08-29, 1927-03-23, 1953-08-20, 1989-03-20, 1…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectDate.html">addCohortIntersectDate</a></span><span class="op">(</span></span>
@@ -351,23 +346,23 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 5</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 3, 2, 3, 1, 3, 1, 3, 2, 1</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 2, 8, 5, 4, 9, 7, 3, 1, 10, 6</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1956-05-06, 1973-09-24, 1941-08-04, 1945-09-24, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1986-02-01, 1980-04-14, 1942-06-25, 1981-02-18, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;date&gt; 1979-06-01, 1966-08-16, NA, NA, NA, NA, NA, NA, …</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 3, 1, 2, 2, 2, 2, 1, 1, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 8, 2, 10, 4, 5, 7, 6, 9, 3, 1</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1954-12-03, 1963-02-19, 1945-03-20, 1938-11-11, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1969-08-13, 1963-02-20, 1945-09-11, 1943-08-29, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;date&gt; 1929-07-25, 1914-10-14, 1942-12-05, NA, NA, NA, …</span></span></code></pre></div>
 <p>Last occurrence:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 3, 2, 2, 1, 2, 2, 3, 3, 2</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 2, 6, 4, 8, 10, 9, 1, 5, 3, 7</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1944-08-01, 1947-06-17, 1904-03-09, 1957-03-05, 2…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1946-08-20, 1951-02-15, 1927-06-28, 1962-09-09, 2…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 3, 3, 3, 3, 1, 3, 2, 1, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 8, 6, 1, 7, 9, 3, 2, 10, 4</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1948-10-29, 1929-07-30, 1938-03-07, 1947-04-25, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1952-10-15, 1930-09-16, 1940-04-22, 1948-03-22, 2…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectDate.html">addCohortIntersectDate</a></span><span class="op">(</span></span>
@@ -381,12 +376,12 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 5</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 2, 3, 3, 3, 2, 1, 2, 2, 2</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 6, 4, 5, 3, 2, 8, 10, 9, 1, 7</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1947-06-17, 1904-03-09, 1913-06-09, 1924-09-15, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1951-02-15, 1927-06-28, 1920-06-29, 1930-01-23, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;date&gt; 1936-02-23, 1906-08-30, 1930-05-25, 1935-04-03, …</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 3, 1, 3, 3, 3, 3, 2, 1, 1</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 6, 1, 9, 5, 8, 7, 3, 2, 10, 4</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1938-03-07, 1947-04-25, 1958-12-30, 1948-10-29, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1940-04-22, 1948-03-22, 1975-01-06, 1952-10-15, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;date&gt; 1923-06-06, 1922-10-10, 1969-03-25, NA, NA, NA, …</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="add-the-number-of-days-instead-of-the-date">Add the number of days instead of the date<a class="anchor" aria-label="anchor" href="#add-the-number-of-days-instead-of-the-date"></a>
@@ -397,11 +392,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 2, 1, 2, 2, 1, 3, 3, 1, 3</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 9, 10, 3, 4, 1, 2, 8, 7, 6</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1908-03-05, 1904-07-25, 1956-01-18, 2012-03-18, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1909-07-11, 1908-01-27, 1969-04-26, 2013-12-06, 1…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 3, 2, 1, 1, 2, 1, 1, 3, 3</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 9, 4, 1, 3, 8, 10, 7, 2, 6, 5</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1922-11-01, 1933-04-23, 1961-09-09, 1932-10-19, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1926-01-29, 1971-01-01, 1963-08-29, 1938-11-18, 1…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectDays.html">addCohortIntersectDays</a></span><span class="op">(</span></span>
@@ -415,12 +410,12 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 5</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 2, 2, 2, 1, 1, 3, 3, 1, 3</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 5, 9, 3, 4, 10, 1, 2, 8, 7, 6</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1908-03-05, 1904-07-25, 2012-03-18, 1907-03-23, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1909-07-11, 1908-01-27, 2013-12-06, 1916-10-25, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;dbl&gt; 964, 937, -7714, 5191, NA, NA, NA, NA, NA, NA</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 3, 2, 1, 3, 3, 1, 2, 1, 1, 3</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 4, 1, 8, 5, 9, 3, 10, 7, 2, 6</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1933-04-23, 1961-09-09, 1955-07-31, 1931-08-05, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1971-01-01, 1963-08-29, 1967-08-18, 1933-06-05, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;dbl&gt; 15815, -202, -3652, 4575, NA, NA, NA, NA, NA, NA</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="combine-multiple-cohort-intersects">Combine multiple cohort intersects<a class="anchor" aria-label="anchor" href="#combine-multiple-cohort-intersects"></a>
@@ -431,11 +426,11 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 3, 2, 1, 3, 2, 2, 3, 3, 2</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 9, 2, 7, 8, 1, 3, 5, 6, 4, 10</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1976-04-06, 1950-11-24, 2010-05-13, 1949-09-30, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1992-07-18, 1955-08-08, 2010-09-07, 1957-09-29, 2…</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 1, 2, 2, 2, 2, 2, 1, 2, 3</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 10, 3, 1, 8, 5, 6, 7, 2, 9, 4</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1942-04-12, 2013-06-07, 2004-09-20, 1937-05-23, 1…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1942-10-19, 2017-02-20, 2005-11-04, 1957-12-10, 1…</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/addCohortIntersectDate.html">addCohortIntersectDate</a></span><span class="op">(</span></span>
@@ -454,12 +449,12 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 5</span></span>
-<span><span class="co">#&gt; Database: DuckDB v1.2.0 [root@Darwin 24.3.0:R 4.4.1/:memory:]</span></span>
-<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 2, 3, 1, 3, 2, 3, 2, 2, 3, 2</span></span>
-<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 9, 2, 8, 1, 5, 6, 7, 3, 4, 10</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1976-04-06, 1950-11-24, 1949-09-30, 1996-03-01, 1…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1992-07-18, 1955-08-08, 1957-09-29, 2013-06-08, 2…</span></span>
-<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 0, 0, 0, 0</span></span></code></pre></div>
+<span><span class="co">#&gt; Database: DuckDB 1.4.0 [root@Darwin 24.6.0:R 4.4.1/:memory:]</span></span>
+<span><span class="co">#&gt; $ cohort_definition_id &lt;int&gt; 1, 2, 1, 1, 2, 2, 2, 2, 2, 3</span></span>
+<span><span class="co">#&gt; $ subject_id           &lt;int&gt; 10, 5, 2, 3, 1, 8, 6, 7, 9, 4</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    &lt;date&gt; 1942-04-12, 1923-07-21, 1947-06-02, 2013-06-07, 2…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      &lt;date&gt; 1942-10-19, 1924-04-07, 1954-10-29, 2017-02-20, 2…</span></span>
+<span><span class="co">#&gt; $ cohort_1_minf_to_inf &lt;dbl&gt; 1, 1, 1, 0, 0, 0, 0, 0, 0, 0</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/mockDisconnect.html">mockDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
 </div>
