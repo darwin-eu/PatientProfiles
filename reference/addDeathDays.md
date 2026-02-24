@@ -56,7 +56,7 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDeathDays()
-#> # Source:   table<og_102_1771936228> [?? x 5]
+#> # Source:   table<og_102_1771937982> [?? x 5]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         

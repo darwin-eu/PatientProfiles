@@ -94,7 +94,7 @@ cdm <- insertTable(cdm, "concept", concept)
 cdm$cohort1 |>
   addConceptIntersectDate(conceptSet = list("acetaminophen" = 1125315))
 #> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_054_1771936197> [?? x 5]
+#> # Source:   table<og_054_1771937950> [?? x 5]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         

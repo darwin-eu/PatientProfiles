@@ -112,7 +112,7 @@ cdm$cohort1 |>
     field = "drug_type_concept_id"
   )
 #> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_074_1771936205> [?? x 5]
+#> # Source:   table<og_074_1771937958> [?? x 5]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         

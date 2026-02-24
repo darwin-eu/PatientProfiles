@@ -105,7 +105,7 @@ cdm$cohort1 |>
     order = "last",
     window = c(-Inf, -1)
   )
-#> # Source:   table<og_147_1771936279> [?? x 5]
+#> # Source:   table<og_147_1771938036> [?? x 5]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         

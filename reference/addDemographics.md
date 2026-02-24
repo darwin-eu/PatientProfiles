@@ -140,7 +140,7 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDemographics()
-#> # Source:   table<og_119_1771936235> [?? x 8]
+#> # Source:   table<og_119_1771937990> [?? x 8]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age sex  
 #>                   <int>      <int> <date>            <date>          <int> <chr>

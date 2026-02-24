@@ -40,7 +40,7 @@ a formatted summarised_result object."><meta property="og:image" content="https:
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Summarise variables using a set of estimate functions. The output will be a formatted summarised_result object.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/R/summariseResult.R" class="external-link"><code>R/summariseResult.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.4.5/R/summariseResult.R" class="external-link"><code>R/summariseResult.R</code></a></small>
       <div class="d-none name"><code>summariseResult.Rd</code></div>
     </div>
 
@@ -135,8 +135,8 @@ be used when measuring the estimates.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> sex: count, percentage</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Table is collected to memory as not all requested estimates are supported on</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   the database side</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 12:31:29.831683</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 12:31:29.90772</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 13:00:46.273196</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 13:00:46.360424</span>
 <span class="r-in"><span><span class="va">result</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 31 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    result_id cdm_name group_name group_level strata_name strata_level</span>
@@ -158,8 +158,8 @@ be used when measuring the estimates.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get only counts of records and subjects</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">summariseResult</span><span class="op">(</span><span class="va">x</span>, variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 12:31:30.223626</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 12:31:30.355688</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 13:00:46.691947</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 13:00:46.825038</span>
 <span class="r-in"><span><span class="va">result</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   result_id cdm_name group_name group_level strata_name strata_level</span>
@@ -181,8 +181,8 @@ be used when measuring the estimates.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> age: mean, median, density</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Table is collected to memory as not all requested estimates are supported on</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   the database side</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 12:31:30.829086</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 12:31:30.917242</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 13:00:47.310963</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 13:00:47.413894</span>
 <span class="r-in"><span><span class="va">result</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2,054 × 13</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    result_id cdm_name group_name group_level strata_name strata_level</span>
@@ -212,8 +212,8 @@ be used when measuring the estimates.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> age: min, max</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> prior_observation: min, max</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> sex: count, percentage</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 12:31:31.379996</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 12:31:31.817222</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> → Start summary of data, at 2026-02-24 13:00:47.904607</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Summary finished, at 2026-02-24 13:00:48.351348</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

@@ -82,7 +82,7 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addCohortIntersectDate(targetCohortTable = "cohort2")
-#> # Source:   table<og_014_1771936179> [?? x 7]
+#> # Source:   table<og_014_1771937931> [?? x 7]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
@@ -96,8 +96,8 @@ cdm$cohort1 |>
 #>  8                    1          7 1985-06-21        1988-05-14     
 #>  9                    2          5 1909-05-10        1911-07-01     
 #> 10                    2          8 1961-08-06        1961-11-17     
-#> # ℹ 3 more variables: cohort_2_0_to_inf <date>, cohort_1_0_to_inf <date>,
-#> #   cohort_3_0_to_inf <date>
+#> # ℹ 3 more variables: cohort_3_0_to_inf <date>, cohort_2_0_to_inf <date>,
+#> #   cohort_1_0_to_inf <date>
 
 # }
 ```
