@@ -116,10 +116,74 @@ checkStrata <- function(list, table, type = "strata") {
 }
 
 #' @noRd
-checkVariablesFunctions <- function(variables, estimates, table) {
+checkVariablesFunctions <- function(variables, estimates, table, weights = NULL) {
   errorMessage <- "variables should be a unique named list that point to columns in table"
+
+  # default variables
+  if (is.null(variables)) {
+    variables <- colnames(table)
+    variables <- variables[!grepl("_id", variables) & !variables %in% weights]
+  }
+  if (!is.list(variables)) {
+    variables <- list(variables)
+  }
+
+  # default estimates
+  if (is.null(estimates)) {
+    types <- table |>
+      dplyr::select(dplyr::all_of(unique(unlist(variables)))) |>
+      variableTypes() |>
+      dplyr::group_by(.data$variable_name) |>
+      dplyr::group_split() |>
+      unclass()
+    variables <- types |>
+      purrr::map(\(x) unique(x$variable_name))
+    estimates <- types |>
+      purrr::map(\(x) {
+        typ <- unique(x$variable_type)
+        nm <- unique(x$variable_name)
+        if (typ == "date") {
+          est <- c("min", "q25", "median", "q75", "max")
+        } else if (typ %in% c("integer", "numeric")) {
+          u <- table |>
+            dplyr::select(dplyr::all_of(nm)) |>
+            dplyr::distinct() |>
+            utils::head(4L) |>
+            dplyr::pull()
+          if (length(u) <= 3) {
+            u <- as.character(u)
+            binary <- all(u %in% c("0", "1", NA_character_))
+          } else {
+            binary <- FALSE
+          }
+          if (binary) {
+            est <- c("min", "q25", "median", "q75", "max", "count", "percentage")
+          } else {
+            est <- c("min", "q25", "median", "q75", "max")
+          }
+        } else if (typ %in% c("logical", "categorical")) {
+          est <- c("count", "percentage")
+        }
+        est
+      })
+  }
+  if (!is.list(estimates)) {
+    estimates <- list(estimates)
+  }
+
   omopgenerics::assertList(x = variables, class = "character")
   omopgenerics::assertList(x = estimates, class = "character")
+  types <- variableTypes(table)
+  if (length(variables) == 1 & is.null(names(variables)) & !is.null(names(estimates)) & length(estimates) != 1) {
+    variables <- types |>
+      dplyr::filter(.data$variable_name %in% unlist(variables)) |>
+      dplyr::group_by(.data$variable_type) |>
+      dplyr::group_split() |>
+      unclass()
+    names(variables) <- purrr::map(variables, \(x) unique(x$variable_type))
+    variables <- purrr::map(variables, \(x) unique(x$variable_name))
+    estimates <- estimates[names(variables)]
+  }
   if (length(variables) != length(estimates)) {
     cli::cli_abort("Variables and estimates must have the same length")
   }
@@ -147,41 +211,47 @@ checkVariablesFunctions <- function(variables, estimates, table) {
     )
   }) |>
     dplyr::bind_rows() |>
-    dplyr::inner_join(variableTypes(table), by = "variable_name") |>
+    dplyr::inner_join(types, by = "variable_name") |>
     dplyr::inner_join(
       availableEstimates(fullQuantiles = TRUE) |>
         dplyr::select(-"estimate_description"),
       by = c("variable_type", "estimate_name")
     )
 
-  # check binary
-  binaryVars <- functions |>
+  # correct weight types
+  if (length(weights) > 0) {
+    functions <- functions |>
+      dplyr::mutate(estimate_type = dplyr::if_else(
+        .data$estimate_type == "integer" & grepl("count|sum", .data$estimate_name),
+        "numeric",
+        .data$estimate_type
+      ))
+  }
+
+  # check count and percentage for non binary
+  vars <- functions |>
     dplyr::filter(
-      .data$variable_type %in% c("numeric", "integer") &
+      .data$variable_type %in% c("integer", "numeric") &
         .data$estimate_name %in% c("count", "percentage")
     ) |>
-    dplyr::select("variable_name") |>
-    dplyr::distinct() |>
-    dplyr::pull()
-  if (length(binaryVars) > 0) {
-    notBinary <- character()
-    for (binVar in binaryVars) {
-      x <- table |>
-        dplyr::select(dplyr::all_of(binVar)) |>
-        dplyr::distinct() |>
-        dplyr::pull()
-      if (length(x) <= 3) {
-        if (!all(as.numeric(x) %in% c(0, 1, NA))) {
-          notBinary <- c(notBinary, binVar)
-        }
-      } else {
-        notBinary <- c(notBinary, binVar)
-      }
-    }
+    dplyr::pull("variable_name") |>
+    unique()
+  if (length(vars) > 0) {
+    vars <- vars |>
+      purrr::keep(\(x) {
+        labs <- table |>
+          dplyr::select(dplyr::all_of(x)) |>
+          dplyr::distinct() |>
+          utils::head(4L) |>
+          dplyr::pull() |>
+          as.character()
+        all(labs %in% c("0", "1", NA_character_))
+      })
     functions <- functions |>
       dplyr::filter(
-        !.data$variable_name %in% .env$notBinary |
-          !.data$estimate_name %in% c("count", "percentage")
+        .data$variable_name %in% .env$vars |
+          !.data$estimate_name %in% c("count", "percentage") |
+          !.data$variable_type %in% c("integer", "numeric")
       )
   }
 

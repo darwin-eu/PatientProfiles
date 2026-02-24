@@ -2,8 +2,8 @@
 % Please edit documentation in R/formats.R
 \name{variableTypes}
 \alias{variableTypes}
-\title{Classify the variables between 5 types: "numeric", "categorical", "binary",
-"date", or NA.}
+\title{Classify the variables between 5 types: "numeric", "categorical", "logical",
+"date", "integer", or NA.}
 \usage{
 variableTypes(table)
 }
@@ -14,8 +14,8 @@ variableTypes(table)
 Tibble with the variables type and classification.
 }
 \description{
-Classify the variables between 5 types: "numeric", "categorical", "binary",
-"date", or NA.
+Classify the variables between 5 types: "numeric", "categorical", "logical",
+"date", "integer", or NA.
 }
 \examples{
 \donttest{

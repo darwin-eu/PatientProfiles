@@ -159,7 +159,7 @@
       renameDates <- rlang::set_names(
         c("observation_period_start_date", "observation_period_end_date"), idsObs
       )
-      individualsInObservation <- x |>
+      individualsWithnObservation <- x |>
         dplyr::select(dplyr::all_of(c(personVariable, indexDate))) |>
         dplyr::distinct() |>
         dplyr::inner_join(
@@ -167,6 +167,8 @@
             dplyr::select(dplyr::all_of(c(renamePersonId, renameDates))),
           by = personVariable
         ) |>
+        dplyr::compute(name = omopgenerics::uniqueTableName(prefix = tablePrefix))
+      individualsInObservation <- individualsWithnObservation |>
         dplyr::filter(
           .data[[indexDate]] >= .data[[idsObs[1]]] &
             .data[[indexDate]] <= .data[[idsObs[2]]]

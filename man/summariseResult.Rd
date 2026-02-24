@@ -12,7 +12,7 @@ summariseResult(
   strata = list(),
   includeOverallStrata = TRUE,
   variables = NULL,
-  estimates = c("min", "q25", "median", "q75", "max", "count", "percentage"),
+  estimates = NULL,
   counts = TRUE,
   weights = NULL
 )
@@ -57,9 +57,28 @@ cdm <- mockPatientProfiles(source = "duckdb")
 x <- cdm$cohort1 |>
   addDemographics()
 
+# summarise all variables with default estimates
 result <- summariseResult(x)
-
 result
+
+# get only counts of records and subjects
+result <- summariseResult(x, variables = character())
+result
+
+# specify variables and estimates
+result <- summariseResult(
+  table = x,
+  variables = c("cohort_start_date", "age"),
+  estimates = c("mean", "median", "density")
+)
+result
+
+# different estimates for each variable
+result <- summariseResult(
+  table = x,
+  variables = list(c("age", "prior_observation"), "sex"),
+  estimates = list(c("min", "max"), c("count", "percentage"))
+)
 
 }
 

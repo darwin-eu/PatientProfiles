@@ -106,35 +106,6 @@ test_that("test available functions", {
   ))
 })
 
-test_that("binaryVariable test", {
-  skip_on_cran()
-  expect_false(
-    binaryVariable(c("A", "B", "C"))
-  )
-
-  expect_false(
-    binaryVariable(c("A", "B", "C", "D"))
-  )
-
-  expect_false(
-    binaryVariable(c(0, 1, 2, 3))
-  )
-
-
-  expect_false(
-    binaryVariable(c("A", "B", NA))
-  )
-  expect_true(
-    binaryVariable(c(1, 0, 1))
-  )
-  expect_true(
-    binaryVariable(c(1, 0, NA))
-  )
-  expect_false(
-    binaryVariable(c(1, 0, "A"))
-  )
-})
-
 test_that("getFunction tests", {
   skip_on_cran()
   expect_true(estimatesFunc["min"] == "base::min(x, na.rm = TRUE)")

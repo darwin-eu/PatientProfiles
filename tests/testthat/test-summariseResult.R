@@ -444,9 +444,7 @@ test_that("misisng counts", {
   cohort <- cdm$test_table
 
   variables <- list(
-    numeric = c(
-      "age", "number_visits", "prior_history"
-    ),
+    numeric = c("age", "number_visits", "prior_history"),
     categorical = c("sex")
   )
   functions <- list(
@@ -462,20 +460,16 @@ test_that("misisng counts", {
   )
   expected <- dplyr::tribble(
     ~strata, ~variable_name, ~count, ~percentage,
-    "overall", "age", 2, 50,
-    "overall", "number_visits", 1, 25,
-    "overall", "prior_history", 0, 0,
-    "Male", "age", 1, 100 / 3,
-    "Male", "number_visits", 1, 100 / 3,
-    "Male", "prior_history", 0, 0,
-    "Female", "age", 1, 100,
-    "Female", "number_visits", 0, 0,
-    "Female", "prior_history", 0, 0,
-  ) |>
-    dplyr::mutate(
-      count = as.character(.data$count),
-      percentage = as.character(.data$percentage)
-    )
+    "overall", "age", "2", "50",
+    "overall", "number_visits", "1", "25",
+    "overall", "prior_history", "0", "0",
+    "Male", "age", "1", as.character(100/3),
+    "Male", "number_visits", "1", as.character(100/3),
+    "Male", "prior_history", "0", "0",
+    "Female", "age", "1", "100",
+    "Female", "number_visits", "0", "0",
+    "Female", "prior_history", "0", "0"
+  )
   for (k in seq_len(nrow(expected))) {
     x <- result |>
       dplyr::filter(
@@ -613,7 +607,7 @@ test_that("NA when min, max and mean works", {
   expect_equal(res1$estimate_value, c(
     "2", "1", "2", "1", "100", "100", "100", "100", "1", "1", NA, NA, "1", "1",
     NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1",
-    NA, NA, "2", "1", "0", "0"
+    NA, NA
   ))
 
   x <- dplyr::tibble(
@@ -636,8 +630,7 @@ test_that("NA when min, max and mean works", {
   )
   expect_equal(res1$estimate_value, c(
     '100', '100', '100', '100', '1', '1', NA, NA, '1', '1', NA, NA, '1', '1',
-    NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', NA, NA, '3.5',
-    '2', '0', '0'
+    NA, NA, '1', '1', NA, NA, '100', '100', NA, NA, '1', '1', NA, NA
   ))
 
   x <- dplyr::tibble(
@@ -659,9 +652,9 @@ test_that("NA when min, max and mean works", {
   )
   expect_equal(res2$estimate_value, c(
     "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "1", "1",
-    NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, "2",
-    "1", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA,
-    NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", "0", "0", "2", "1"
+    NA, NA, "1", "1", NA, NA, "100", "100", NA, NA, "1", "1", NA, NA, NA, NA,
+    "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "1", "1", NA, NA,
+    "100", "100", NA, NA, "1", "1"
   ))
 
   x <- dplyr::tibble(
@@ -685,8 +678,7 @@ test_that("NA when min, max and mean works", {
   )
   expect_equal(res2$estimate_value, c(
     "100", "100", "100", "100", "1", "1", NA, NA, "1", "1", NA, NA, "100",
-    "100", NA, NA,  "3.5", "2", "0", "0", NA, NA, "1", "1", NA, NA, "1", "1",
-    NA, NA, "100", "100", "0", "0", "0.25", "0.25"
+    "100", NA, NA, NA, NA, "1", "1", NA, NA, "1", "1", NA, NA, "100", "100"
   ))
 
   x <- dplyr::tibble(
@@ -842,5 +834,292 @@ test_that("density works correctly", {
     sw |> dplyr::filter(variable_name == "age1" & estimate_name == "density_y") |> dplyr::pull("estimate_value") |> as.numeric())
   )
 
+  # date sd is numeric
+  expect_no_error(result <- summariseResult(
+    table = x, variables = "birth", estimates = c("mean", "sd"), counts = FALSE
+  ))
+  expect_true(nrow(result) == 2)
+  expect_identical(result$estimate_type, c("date", "numeric"))
+  expect_identical(omopgenerics::tidy(result)$mean, as.Date("2013-06-26"))
+  expect_identical(omopgenerics::tidy(result)$sd |> round(), 3954)
+
   dropCreatedTables(cdm = cdm)
+})
+
+test_that("new counts functions", {
+  skip_on_cran()
+
+  cdm <- mockPatientProfiles() |>
+    copyCdm()
+
+  x <- dplyr::tibble(
+    group = c(rep("a", 5), rep("b", 3)),
+    val1 = c(-5, 1.2, 0, 4.3, 2, -1, 1, -5.5),
+    val2 = c(-5L, 1L, 0L, 4L, 2L, -1L, 1L, -5L),
+    w = c(0.4, 2.5, 4.5, 1.1, 3.4, 1.4, 0.98, 0.45)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test", table = x)
+
+  expect_no_error(result <- summariseResult(
+    table = cdm$test,
+    group = "group",
+    variables = c("val1", "val2"),
+    estimates = c(
+      "count_0", "count_positive", "count_negative", "count_not_positive",
+      "count_not_negative", "percentage_0", "percentage_positive",
+      "percentage_negative", "percentage_not_positive",
+      "percentage_not_negative"
+    )
+  ))
+
+  res <- result |>
+    dplyr::filter(.data$variable_name != "number records") |>
+    omopgenerics::tidy()
+
+  # same results for val1 and val2
+  expect_identical(
+    res |>
+      dplyr::filter(.data$variable_name == "val1") |>
+      dplyr::select(!"variable_name"),
+    res |>
+      dplyr::filter(.data$variable_name == "val2") |>
+      dplyr::select(!"variable_name")
+  )
+
+  res <- res[res$variable_name == "val1",]
+
+  # count 0
+  expect_identical(res$count_0[1], sum(x$val1[x$group == "a"] == 0))
+  expect_identical(res$count_0[2], sum(x$val1[x$group == "b"] == 0))
+
+  # count positive
+  expect_identical(res$count_positive[1], sum(x$val1[x$group == "a"] > 0))
+  expect_identical(res$count_positive[2], sum(x$val1[x$group == "b"] > 0))
+
+  # count negative
+  expect_identical(res$count_negative[1], sum(x$val1[x$group == "a"] < 0))
+  expect_identical(res$count_negative[2], sum(x$val1[x$group == "b"] < 0))
+
+  # count not positive
+  expect_identical(res$count_not_positive[1], sum(x$val1[x$group == "a"] <= 0))
+  expect_identical(res$count_not_positive[2], sum(x$val1[x$group == "b"] <= 0))
+
+  # count not negative
+  expect_identical(res$count_not_negative[1], sum(x$val1[x$group == "a"] >= 0))
+  expect_identical(res$count_not_negative[2], sum(x$val1[x$group == "b"] >= 0))
+
+  na <- 100/sum(x$group == "a" & !is.na(x$val1))
+  nb <- 100/sum(x$group == "b" & !is.na(x$val1))
+
+  # percentage 0
+  expect_equal(res$percentage_0[1], sum(x$val1[x$group == "a"] == 0) * na)
+  expect_equal(res$percentage_0[2], sum(x$val1[x$group == "b"] == 0) * nb)
+
+  # percentage positive
+  expect_equal(res$percentage_positive[1], sum(x$val1[x$group == "a"] > 0) * na)
+  expect_equal(res$percentage_positive[2], sum(x$val1[x$group == "b"] > 0) * nb)
+
+  # percentage negative
+  expect_equal(res$percentage_negative[1], sum(x$val1[x$group == "a"] < 0) * na)
+  expect_equal(res$percentage_negative[2], sum(x$val1[x$group == "b"] < 0) * nb)
+
+  # percentage not positive
+  expect_equal(res$percentage_not_positive[1], sum(x$val1[x$group == "a"] <= 0) * na)
+  expect_equal(res$percentage_not_positive[2], sum(x$val1[x$group == "b"] <= 0) * nb)
+
+  # percentage not negative
+  expect_equal(res$percentage_not_negative[1], sum(x$val1[x$group == "a"] >= 0) * na)
+  expect_equal(res$percentage_not_negative[2], sum(x$val1[x$group == "b"] >= 0) * nb)
+
+  expect_no_error(result <- summariseResult(
+    table = cdm$test,
+    group = "group",
+    variables = c("val1", "val2"),
+    weights = "w",
+    estimates = c(
+      "count_0", "count_positive", "count_negative", "count_not_positive",
+      "count_not_negative", "percentage_0", "percentage_positive",
+      "percentage_negative", "percentage_not_positive",
+      "percentage_not_negative"
+    )
+  ))
+
+  res <- result |>
+    dplyr::filter(.data$variable_name != "number records") |>
+    omopgenerics::tidy()
+
+  # same results for val1 and val2
+  expect_identical(
+    res |>
+      dplyr::filter(.data$variable_name == "val1") |>
+      dplyr::select(!"variable_name"),
+    res |>
+      dplyr::filter(.data$variable_name == "val2") |>
+      dplyr::select(!"variable_name")
+  )
+
+  res <- res[res$variable_name == "val1",]
+  tol <- 0.01
+
+  # count 0
+  expect_equal(res$count_0[1], sum(x$w[x$group == "a" & x$val1 == 0]), tolerance = tol)
+  expect_equal(res$count_0[2], sum(x$w[x$group == "b" & x$val1 == 0]), tolerance = tol)
+
+  # count positive
+  expect_equal(res$count_positive[1], sum(x$w[x$group == "a" & x$val1 > 0]), tolerance = tol)
+  expect_equal(res$count_positive[2], sum(x$w[x$group == "b" & x$val1 > 0]), tolerance = tol)
+
+  # count negative
+  expect_equal(res$count_negative[1], sum(x$w[x$group == "a" & x$val1 < 0]), tolerance = tol)
+  expect_equal(res$count_negative[2], sum(x$w[x$group == "b" & x$val1 < 0]), tolerance = tol)
+
+  # count not positive
+  expect_equal(res$count_not_positive[1], sum(x$w[x$group == "a" & x$val1 <= 0]), tolerance = tol)
+  expect_equal(res$count_not_positive[2], sum(x$w[x$group == "b" & x$val1 <= 0]), tolerance = tol)
+
+  # count not negative
+  expect_equal(res$count_not_negative[1], sum(x$w[x$group == "a" & x$val1 >= 0]), tolerance = tol)
+  expect_equal(res$count_not_negative[2], sum(x$w[x$group == "b" & x$val1 >= 0]), tolerance = tol)
+
+  na <- 100/sum(x$w[x$group == "a" & !is.na(x$val1)])
+  nb <- 100/sum(x$w[x$group == "b" & !is.na(x$val1)])
+
+  # percentage 0
+  expect_equal(res$percentage_0[1], sum(x$w[x$val1 == 0 & x$group == "a"]) * na, tolerance = tol)
+  expect_equal(res$percentage_0[2], sum(x$w[x$val1 == 0 & x$group == "b"]) * nb, tolerance = tol)
+
+  # percentage positive
+  expect_equal(res$percentage_positive[1], sum(x$w[x$val1 > 0 & x$group == "a"]) * na, tolerance = tol)
+  expect_equal(res$percentage_positive[2], sum(x$w[x$val1 > 0 & x$group == "b"]) * nb, tolerance = tol)
+
+  # percentage negative
+  expect_equal(res$percentage_negative[1], sum(x$w[x$val1 < 0 & x$group == "a"]) * na, tolerance = tol)
+  expect_equal(res$percentage_negative[2], sum(x$w[x$val1 < 0 & x$group == "b"]) * nb, tolerance = tol)
+
+  # percentage not positive
+  expect_equal(res$percentage_not_positive[1], sum(x$w[x$val1 <= 0 & x$group == "a"]) * na, tolerance = tol)
+  expect_equal(res$percentage_not_positive[2], sum(x$w[x$val1 <= 0 & x$group == "b"]) * nb, tolerance = tol)
+
+  # percentage not negative
+  expect_equal(res$percentage_not_negative[1], sum(x$w[x$val1 >= 0 & x$group == "a"]) * na, tolerance = tol)
+  expect_equal(res$percentage_not_negative[2], sum(x$w[x$val1 >= 0 & x$group == "b"]) * nb, tolerance = tol)
+
+  # no estimates
+  expect_no_error(
+    res <- summariseResult(
+      table = cdm$test,
+      variables = "group",
+      estimates = "density",
+      count = FALSE
+    )
+  )
+
+  x <- dplyr::tibble(
+    group = c(rep("a", 5), rep("b", 3)),
+    person_id = c(1L, 1L, 2L, 2L, 3L, 2L, 1L, 1L),
+    subject_id = c(1L, 2L, 2L, 2L, 2L, 2L, 4L, 4L),
+    w = c(0.4, 2.5, 4.5, 1.1, 3.4, 1.4, 0.98, 0.45)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test", table = x)
+
+  # count_subject count_person
+  # no person_id or subject_id column
+  expect_no_error(result1 <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!c("person_id", "subject_id")),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE
+  ))
+  expect_true(nrow(result1) == 0)
+  expect_no_error(result1w <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!c("person_id", "subject_id")),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE,
+    weights = "w"
+  ))
+  expect_equal(result1, result1w, ignore_attr = TRUE)
+
+  # no person_id column
+  expect_no_error(result2 <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!"person_id"),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE
+  ))
+  expect_true(nrow(result2) == 2)
+  res <- omopgenerics::tidy(result2)
+  expect_identical(res$count_subject, c(2L, 2L))
+  expect_no_error(result2w <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!"person_id"),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE
+  ))
+  expect_equal(result2, result2w, ignore_attr = TRUE)
+
+  # no subject_id column
+  expect_no_error(result3 <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!"subject_id"),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE
+  ))
+  expect_true(nrow(result3) == 2)
+  res <- omopgenerics::tidy(result3)
+  expect_identical(res$count_person, c(3L, 2L))
+  expect_no_error(result3w <- summariseResult(
+    table = cdm$test |>
+      dplyr::select(!"subject_id"),
+    variables = c("group"),
+    estimates = c("count_person", "count_subject"),
+    counts = FALSE
+  ))
+  expect_equal(result3, result3w, ignore_attr = TRUE)
+
+  # test binary variables and count
+  cdm <- mockPatientProfiles() |>
+    copyCdm()
+
+  x <- dplyr::tibble(
+    group = c(rep("a", 5), rep("b", 3)),
+    val1 = c(0, 1, 0, 1, NA, NA, 1, 0),
+    val2 = c(-5, 1, 0, 4, 2, -1, 1, -5),
+    val3 = c(0L, 1L, 0, 1L, NA, NA, 1L, 0),
+    val4 = c(-5L, 1L, 0L, 4L, 2L, -1L, 1L, -5L)
+  )
+
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "test", table = x)
+
+  expect_no_error(res <- summariseResult(
+    table = cdm$test,
+    variables = c("val1", "val2", "val3", "val4"),
+    estimates = c("count", "percentage", "mean"),
+    counts = FALSE
+  ))
+  expect_identical(res$estimate_name[res$variable_name == "val1"], c("count", "percentage", "mean"))
+  expect_identical(res$estimate_name[res$variable_name == "val2"], "mean")
+  expect_identical(res$estimate_name[res$variable_name == "val3"], c("count", "percentage", "mean"))
+  expect_identical(res$estimate_name[res$variable_name == "val4"], "mean")
+
+  dropCreatedTables(cdm = cdm)
+})
+
+test_that("no cdm_table still works", {
+  skip_if(dbToTest == "duckdb")
+
+  con <- duckdb::dbConnect(drv = duckdb::duckdb())
+  duckdb::dbWriteTable(conn = con, name = "cars", value = cars)
+  cars_db <- dplyr::tbl(src = con, "cars")
+
+  expect_no_warning(summariseResult(cars_db, variables = "speed"))
+
+  duckdb::dbDisconnect(conn = con)
 })

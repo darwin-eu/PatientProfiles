@@ -1,3 +1,18 @@
+# PatientProfiles 1.4.5
+
+* Add new estimates count_0, count_negative, count_positive, count_not_positive, count_not_negative + percentages by @catalamarti in #825
+* Restrict count and percentage to binary variables by @catalamarti in #836
+* Limit x values of density estimation to .005 and .995 percentiles of the distribution by @ablack3 in #820
+* Improve summariseResult examples by @catalamarti in #827
+* Add message when no result is provided in summariseResult by @catalamarti in #826
+* Add new estimates count_person and count_subject by @catalamarti in #828
+* Fix warning when table is no cdm_table in summariseResult by @catalamarti in #835
+* Standard deviation is corrected to numeric for all variables by @catalamarti in #834
+
+# PatientProfiles 1.4.4
+
+* fix edge case for not present domains by @catalamarti in #815
+* additional compute in intersect by @edward-burn in #817
 
 # PatientProfiles 1.4.3
 
@@ -5,7 +20,7 @@
 * explicit message for order by @catalamarti in #807
 * allowDuplicated documentation by @catalamarti in #805
 * Support local datasets by @catalamarti in #810
-* Deprecrate mockDisconnect by @catalamarti in #811
+* Deprecate mockDisconnect by @catalamarti in #811
 
 # PatientProfiles 1.4.2
 

@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Classify the variables between 5 types: "numeric", "categorical", "binary",
-#' "date", or NA.
+#' Classify the variables between 5 types: "numeric", "categorical", "logical",
+#' "date", "integer", or NA.
 #'
 #' @param table Tibble.
 #'
@@ -49,7 +49,8 @@ variableTypes <- function(table) {
           dplyr::pull() |>
           dplyr::type_sum() |>
           assertClassification()
-      }) |> unlist()
+      }) |>
+        unlist()
     )
   } else {
     x <- dplyr::tibble(
@@ -146,13 +147,4 @@ availableEstimates <- function(variableType = NULL, fullQuantiles = FALSE) {
   }
 
   x |> dplyr::filter(.data$variable_type %in% .env$variableType)
-}
-
-binaryVariable <- function(x) {
-  u <- unique(x)
-  if (length(u) <= 3) {
-    u <- as.character(u)
-    return(all(u %in% c("0", "1", NA_character_)))
-  }
-  return(FALSE)
 }

@@ -1,6 +1,6 @@
 estimate_name,estimate_description, estimate_type
 mean,mean of the variable of interest., same
-sd,standard deviation of the variable of interest., same
+sd,standard deviation of the variable of interest.,numeric
 median,median of the variable of interest., same
 qXX,qualtile of XX% the variable of interest., same
 min,minimum of the variable of interest., same
@@ -10,3 +10,17 @@ count_missing,number of missing values.,integer
 percentage_missing,percentage of missing values,percentage
 count,number of times that each category is observed.,integer
 percentage,percentage of individuals with that category.,percentage
+count_0,count number of `1`.,integer
+percentage_0,percentage of occurrences of `0` (NA are excluded).,percentage
+count_negative,count negative values.,integer
+percentage_negative,percentage of negative values.,percentage
+count_positive,count positive values.,integer
+percentage_positive,percentage of positive values.,percentage
+count_not_negative,count not negative values.,integer
+percentage_not_negative,percentage of not negative values.,percentage
+count_not_positive,count not positive values.,integer
+percentage_not_positive,percentage of not positive values.,percentage
+count_person,distinct counts of `person_id`.,integer
+percentage_person,percentage of distinct counts of `person_id`.,percentage
+count_subject,distinct counts of `subject_id`.,integer
+percentage_subject,percentage of distinct counts of `subject_id`.,percentage

@@ -73,7 +73,7 @@ test_that("test checkCategory with length 1 ", {
   expect_error(checkVariablesFunctions(list("a" = "sex"), list("b" = "count")))
 
   expect_identical(
-    checkVariablesFunctions(list(), list()),
+    checkVariablesFunctions(list(), list(), dplyr::tibble()),
     rep(list(character()), 4) |>
       rlang::set_names(c("variable_name", "estimate_name", "variable_type", "estimate_type")) |>
       dplyr::as_tibble()
@@ -88,6 +88,8 @@ test_that("test checkCategory with length 1 ", {
   )
   expect_true("count" %in% x$estimate_name[x$variable_name == "bin"])
   expect_false("count" %in% x$estimate_name[x$variable_name == "age"])
+  expect_true("mean" %in% x$estimate_name[x$variable_name == "bin"])
+  expect_true("mean" %in% x$estimate_name[x$variable_name == "age"])
 
   expect_error(checkStrata(list(3)))
 

@@ -29,7 +29,8 @@ observation flag.}
 \item{name}{Name of the new table, if NULL a temporary table is returned.}
 }
 \value{
-cohort table with the added binary column assessing inObservation.
+cohort table with the added numeric column assessing observation (1
+in observation, 0 not in observation).
 }
 \description{
 Indicate if a certain record is within the observation period

@@ -6,11 +6,19 @@ library(dplyr)
 
 formats <- read_csv(here("extras", "formats.csv"), col_types = "c")
 
+num <- c(
+  "sum", "mean", "sd", "median", "qXX", "min", "max", "count_missing",
+  "percentage_missing", "count", "percentage", "count_0", "percentage_0",
+  "count_negative", "percentage_negative", "count_positive",
+  "percentage_positive", "count_not_negative", "percentage_not_negative",
+  "count_not_positive", "percentage_not_positive"
+)
+
 variables <- list(
   "date" = c("mean", "sd", "median", "qXX", "min", "max", "count_missing", "percentage_missing"),
-  "numeric" = c("sum", "mean", "sd", "median", "qXX", "min", "max", "count_missing", "percentage_missing", "count", "percentage"),
-  "integer" = c("sum", "mean", "sd", "median", "qXX", "min", "max", "count_missing", "percentage_missing", "count", "percentage"),
-  "categorical" = c("count", "percentage"),
+  "numeric" = num,
+  "integer" = num,
+  "categorical" = c("count", "percentage", "count_person", "count_subject"),
   "logical" = c("count", "percentage")
 )
 
@@ -20,12 +28,12 @@ formats <- variables |>
   rename("estimate_name" = "value") |>
   inner_join(formats, by = "estimate_name") |>
   mutate(estimate_type = if_else(estimate_type == "same", variable_type, estimate_type)) |>
-  mutate(estimate_type = if_else(estimate_name %in% c("mean", "sd") & variable_type == "integer", "numeric", estimate_type)) |>
+  mutate(estimate_type = if_else(estimate_name == "mean" & variable_type == "integer", "numeric", estimate_type)) |>
   mutate(estimate_description = case_when(
     variable_type %in% c("numeric", "integer") & estimate_name == "count" ~
-      "count number of `1`.",
+      "count number of `1`. Only allowed for binary numeric variables.",
     variable_type %in% c("numeric", "integer") & estimate_name == "percentage" ~
-      "percentage of occurrences of `1` (NA are excluded).",
+      "percentage of occurrences of `1` (NA are excluded). Only allowed for binary numeric variables.",
     variable_type == "logical" & estimate_name == "count" ~
       "count number of `TRUE`.",
     variable_type == "logical" & estimate_name == "percentage" ~
@@ -58,7 +66,15 @@ estimatesFunc <- c(
   "mean" = "base::mean(x, na.rm = TRUE)",
   "median" = "stats::median(x, na.rm = TRUE)",
   "sum" = "base::sum(x, na.rm = TRUE)",
-  "sd" = "stats::sd(x, na.rm = TRUE)")
+  "sd" = "stats::sd(x, na.rm = TRUE)",
+  "count" = "as.numeric(base::sum(dplyr::if_else(x == 1, 1, 0), na.rm = TRUE))",
+  "count_missing" = "as.numeric(base::sum(dplyr::if_else(is.na(x), 1, 0), na.rm = TRUE))",
+  "count_0" = "as.numeric(base::sum(dplyr::if_else(x == 0, 1, 0), na.rm = TRUE))",
+  "count_positive" = "as.numeric(base::sum(dplyr::if_else(x > 0, 1, 0), na.rm = TRUE))",
+  "count_not_positive" = "as.numeric(base::sum(dplyr::if_else(x > 0, 0, 1), na.rm = TRUE))",
+  "count_negative" = "as.numeric(base::sum(dplyr::if_else(x < 0, 1, 0), na.rm = TRUE))",
+  "count_not_negative" = "as.numeric(base::sum(dplyr::if_else(x < 0, 0, 1), na.rm = TRUE))"
+)
 quantiles <- paste0("stats::quantile(x, ", seq(0.01, 0.99, 0.01), ", na.rm = TRUE)")
 names(quantiles) <- c(paste0("q0", 1:9), paste0("q", 10:99))
 estimatesFunc <- c(estimatesFunc, quantiles)
@@ -69,10 +85,17 @@ estimatesFuncWeights <- c(
   "mean" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.mean(x, weights = .data[[weights]], na.rm = TRUE))",
   "median" = "ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = 0.5, na.rm = TRUE))",
   "sum" = "base::sum(x*.data[[weights]], na.rm = TRUE)",
-  "sd" = "sqrt(ifelse(all(is.na(x)), NA, Hmisc::wtd.var(x, weights = .data[[weights]], na.rm = TRUE)))")
+  "sd" = "sqrt(ifelse(all(is.na(x)), NA, Hmisc::wtd.var(x, weights = .data[[weights]], na.rm = TRUE)))",
+  "count" = "as.numeric(base::sum(dplyr::if_else(x == 1, .data[[weights]], 0), na.rm = TRUE))",
+  "count_missing" = "as.numeric(base::sum(dplyr::if_else(is.na(x), .data[[weights]], 0), na.rm = TRUE))",
+  "count_0" = "as.numeric(base::sum(dplyr::if_else(x == 0, .data[[weights]], 0), na.rm = TRUE))",
+  "count_positive" = "as.numeric(base::sum(dplyr::if_else(x > 0, .data[[weights]], 0), na.rm = TRUE))",
+  "count_not_positive" = "as.numeric(base::sum(dplyr::if_else(x > 0, 0, .data[[weights]]), na.rm = TRUE))",
+  "count_negative" = "as.numeric(base::sum(dplyr::if_else(x < 0, .data[[weights]], 0), na.rm = TRUE))",
+  "count_not_negative" = "as.numeric(base::sum(dplyr::if_else(x < 0, 0, .data[[weights]]), na.rm = TRUE))"
+)
 quantiles <- paste0("ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = .data[[weights]], probs = ", seq(0.01, 0.99, 0.01), ", na.rm = TRUE))")
 names(quantiles) <- c(paste0("q0", 1:9), paste0("q", 10:99))
 estimatesFuncWeights <- c(estimatesFuncWeights, quantiles)
 
 use_data(estimatesFunc, estimatesFuncWeights, formats, namesTable, formatsOld, internal = TRUE, overwrite = TRUE)
-

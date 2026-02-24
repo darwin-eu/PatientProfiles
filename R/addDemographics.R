@@ -86,8 +86,12 @@ addDemographics <- function(x,
                             dateOfBirth = FALSE,
                             dateOfBirthName = "date_of_birth",
                             name = NULL) {
+
   name <- validateName(name)
-  x |>
+  cdm <- omopgenerics::cdmReference(x)
+  tmpName <- omopgenerics::uniqueTableName()
+
+  x <- x |>
     .addDemographicsQuery(
       indexDate = indexDate,
       age = age,
@@ -108,9 +112,14 @@ addDemographics <- function(x,
       priorObservationType = priorObservationType,
       futureObservationType = futureObservationType,
       dateOfBirth = dateOfBirth,
-      dateOfBirthName = dateOfBirthName
+      dateOfBirthName = dateOfBirthName,
+      tmpName = tmpName
     ) |>
     computeTable(name = name)
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = tmpName)
+
+  x
 }
 
 #' Compute the age of the individuals at a certain date
@@ -178,6 +187,7 @@ addAge <- function(x,
       dateOfBirthName = NULL
     ) |>
     computeTable(name = name)
+
 }
 
 #' Compute the number of days till the end of the observation period at a
@@ -210,8 +220,12 @@ addFutureObservation <- function(x,
                                  futureObservationName = "future_observation",
                                  futureObservationType = "days",
                                  name = NULL) {
+
   name <- validateName(name)
-  x |>
+  cdm <- omopgenerics::cdmReference(x)
+  tmpName <- omopgenerics::uniqueTableName()
+
+  x <- x |>
     .addDemographicsQuery(
       indexDate = indexDate,
       age = FALSE,
@@ -232,9 +246,14 @@ addFutureObservation <- function(x,
       missingSexValue = NULL,
       priorObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      tmpName = tmpName
     ) |>
     computeTable(name = name)
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = tmpName)
+
+  x
 }
 
 #' Compute the number of days of prior observation in the current observation period
@@ -268,8 +287,12 @@ addPriorObservation <- function(x,
                                 priorObservationName = "prior_observation",
                                 priorObservationType = "days",
                                 name = NULL) {
+
   name <- validateName(name)
-  x |>
+  cdm <- omopgenerics::cdmReference(x)
+  tmpName <- omopgenerics::uniqueTableName()
+
+  x <- x |>
     .addDemographicsQuery(
       indexDate = indexDate,
       age = FALSE,
@@ -290,9 +313,14 @@ addPriorObservation <- function(x,
       missingSexValue = NULL,
       futureObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      tmpName = tmpName
     ) |>
     computeTable(name = name)
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = tmpName)
+
+  x
 }
 
 #' Indicate if a certain record is within the observation period
@@ -306,7 +334,8 @@ addPriorObservation <- function(x,
 #' "window_name" if multiple windows are provided.
 #' @param name Name of the new table, if NULL a temporary table is returned.
 #'
-#' @return cohort table with the added binary column assessing inObservation.
+#' @return cohort table with the added numeric column assessing observation (1
+#' in observation, 0 not in observation).
 #' @export
 #'
 #' @examples

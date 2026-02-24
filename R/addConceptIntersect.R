@@ -274,8 +274,14 @@ checkDomainsAndTables <- function(x, supportedDomains) {
     names(mes) <- rep("!", length(mes))
     cli::cli_inform(message = mes)
   }
-  x <- x |>
-    dplyr::filter(.data$domain_id %in% .env$presentTables)
+
+  if (length(presentTables) == 0) {
+    x <- x |>
+      utils::head(0L)
+  } else {
+    x <- x |>
+      dplyr::filter(.data$domain_id %in% .env$presentTables)
+  }
 
   dplyr::compute(x)
 }
