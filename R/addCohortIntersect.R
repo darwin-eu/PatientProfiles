@@ -304,3 +304,86 @@ addCohortIntersectDate <- function(x,
 
   return(x)
 }
+
+#' It creates a column with the field of a desired intersection
+#'
+#' @param x Table with individuals in the cdm.
+#' @param targetCohortTable name of the cohort that we want to check for overlap.
+#' @param field Column of interest in the targetCohort.
+#' @param targetCohortId vector of cohort definition ids to include.
+#' @param indexDate Variable in x that contains the date to compute the
+#' intersection.
+#' @param censorDate whether to censor overlap events at a specific date
+#' or a column date of x.
+#' @param targetDate Date of interest in the other cohort table. Either
+#' cohort_start_date or cohort_end_date.
+#' @param order date to use if there are multiple records for an
+#' individual during the window of interest. Either first or last.
+#' @param window Window of time to identify records relative to the indexDate.
+#' Records outside of this time period will be ignored.
+#' @param nameStyle naming of the added column or columns, should include
+#' required parameters.
+#' @param name Name of the new table, if NULL a temporary table is returned.
+#'
+#' @return table with added columns with overlap information.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' library(PatientProfiles)
+#' library(dplyr)
+#'
+#' cdm <- mockPatientProfiles(source = "duckdb")
+#'
+#' cdm$cohort2 <- cdm$cohort2 |>
+#'   mutate(even = if_else(subject_id %% 2, "yes", "no")) |>
+#'   compute(name = "cohort2")
+#'
+#' cdm$cohort1 |>
+#'   addCohortIntersectFlag(
+#'     targetCohortTable = "cohort2"
+#'   )
+#'
+#' }
+#'
+addCohortIntersectField <- function(x,
+                                    targetCohortTable,
+                                    field,
+                                    targetCohortId = NULL,
+                                    indexDate = "cohort_start_date",
+                                    censorDate = NULL,
+                                    targetDate = "cohort_start_date",
+                                    order = "first",
+                                    window = list(c(0, Inf)),
+                                    nameStyle = "{cohort_name}_{field}_{window_name}",
+                                    name = NULL) {
+  cdm <- omopgenerics::cdmReference(x)
+  omopgenerics::assertCharacter(targetCohortTable)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
+  parameters <- checkCohortNames(cdm[[targetCohortTable]], {{targetCohortId}}, targetCohortTable)
+  nameStyle <- gsub("\\{cohort_name\\}", "\\{id_name\\}", nameStyle)
+  nameStyle <- gsub("\\{field\\}", "\\{value\\}", nameStyle)
+
+  if (missing(order) & rlang::is_interactive()) {
+    messageOrder(order)
+  }
+
+  x <- x |>
+    .addIntersect(
+      tableName = targetCohortTable,
+      filterVariable = parameters$filter_variable,
+      filterId = parameters$filter_id,
+      idName = parameters$id_name,
+      value = field,
+      indexDate = indexDate,
+      targetStartDate = targetDate,
+      targetEndDate = NULL,
+      window = window,
+      order = order,
+      nameStyle = nameStyle,
+      censorDate = censorDate,
+      name = name
+    )
+
+  return(x)
+}

@@ -2,21 +2,21 @@
 % Please edit documentation in R/filterInObservation.R
 \name{filterInObservation}
 \alias{filterInObservation}
-\title{Filter the rows of a `cdm_table` to the ones in observation that `indexDate`
+\title{Filter the rows of a \code{cdm_table} to the ones in observation that \code{indexDate}
 is in observation.}
 \usage{
 filterInObservation(x, indexDate)
 }
 \arguments{
-\item{x}{A `cdm_table` object.}
+\item{x}{A \code{cdm_table} object.}
 
 \item{indexDate}{Name of a column of x that is a date.}
 }
 \value{
-A `cdm_table` that is a subset of the original table.
+A \code{cdm_table} that is a subset of the original table.
 }
 \description{
-Filter the rows of a `cdm_table` to the ones in observation that `indexDate`
+Filter the rows of a \code{cdm_table} to the ones in observation that \code{indexDate}
 is in observation.
 }
 \examples{

@@ -9,12 +9,12 @@ functions of other packages.}
 filterCohortId(cohort, cohortId = NULL)
 }
 \arguments{
-\item{cohort}{A `cohort_table` object.}
+\item{cohort}{A \code{cohort_table} object.}
 
 \item{cohortId}{A vector with cohort ids.}
 }
 \value{
-A `cohort_table` object.
+A \code{cohort_table} object.
 }
 \description{
 Filter a cohort according to cohort_definition_id column, the result is not

@@ -16,10 +16,10 @@ addPriorObservation(
 \arguments{
 \item{x}{Table with individuals in the cdm.}
 
-\item{indexDate}{Variable in x that contains the date to compute the prior
-observation.}
+\item{indexDate}{Variable in x that contains the date to compute the
+demographics characteristics.}
 
-\item{priorObservationName}{name of the new column to be added.}
+\item{priorObservationName}{Prior observation variable name.}
 
 \item{priorObservationType}{Whether to return a "date" or the number of
 "days".}

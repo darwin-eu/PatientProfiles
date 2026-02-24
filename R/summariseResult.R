@@ -682,11 +682,15 @@ summariseCounts <- function(table, functions, weights) {
       dplyr::left_join(dens, by = "den")
 
     # assign numerator
+    if (length(weights) == 0) {
+      functs <- functs |>
+        dplyr::mutate(num = estimatesFunc[gsub("percentage", "count", .data$estimate_name)])
+    } else {
+      functs <- functs |>
+        dplyr::mutate(num = estimatesFuncWeights[gsub("percentage", "count", .data$estimate_name)])
+    }
+
     functs <- functs |>
-      dplyr::mutate(num = dplyr::case_when(
-        length(.env$weights) == 0 ~ estimatesFunc[gsub("percentage", "count", .data$estimate_name)],
-        length(.env$weights) != 0 ~ estimatesFuncWeights[gsub("percentage", "count", .data$estimate_name)]
-      )) |>
       dplyr::rowwise() |>
       dplyr::mutate(num = gsub(
         "\\(x", paste0("\\(.data[['", .data$variable_name, "']]"), .data$num

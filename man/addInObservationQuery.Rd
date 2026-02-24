@@ -31,8 +31,7 @@ cohort table with the added numeric column assessing observation (1
 in observation, 0 not in observation).
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addInObservation()`, except query is not computed to a table.
+Same as \code{addInObservation()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

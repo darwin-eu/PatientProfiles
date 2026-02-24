@@ -1435,3 +1435,64 @@ test_that("test query functions", {
 
   dropCreatedTables(cdm = cdm)
 })
+
+test_that("test ageUnit", {
+  skip_on_cran()
+  person <- dplyr::tribble(
+    ~person_id, ~year_of_birth, ~month_of_birth, ~day_of_birth,
+    1L, 2015L, 4L, 30L,
+    2L, 2015L, 3L, 31L,
+    3L, 2015L, 5L, 31L,
+    4L, 2015L, 3L, 31L,
+    5L, 2015L, 3L, 30L,
+    5L, 2015L, 3L, 29L,
+  ) |>
+    dplyr::mutate(gender_concept_id = 0L)
+  cohort <- dplyr::tibble(
+    cohort_definition_id = 1L,
+    subject_id = 1:5L,
+    cohort_start_date = as.Date("2020-04-30"),
+    cohort_end_date = cohort_start_date
+  )
+  op <- dplyr::tibble(
+    observation_period_id = 1:5L,
+    person_id = 1:5L,
+    observation_period_start_date = as.Date("2016-01-01"),
+    observation_period_end_date = as.Date("2022-01-01")
+  )
+  cdm <- omock::mockCdmFromTables(tables = list(
+    person = person,
+    cohort = cohort,
+    observation_period = op
+  )) |>
+    copyCdm()
+
+  # years
+  expect_no_error(
+    x <- cdm$cohort |>
+      addAge(ageUnit = "years") |>
+      dplyr::collect() |>
+      dplyr::arrange(.data$subject_id) |>
+      dplyr::pull("age")
+  )
+
+  # months
+  expect_no_error(
+    x <- cdm$cohort |>
+      addDemographicsQuery(ageUnit = "months") |>
+      dplyr::collect() |>
+      dplyr::arrange(.data$subject_id) |>
+      dplyr::pull("age")
+  )
+
+  # days
+  expect_no_error(
+    x <- cdm$cohort |>
+      addDemographics(ageUnit = "days") |>
+      dplyr::collect() |>
+      dplyr::arrange(.data$subject_id) |>
+      dplyr::pull("age")
+  )
+
+  dropCreatedTables(cdm = cdm)
+})

@@ -22,6 +22,7 @@ reference:
   - addPriorObservation
   - addFutureObservation
   - addInObservation
+  - addBirthday
 - subtitle: Add multiple individual patient characteristics
   desc: Add a set of patient characteristics to a table in the OMOP Common Data Model
 - contents:

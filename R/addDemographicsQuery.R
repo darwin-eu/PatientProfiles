@@ -17,41 +17,9 @@
 #' Query to add demographic characteristics at a certain date
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addDemographics()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' demographics characteristics.
-#' @param age TRUE or FALSE. If TRUE, age will be calculated relative to
-#' indexDate.
-#' @param ageMissingMonth Month of the year assigned to individuals with missing
-#' month of birth.
-#' @param ageName Age variable name.
-#' @param ageMissingDay day of the month assigned to individuals
-#' with missing day of birth.
-#' @param ageImposeMonth TRUE or FALSE. Whether the month of the date of birth
-#' will be considered as missing for all the individuals.
-#' @param ageImposeDay TRUE or FALSE. Whether the day of the date of birth
-#' will be considered as missing for all the individuals.
-#' @param ageGroup if not NULL, a list of ageGroup vectors.
-#' @param missingAgeGroupValue Value to include if missing age.
-#' @param sex TRUE or FALSE. If TRUE, sex will be identified.
-#' @param sexName Sex variable name.
-#' @param missingSexValue Value to include if missing sex.
-#' @param priorObservation TRUE or FALSE. If TRUE, days of between the start
-#' of the current observation period and the indexDate will be calculated.
-#' @param priorObservationName Prior observation variable name.
-#' @param priorObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param futureObservation TRUE or FALSE. If TRUE, days between the
-#' indexDate and the end of the current observation period will be
-#' calculated.
-#' @param futureObservationName Future observation variable name.
-#' @param futureObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param dateOfBirth TRUE or FALSE, if true the date of birth will be return.
-#' @param dateOfBirthName dateOfBirth column name.
+#' @inheritParams addDemographics
 #'
 #' @return cohort table with the added demographic information columns.
 #' @export
@@ -75,6 +43,7 @@ addDemographicsQuery <- function(x,
                                  ageMissingDay = 1,
                                  ageImposeMonth = FALSE,
                                  ageImposeDay = FALSE,
+                                 ageUnit = "years",
                                  ageGroup = NULL,
                                  missingAgeGroupValue = "None",
                                  sex = TRUE,
@@ -97,6 +66,7 @@ addDemographicsQuery <- function(x,
       ageMissingMonth = ageMissingMonth,
       ageImposeDay = ageImposeDay,
       ageImposeMonth = ageImposeMonth,
+      ageUnit = ageUnit,
       sex = sex,
       sexName = sexName,
       missingSexValue = missingSexValue,
@@ -116,22 +86,9 @@ addDemographicsQuery <- function(x,
 #' Query to add the age of the individuals at a certain date
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addAge()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the age.
-#' @param ageName Name of the new column that contains age.
-#' @param ageGroup List of age groups to be added.
-#' @param ageMissingMonth Month of the year assigned to individuals with missing
-#' month of birth. By default: 1.
-#' @param ageMissingDay day of the month assigned to individuals with missing
-#' day of birth. By default: 1.
-#' @param ageImposeMonth Whether the month of the date of birth will be
-#' considered as missing for all the individuals.
-#' @param ageImposeDay Whether the day of the date of birth will be considered
-#' as missing for all the individuals.
-#' @param missingAgeGroupValue Value to include if missing age.
+#' @inheritParams addDemographics
 #'
 #' @return tibble with the age column added.
 #' @export
@@ -154,6 +111,7 @@ addAgeQuery <- function(x,
                         ageMissingDay = 1,
                         ageImposeMonth = FALSE,
                         ageImposeDay = FALSE,
+                        ageUnit = "years",
                         missingAgeGroupValue = "None") {
   x |>
     .addDemographicsQuery(
@@ -165,6 +123,7 @@ addAgeQuery <- function(x,
       ageMissingMonth = ageMissingMonth,
       ageImposeDay = ageImposeDay,
       ageImposeMonth = ageImposeMonth,
+      ageUnit = ageUnit,
       missingAgeGroupValue = missingAgeGroupValue,
       sex = FALSE,
       priorObservation = FALSE,
@@ -184,15 +143,9 @@ addAgeQuery <- function(x,
 #' certain date
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addFutureObservation()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the future
-#' observation.
-#' @param futureObservationName name of the new column to be added.
-#' @param futureObservationType Whether to return a "date" or the number of
-#' "days".
+#' @inheritParams addDemographics
 #'
 #' @return cohort table with added column containing future observation of the
 #' individuals.
@@ -221,6 +174,7 @@ addFutureObservationQuery <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = FALSE,
       priorObservation = FALSE,
       futureObservation = TRUE,
@@ -241,15 +195,9 @@ addFutureObservationQuery <- function(x,
 #' observation period at a certain date
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addPriorObservation()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the prior
-#' observation.
-#' @param priorObservationName name of the new column to be added.
-#' @param priorObservationType Whether to return a "date" or the number of
-#' "days".
+#' @inheritParams addDemographics
 #'
 #' @return cohort table with added column containing prior observation of the
 #' individuals.
@@ -279,6 +227,7 @@ addPriorObservationQuery <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = FALSE,
       priorObservation = TRUE,
       priorObservationName = priorObservationName,
@@ -298,12 +247,9 @@ addPriorObservationQuery <- function(x,
 #' Query to add the sex of the individuals
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addSex()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param sexName name of the new column to be added.
-#' @param missingSexValue Value to include if missing sex.
+#' @inheritParams addDemographics
 #'
 #' @return table x with the added column with sex information.
 #'
@@ -332,6 +278,7 @@ addSexQuery <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = TRUE,
       sexName = sexName,
       missingSexValue = missingSexValue,
@@ -351,16 +298,9 @@ addSexQuery <- function(x,
 #' Query to add a column with the individual birth date
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addDateOfBirth()`, except query is not computed to a table.
 #'
-#' @param x Table in the cdm that contains 'person_id' or 'subject_id'.
-#' @param dateOfBirthName Name of the column to be added with the date of birth.
-#' @param missingDay Day of the individuals with no or imposed day of birth.
-#' @param missingMonth Month of the individuals with no or imposed month of
-#' birth.
-#' @param imposeDay Whether to impose day of birth.
-#' @param imposeMonth Whether to impose month of birth.
+#' @inheritParams addDateOfBirth
 #'
 #' @return The function returns the table x with an extra column that contains
 #' the date of birth.
@@ -392,6 +332,7 @@ addDateOfBirthQuery <- function(x,
       ageMissingMonth = missingMonth,
       ageImposeDay = imposeDay,
       ageImposeMonth = imposeMonth,
+      ageUnit = "years",
       sex = FALSE,
       sexName = NULL,
       missingSexValue = NULL,
@@ -417,6 +358,7 @@ addDateOfBirthQuery <- function(x,
                                   ageImposeMonth,
                                   ageImposeDay,
                                   ageGroup,
+                                  ageUnit,
                                   missingAgeGroupValue,
                                   sex,
                                   sexName,
@@ -457,6 +399,7 @@ addDateOfBirthQuery <- function(x,
   missingSexValue <- validateMissingValue(missingSexValue, null = !sex, call = call)
   priorObservationType <- validateType(priorObservationType, null = !priorObservation, call = call)
   futureObservationType <- validateType(futureObservationType, null = !futureObservation, call = call)
+  omopgenerics::assertChoice(ageUnit, c("days", "months", "years"), length = 1, call = call)
 
   # if no new columns return x
   if (!(age | sex | priorObservation | futureObservation | dateOfBirth | !is.null(ageGroup))) {
@@ -593,12 +536,7 @@ addDateOfBirthQuery <- function(x,
         if (!age) {
           ageName <- newCols[2]
         }
-        aQ <- "as.integer(floor(
-        (
-          (clock::get_year(.data[['{indexDate}']]) * 10000 + clock::get_month(.data[['{indexDate}']]) * 100 + clock::get_day(.data[['{indexDate}']])) -
-          (clock::get_year(.data[['{dateOfBirthName}']]) * 10000 + clock::get_month(.data[['{dateOfBirthName}']]) * 100 + clock::get_day(.data[['{dateOfBirthName}']]))
-        ) / 10000
-        ))" |>
+        aQ <- getAgeQuery(ageUnit) |>
           glue::glue() |>
           rlang::parse_exprs() |>
           rlang::set_names(ageName)
@@ -652,6 +590,30 @@ addDateOfBirthQuery <- function(x,
   return(xnew)
 }
 
+getAgeQuery <- function(ageUnit) {
+  if (ageUnit == "years") {
+    aQ <- "as.integer(floor(
+        (
+          (clock::get_year(.data[['{indexDate}']]) * 10000 + clock::get_month(.data[['{indexDate}']]) * 100 + clock::get_day(.data[['{indexDate}']])) -
+          (clock::get_year(.data[['{dateOfBirthName}']]) * 10000 + clock::get_month(.data[['{dateOfBirthName}']]) * 100 + clock::get_day(.data[['{dateOfBirthName}']]))
+        ) / 10000
+        ))"
+  } else if (ageUnit == "months") {
+    aQ <- "as.integer(floor(
+        (
+          (clock::get_year(.data[['{indexDate}']]) * 1200 + clock::get_month(.data[['{indexDate}']]) * 100 + clock::get_day(.data[['{indexDate}']])) -
+          (clock::get_year(.data[['{dateOfBirthName}']]) * 1200 + clock::get_month(.data[['{dateOfBirthName}']]) * 100 + clock::get_day(.data[['{dateOfBirthName}']]))
+        ) / 100
+        ))"
+  } else if (ageUnit == "days") {
+    aQ <- "as.integer(clock::date_count_between(
+      start = .data[['{dateOfBirthName}']],
+      end = .data[['{indexDate}']],
+      precision = 'day'
+    ))"
+  }
+  return(aQ)
+}
 ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
   ageName <- paste0(".data[['", ageName, "']]")
   purrr::map_chr(ageGroup, \(ag) {
@@ -679,7 +641,6 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
 #' observation period
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
 #' Same as `addInObservation()`, except query is not computed to a table.
 #'
 #' @param x Table with individuals in the cdm.
@@ -828,11 +789,4 @@ addInObservationQuery <- function(x,
     ))
 
   return(x)
-}
-
-## This function is never called
-## Exists to suppress this NOTE:
-## Namespace in Imports field not imported from: ‘lifecycle’
-lc <- function() {
-  lifecycle::badge("experimental")
 }

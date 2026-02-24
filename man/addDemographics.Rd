@@ -13,6 +13,7 @@ addDemographics(
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
   ageImposeDay = FALSE,
+  ageUnit = "years",
   ageGroup = NULL,
   missingAgeGroupValue = "None",
   sex = TRUE,
@@ -51,6 +52,8 @@ will be considered as missing for all the individuals.}
 
 \item{ageImposeDay}{TRUE or FALSE. Whether the day of the date of birth
 will be considered as missing for all the individuals.}
+
+\item{ageUnit}{Unit for age it can either be 'years', 'months' or 'days'.}
 
 \item{ageGroup}{if not NULL, a list of ageGroup vectors.}
 
