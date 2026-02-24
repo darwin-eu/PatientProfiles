@@ -27,7 +27,8 @@ observation flag.}
 "window_name" if multiple windows are provided.}
 }
 \value{
-cohort table with the added binary column assessing inObservation.
+cohort table with the added numeric column assessing observation (1
+in observation, 0 not in observation).
 }
 \description{
 `r lifecycle::badge("experimental")`

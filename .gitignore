@@ -55,4 +55,5 @@ inst/doc
 .Rdata
 .DS_Store
 .quarto
-/revdep/
+/
+revdep/

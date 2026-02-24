@@ -429,6 +429,7 @@ addDateOfBirthQuery <- function(x,
                                   futureObservationType,
                                   dateOfBirth,
                                   dateOfBirthName,
+                                  tmpName = NULL,
                                   call = parent.frame()) {
   # initial checks
   x <- omopgenerics::validateCdmTable(table = x)
@@ -514,9 +515,17 @@ addDateOfBirthQuery <- function(x,
       fOQ <- NULL
     }
 
-    observationPeriod <- x |>
+    distinctSubjects <- x |>
       dplyr::select(dplyr::all_of(c(personVariable, indexDate))) |>
-      dplyr::distinct() |>
+      dplyr::distinct()
+
+    if(!is.null(tmpName)){
+      distinctSubjects <- distinctSubjects  |> dplyr::compute(name = tmpName,
+                                                              temporary = FALSE,
+                                                              logPrefix = "PatientProfiles.addDemographicsQuery_distinctSubjects")
+    }
+
+    observationPeriod <- distinctSubjects |>
       dplyr::inner_join(
         cdm[["observation_period"]] |>
           dplyr::select(
@@ -534,6 +543,12 @@ addDateOfBirthQuery <- function(x,
       dplyr::select(dplyr::all_of(c(
         personVariable, indexDate, priorObservationName, futureObservationName
       )))
+
+    if(!is.null(tmpName)){
+      observationPeriod <- observationPeriod  |> dplyr::compute(name = tmpName,
+                                                                temporary = FALSE,
+                                                                logPrefix = "PatientProfiles.addDemographicsQuery_observationPeriod")
+    }
 
     xnew <- x |>
       dplyr::left_join(observationPeriod, by = c(personVariable, indexDate))
@@ -675,7 +690,8 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
 #' @param nameStyle Name of the new columns to create, it must contain
 #' "window_name" if multiple windows are provided.
 #'
-#' @return cohort table with the added binary column assessing inObservation.
+#' @return cohort table with the added numeric column assessing observation (1
+#' in observation, 0 not in observation).
 #' @export
 #'
 #' @examples
