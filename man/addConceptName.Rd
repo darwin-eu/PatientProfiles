@@ -10,7 +10,7 @@ addConceptName(table, column = NULL, nameStyle = "{column}_name")
 \item{table}{cdm_table that contains column.}
 
 \item{column}{Column to add the concept names from. If NULL any column that
-its name ends with `concept_id` will be used.}
+its name ends with \code{concept_id} will be used.}
 
 \item{nameStyle}{Name of the new column.}
 }

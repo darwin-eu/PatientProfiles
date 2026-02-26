@@ -13,6 +13,7 @@ addDemographicsQuery(
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
   ageImposeDay = FALSE,
+  ageUnit = "years",
   ageGroup = NULL,
   missingAgeGroupValue = "None",
   sex = TRUE,
@@ -51,6 +52,8 @@ will be considered as missing for all the individuals.}
 \item{ageImposeDay}{TRUE or FALSE. Whether the day of the date of birth
 will be considered as missing for all the individuals.}
 
+\item{ageUnit}{Unit for age it can either be 'years', 'months' or 'days'.}
+
 \item{ageGroup}{if not NULL, a list of ageGroup vectors.}
 
 \item{missingAgeGroupValue}{Value to include if missing age.}
@@ -86,8 +89,7 @@ calculated.}
 cohort table with the added demographic information columns.
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addDemographics()`, except query is not computed to a table.
+Same as \code{addDemographics()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

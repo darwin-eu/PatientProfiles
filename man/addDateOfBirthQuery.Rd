@@ -14,26 +14,28 @@ addDateOfBirthQuery(
 )
 }
 \arguments{
-\item{x}{Table in the cdm that contains 'person_id' or 'subject_id'.}
+\item{x}{Table with individuals in the cdm.}
 
-\item{dateOfBirthName}{Name of the column to be added with the date of birth.}
+\item{dateOfBirthName}{dateOfBirth column name.}
 
-\item{missingDay}{Day of the individuals with no or imposed day of birth.}
+\item{missingDay}{day of the month assigned to individuals
+with missing day of birth.}
 
-\item{missingMonth}{Month of the individuals with no or imposed month of
-birth.}
+\item{missingMonth}{Month of the year assigned to individuals with missing
+month of birth.}
 
-\item{imposeDay}{Whether to impose day of birth.}
+\item{imposeDay}{TRUE or FALSE. Whether the day of the date of birth
+will be considered as missing for all the individuals.}
 
-\item{imposeMonth}{Whether to impose month of birth.}
+\item{imposeMonth}{TRUE or FALSE. Whether the month of the date of birth
+will be considered as missing for all the individuals.}
 }
 \value{
 The function returns the table x with an extra column that contains
 the date of birth.
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addDateOfBirth()`, except query is not computed to a table.
+Same as \code{addDateOfBirth()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

@@ -9,7 +9,7 @@ addSexQuery(x, sexName = "sex", missingSexValue = "None")
 \arguments{
 \item{x}{Table with individuals in the cdm.}
 
-\item{sexName}{name of the new column to be added.}
+\item{sexName}{Sex variable name.}
 
 \item{missingSexValue}{Value to include if missing sex.}
 }
@@ -17,8 +17,7 @@ addSexQuery(x, sexName = "sex", missingSexValue = "None")
 table x with the added column with sex information.
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addSex()`, except query is not computed to a table.
+Same as \code{addSex()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

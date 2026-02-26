@@ -17,7 +17,7 @@ addTableIntersectField(
   inObservation = TRUE,
   order = "first",
   allowDuplicates = FALSE,
-  nameStyle = "{table_name}_{extra_value}_{window_name}",
+  nameStyle = "{table_name}_{field}_{window_name}",
   name = NULL
 )
 }
@@ -51,7 +51,7 @@ required for date and days options).}
 
 \item{allowDuplicates}{Whether to allow multiple records with same
 conceptSet, person_id and targetDate. If switched to TRUE, the created new
-columns (field) will be collapsed to a character vector separated by `;` to
+columns (field) will be collapsed to a character vector separated by \verb{;} to
 account for multiple values per person.}
 
 \item{nameStyle}{naming of the added column or columns, should include

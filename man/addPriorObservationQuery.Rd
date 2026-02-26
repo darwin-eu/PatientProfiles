@@ -15,10 +15,10 @@ addPriorObservationQuery(
 \arguments{
 \item{x}{Table with individuals in the cdm.}
 
-\item{indexDate}{Variable in x that contains the date to compute the prior
-observation.}
+\item{indexDate}{Variable in x that contains the date to compute the
+demographics characteristics.}
 
-\item{priorObservationName}{name of the new column to be added.}
+\item{priorObservationName}{Prior observation variable name.}
 
 \item{priorObservationType}{Whether to return a "date" or the number of
 "days".}
@@ -28,8 +28,7 @@ cohort table with added column containing prior observation of the
 individuals.
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addPriorObservation()`, except query is not computed to a table.
+Same as \code{addPriorObservation()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

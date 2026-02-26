@@ -393,7 +393,7 @@ validateAgeMissingDay <- function(ageMissingDay, null, call) {
   if (is.character(ageMissingDay)) {
     ageMissingDay <- as.numeric(ageMissingDay)
   }
-  omopgenerics::assertNumeric(ageMissingDay, integerish = TRUE, min = 1, max = 12, call = call)
+  omopgenerics::assertNumeric(ageMissingDay, integerish = TRUE, min = 1, max = 31, call = call)
   ageMissingDay <- as.integer(ageMissingDay)
 
   return(ageMissingDay)

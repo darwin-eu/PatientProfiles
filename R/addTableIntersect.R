@@ -365,13 +365,13 @@ addTableIntersectField <- function(x,
                                    inObservation = TRUE,
                                    order = "first",
                                    allowDuplicates = FALSE,
-                                   nameStyle = "{table_name}_{extra_value}_{window_name}",
+                                   nameStyle = "{table_name}_{field}_{window_name}",
                                    name = NULL) {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
   omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
   nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
-  nameStyle <- gsub("\\{extra_value\\}", "\\{value\\}", nameStyle)
+  nameStyle <- gsub("\\{field\\}", "\\{value\\}", nameStyle)
 
   if (missing(order) & rlang::is_interactive()) {
     messageOrder(order)

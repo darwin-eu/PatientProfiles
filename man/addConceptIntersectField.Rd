@@ -45,7 +45,7 @@ will be considered.}
 
 \item{allowDuplicates}{Whether to allow multiple records with same
 conceptSet, person_id and targetDate. If switched to TRUE, the created new
-columns (field) will be collapsed to a character vector separated by `;` to
+columns (field) will be collapsed to a character vector separated by \verb{;} to
 account for multiple values per person.}
 
 \item{nameStyle}{naming of the added column or columns, should include
@@ -54,7 +54,7 @@ required parameters.}
 \item{name}{Name of the new table, if NULL a temporary table is returned.}
 }
 \value{
-Table with the `field` value obtained from the intersection
+Table with the \code{field} value obtained from the intersection
 }
 \description{
 It adds a custom column (field) from the intersection with a certain table

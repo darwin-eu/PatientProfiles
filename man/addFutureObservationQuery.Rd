@@ -15,10 +15,10 @@ addFutureObservationQuery(
 \arguments{
 \item{x}{Table with individuals in the cdm.}
 
-\item{indexDate}{Variable in x that contains the date to compute the future
-observation.}
+\item{indexDate}{Variable in x that contains the date to compute the
+demographics characteristics.}
 
-\item{futureObservationName}{name of the new column to be added.}
+\item{futureObservationName}{Future observation variable name.}
 
 \item{futureObservationType}{Whether to return a "date" or the number of
 "days".}
@@ -28,8 +28,7 @@ cohort table with added column containing future observation of the
 individuals.
 }
 \description{
-`r lifecycle::badge("experimental")`
-Same as `addFutureObservation()`, except query is not computed to a table.
+Same as \code{addFutureObservation()}, except query is not computed to a table.
 }
 \examples{
 \donttest{

@@ -30,6 +30,7 @@
 #' will be considered as missing for all the individuals.
 #' @param ageImposeDay TRUE or FALSE. Whether the day of the date of birth
 #' will be considered as missing for all the individuals.
+#' @param ageUnit Unit for age it can either be 'years', 'months' or 'days'.
 #' @param ageGroup if not NULL, a list of ageGroup vectors.
 #' @param missingAgeGroupValue Value to include if missing age.
 #' @param sex TRUE or FALSE. If TRUE, sex will be identified.
@@ -72,6 +73,7 @@ addDemographics <- function(x,
                             ageMissingDay = 1,
                             ageImposeMonth = FALSE,
                             ageImposeDay = FALSE,
+                            ageUnit = "years",
                             ageGroup = NULL,
                             missingAgeGroupValue = "None",
                             sex = TRUE,
@@ -100,6 +102,7 @@ addDemographics <- function(x,
       ageMissingMonth = ageMissingMonth,
       ageImposeDay = ageImposeDay,
       ageImposeMonth = ageImposeMonth,
+      ageUnit = ageUnit,
       sex = sex,
       sexName = sexName,
       missingSexValue = missingSexValue,
@@ -124,20 +127,7 @@ addDemographics <- function(x,
 
 #' Compute the age of the individuals at a certain date
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the age.
-#' @param ageName Name of the new column that contains age.
-#' @param ageGroup List of age groups to be added.
-#' @param ageMissingMonth Month of the year assigned to individuals with missing
-#' month of birth. By default: 1.
-#' @param ageMissingDay day of the month assigned to individuals with missing
-#' day of birth. By default: 1.
-#' @param ageImposeMonth Whether the month of the date of birth will be
-#' considered as missing for all the individuals.
-#' @param ageImposeDay Whether the day of the date of birth will be considered
-#' as missing for all the individuals.
-#' @param missingAgeGroupValue Value to include if missing age.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams addDemographics
 #'
 #' @return tibble with the age column added.
 #' @export
@@ -160,6 +150,7 @@ addAge <- function(x,
                    ageMissingDay = 1,
                    ageImposeMonth = FALSE,
                    ageImposeDay = FALSE,
+                   ageUnit = "years",
                    missingAgeGroupValue = "None",
                    name = NULL) {
   name <- validateName(name)
@@ -173,6 +164,7 @@ addAge <- function(x,
       ageMissingMonth = ageMissingMonth,
       ageImposeDay = ageImposeDay,
       ageImposeMonth = ageImposeMonth,
+      ageUnit = ageUnit,
       missingAgeGroupValue = missingAgeGroupValue,
       sex = FALSE,
       priorObservation = FALSE,
@@ -193,13 +185,7 @@ addAge <- function(x,
 #' Compute the number of days till the end of the observation period at a
 #' certain date
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the future
-#' observation.
-#' @param futureObservationName name of the new column to be added.
-#' @param futureObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams addDemographics
 #'
 #' @return cohort table with added column containing future observation of the
 #' individuals.
@@ -234,6 +220,7 @@ addFutureObservation <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = FALSE,
       priorObservation = FALSE,
       futureObservation = TRUE,
@@ -259,13 +246,7 @@ addFutureObservation <- function(x,
 #' Compute the number of days of prior observation in the current observation period
 #' at a certain date
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the prior
-#' observation.
-#' @param priorObservationName name of the new column to be added.
-#' @param priorObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams addDemographics
 #'
 #' @return cohort table with added column containing prior observation of the
 #' individuals.
@@ -301,6 +282,7 @@ addPriorObservation <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = FALSE,
       priorObservation = TRUE,
       priorObservationName = priorObservationName,
@@ -377,10 +359,7 @@ addInObservation <- function(x,
 
 #' Compute the sex of the individuals
 #'
-#' @param x Table with individuals in the cdm.
-#' @param sexName name of the new column to be added.
-#' @param missingSexValue Value to include if missing sex.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams addDemographics
 #'
 #' @return table x with the added column with sex information.
 #'
@@ -411,6 +390,7 @@ addSex <- function(x,
       ageMissingMonth = NULL,
       ageImposeDay = FALSE,
       ageImposeMonth = FALSE,
+      ageUnit = "years",
       sex = TRUE,
       sexName = sexName,
       missingSexValue = missingSexValue,
@@ -430,14 +410,15 @@ addSex <- function(x,
 
 #' Add a column with the individual birth date
 #'
-#' @param x Table in the cdm that contains 'person_id' or 'subject_id'.
-#' @param dateOfBirthName Name of the column to be added with the date of birth.
-#' @param missingDay Day of the individuals with no or imposed day of birth.
-#' @param missingMonth Month of the individuals with no or imposed month of
-#' birth.
-#' @param imposeDay Whether to impose day of birth.
-#' @param imposeMonth Whether to impose month of birth.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams addDemographics
+#' @param missingMonth Month of the year assigned to individuals with missing
+#' month of birth.
+#' @param missingDay day of the month assigned to individuals
+#' with missing day of birth.
+#' @param imposeMonth TRUE or FALSE. Whether the month of the date of birth
+#' will be considered as missing for all the individuals.
+#' @param imposeDay TRUE or FALSE. Whether the day of the date of birth
+#' will be considered as missing for all the individuals.
 #'
 #' @return The function returns the table x with an extra column that contains
 #' the date of birth.
@@ -471,6 +452,7 @@ addDateOfBirth <- function(x,
       ageMissingMonth = missingMonth,
       ageImposeDay = imposeDay,
       ageImposeMonth = imposeMonth,
+      ageUnit = "years",
       sex = FALSE,
       sexName = NULL,
       missingSexValue = NULL,

@@ -995,3 +995,53 @@ test_that("duplicated measurment results", {
 
   dropCreatedTables(cdm = cdm)
 })
+
+test_that("test addCohortIntersectField", {
+  skip_on_cran()
+  cdm <- omock::mockCdmFromTables(tables = list(
+    cohort1 = dplyr::tibble(
+      cohort_definition_id = 1L,
+      subject_id = 1L,
+      cohort_start_date = as.Date("2005-01-01"),
+      cohort_end_date = as.Date("2005-01-01")
+    ),
+    cohort2 = dplyr::tibble(
+      cohort_definition_id = 1L,
+      subject_id = 1L,
+      cohort_start_date = as.Date(c("2000-01-01", "2010-01-01")),
+      cohort_end_date = as.Date(c("2000-01-01", "2010-01-01")),
+      test = c("A", "B")
+    )
+  )) |>
+    copyCdm()
+
+  expect_no_error(
+    x <- cdm$cohort1 |>
+      addCohortIntersectField(targetCohortTable = "cohort2", field = "test", window = c(0, Inf)) |>
+      dplyr::collect()
+  )
+  expect_identical(x$cohort_1_test_0_to_inf, "B")
+
+  expect_no_error(
+    x <- cdm$cohort1 |>
+      addCohortIntersectField(targetCohortTable = "cohort2", field = "test", window = c(-Inf, 0)) |>
+      dplyr::collect()
+  )
+  expect_identical(x$cohort_1_test_minf_to_0, "A")
+
+  expect_no_error(
+    x <- cdm$cohort1 |>
+      addCohortIntersectField(targetCohortTable = "cohort2", field = "test", window = c(0, 0)) |>
+      dplyr::collect()
+  )
+  expect_identical(x$cohort_1_test_0_to_0, NA_character_)
+
+  expect_no_error(
+    x <- cdm$cohort1 |>
+      addCohortIntersectField(targetCohortTable = "cohort2", field = "test", window = c(-Inf, Inf), order = "last", nameStyle = "new_col") |>
+      dplyr::collect()
+  )
+  expect_identical(x$new_col, "B")
+
+  dropCreatedTables(cdm = cdm)
+})

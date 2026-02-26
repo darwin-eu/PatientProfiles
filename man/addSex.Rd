@@ -9,7 +9,7 @@ addSex(x, sexName = "sex", missingSexValue = "None", name = NULL)
 \arguments{
 \item{x}{Table with individuals in the cdm.}
 
-\item{sexName}{name of the new column to be added.}
+\item{sexName}{Sex variable name.}
 
 \item{missingSexValue}{Value to include if missing sex.}
 

@@ -1,3 +1,10 @@
+# PatientProfiles 1.5.0
+
+* Fix tests for dplyr 1.2.0 by @catalamarti in #842
+* add ageUnit to age functions by @catalamarti in #840
+* addCohortIntersectField by @catalamarti in #843
+* addBirthDay function by @catalamarti in #841
+
 # PatientProfiles 1.4.5
 
 * Add new estimates count_0, count_negative, count_positive, count_not_positive, count_not_negative + percentages by @catalamarti in #825
