@@ -24,7 +24,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/darwin-eu/PatientProfiles/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/darwin-eu/PatientProfiles/blob/v1.5.0/DESCRIPTION)
 
 Català M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N (2026).
 *PatientProfiles: Identify Characteristics of Patients in the OMOP

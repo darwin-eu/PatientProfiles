@@ -388,7 +388,7 @@ cdm$cohort2 |>
   addFutureObservation()
 ```
 
-    ## # Source:   table<og_030_1772095490> [?? x 10]
+    ## # Source:   table<og_030_1772095881> [?? x 10]
     ## # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ##    cohort_definition_id subject_id cohort_start_date cohort_end_date   age
     ##                   <int>      <int> <date>            <date>          <int>
@@ -410,7 +410,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 1.514 sec elapsed
+    ## 1.473 sec elapsed
 
 ``` r
 tictoc::tic()
@@ -448,7 +448,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 0.627 sec elapsed
+    ## 0.608 sec elapsed
 
 In our small mock dataset we see a small improvement in performance, but
 this difference will become much more noticeable when working with real

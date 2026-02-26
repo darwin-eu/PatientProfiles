@@ -92,7 +92,7 @@ cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2"
   )
-#> # Source:   table<og_029_1772095291> [?? x 7]
+#> # Source:   table<og_029_1772095689> [?? x 7]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
@@ -106,7 +106,7 @@ cdm$cohort1 |>
 #>  8                    3         10 1980-02-26        2003-12-11     
 #>  9                    1          9 1961-12-05        1983-03-17     
 #> 10                    2          8 1919-08-10        1922-05-11     
-#> # ℹ 3 more variables: cohort_1_0_to_inf <dbl>, cohort_2_0_to_inf <dbl>,
+#> # ℹ 3 more variables: cohort_2_0_to_inf <dbl>, cohort_1_0_to_inf <dbl>,
 #> #   cohort_3_0_to_inf <dbl>
 
 # }

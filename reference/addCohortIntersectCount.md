@@ -82,7 +82,7 @@ cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2"
   )
-#> # Source:   table<og_006_1772095280> [?? x 7]
+#> # Source:   table<og_006_1772095678> [?? x 7]
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         

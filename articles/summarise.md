@@ -181,7 +181,7 @@ x |>
   glimpse()
 #> Rows: ??
 #> Columns: 17
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpqQVnxN/file2080343b0212.duckdb]
+#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpAACkNn/file207c6cd7d5ff.duckdb]
 #> $ cohort_definition_id  <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
 #> $ subject_id            <int> 42, 187, 96, 32, 5, 222, 1, 176, 116, 236, 101, …
 #> $ cohort_start_date     <date> 1926-05-12, 1953-02-18, 1933-11-16, 1967-01-29,…
@@ -190,10 +190,10 @@ x |>
 #> $ sex                   <chr> "Female", "Male", "Male", "Male", "Male", "Femal…
 #> $ prior_observation     <int> 6034, 2767, 3246, 8495, 3308, 2379, 6696, 1537, …
 #> $ future_observation    <int> 33908, 24015, 23088, 17496, 14990, 22191, 18987,…
-#> $ future_1191_aspirin   <dbl> 3, 2, 2, 0, 1, 2, 2, 1, 1, 0, 3, 1, 0, 3, 1, 0, …
-#> $ prior_1191_aspirin    <dbl> 2, 3, 1, 3, 0, 2, 0, 0, 3, 1, 0, 2, 0, 2, 0, 2, …
 #> $ prior_7804_oxycodone  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, …
 #> $ prior_7052_morphine   <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+#> $ future_1191_aspirin   <dbl> 3, 2, 2, 0, 1, 2, 2, 1, 1, 0, 3, 1, 0, 3, 1, 0, …
+#> $ prior_1191_aspirin    <dbl> 2, 3, 1, 3, 0, 2, 0, 0, 3, 1, 0, 2, 0, 2, 0, 2, …
 #> $ future_7804_oxycodone <dbl> 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, …
 #> $ future_7052_morphine  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
 #> $ pharyngitis_before    <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
@@ -218,7 +218,7 @@ x |>
 #> Use `na.rm = TRUE` to silence this warning
 #> This warning is displayed once every 8 hours.
 #> # Source:   SQL [?? x 3]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpqQVnxN/file2080343b0212.duckdb]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpAACkNn/file207c6cd7d5ff.duckdb]
 #>   sex    mean_age sd_age
 #>   <chr>     <dbl>  <dbl>
 #> 1 Female     7.51   7.46
@@ -250,9 +250,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:18.631012
+#> → Start summary of data, at 2026-02-26 08:51:48.778788
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:19.042693
+#> ✔ Summary finished, at 2026-02-26 08:51:49.164561
 #> # A tibble: 6 × 4
 #>   strata_name strata_level variable_name estimate_value  
 #>   <chr>       <chr>        <chr>         <chr>           
@@ -277,9 +277,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:19.724277
+#> → Start summary of data, at 2026-02-26 08:51:49.833043
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:20.367177
+#> ✔ Summary finished, at 2026-02-26 08:51:50.461257
 #> # A tibble: 10 × 4
 #>    strata_name        strata_level variable_name estimate_value  
 #>    <chr>              <chr>        <chr>         <chr>           
@@ -310,9 +310,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:21.058681
+#> → Start summary of data, at 2026-02-26 08:51:51.136638
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:21.973162
+#> ✔ Summary finished, at 2026-02-26 08:51:52.029287
 #> # A tibble: 18 × 4
 #>    strata_name                strata_level variable_name estimate_value  
 #>    <chr>                      <chr>        <chr>         <chr>           
@@ -351,9 +351,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:22.66419
+#> → Start summary of data, at 2026-02-26 08:51:52.705077
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:23.179052
+#> ✔ Summary finished, at 2026-02-26 08:51:53.204874
 #> # A tibble: 8 × 4
 #>   strata_name        strata_level variable_name estimate_value  
 #>   <chr>              <chr>        <chr>         <chr>           
@@ -386,9 +386,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:24.083789
+#> → Start summary of data, at 2026-02-26 08:51:54.079451
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:24.936301
+#> ✔ Summary finished, at 2026-02-26 08:51:54.910701
 #> # A tibble: 10 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         
@@ -418,9 +418,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:45:25.627222
+#> → Start summary of data, at 2026-02-26 08:51:55.587248
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:25.875288
+#> ✔ Summary finished, at 2026-02-26 08:51:55.826487
 #> # A tibble: 4 × 4
 #>   strata_name strata_level variable_name   estimate_value  
 #>   <chr>       <chr>        <chr>           <chr>           
@@ -448,9 +448,9 @@ x |>
 #> • age: mean, sd
 #> • prior_observation: mean, sd
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-02-26 08:45:26.577447
+#> → Start summary of data, at 2026-02-26 08:51:56.512518
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:27.032814
+#> ✔ Summary finished, at 2026-02-26 08:51:56.9555
 #> # A tibble: 16 × 4
 #>    strata_name        strata_level variable_name     estimate_value  
 #>    <chr>              <chr>        <chr>             <chr>           
@@ -517,9 +517,9 @@ x |>
 #> • cohort_end_date: median, q25, q75, min, max
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side
-#> → Start summary of data, at 2026-02-26 08:45:28.03559
+#> → Start summary of data, at 2026-02-26 08:51:57.926392
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:45:28.328182
+#> ✔ Summary finished, at 2026-02-26 08:51:58.211367
 #> # A tibble: 159 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         
