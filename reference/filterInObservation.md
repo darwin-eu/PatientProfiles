@@ -1,7 +1,7 @@
-# Filter the rows of a \`cdm_table\` to the ones in observation that \`indexDate\` is in observation.
+# Filter the rows of a `cdm_table` to the ones in observation that `indexDate` is in observation.
 
-Filter the rows of a \`cdm_table\` to the ones in observation that
-\`indexDate\` is in observation.
+Filter the rows of a `cdm_table` to the ones in observation that
+`indexDate` is in observation.
 
 ## Usage
 
@@ -13,7 +13,7 @@ filterInObservation(x, indexDate)
 
 - x:
 
-  A \`cdm_table\` object.
+  A `cdm_table` object.
 
 - indexDate:
 
@@ -21,7 +21,7 @@ filterInObservation(x, indexDate)
 
 ## Value
 
-A \`cdm_table\` that is a subset of the original table.
+A `cdm_table` that is a subset of the original table.
 
 ## Examples
 

@@ -15,11 +15,14 @@
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/PatientProfiles-package.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addAge.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addAgeQuery.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addBirthday.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addBirthdayQuery.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCategories.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCdmName.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectCount.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectDate.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectDays.html</loc></url>
+<url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectField.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectFlag.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addCohortName.html</loc></url>
 <url><loc>https://darwin-eu.github.io/PatientProfiles/reference/addConceptIntersectCount.html</loc></url>

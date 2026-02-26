@@ -28,7 +28,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
     ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
     ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
@@ -52,7 +52,7 @@ cdm$cohort2 |>
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 3, 1, 1, 3, 1, 2, 1, 1, 2, 2, 3, 2, 2, 3, 1, 3, 1…
     ## $ subject_id           <int> 576, 112, 58, 256, 335, 291, 294, 615, 782, 721, …
     ## $ cohort_start_date    <date> 1956-05-21, 1978-06-11, 1921-03-26, 1955-04-22, …
@@ -110,14 +110,14 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 3, 2, 3, 1, 1, 1, 1, 3, 1, 2, 3, 2, 3, 2, 1, 2, 3…
     ## $ subject_id           <int> 523, 899, 778, 85, 222, 140, 70, 591, 54, 137, 77…
     ## $ cohort_start_date    <date> 1962-10-26, 1950-03-28, 1925-07-30, 1939-09-06, …
     ## $ cohort_end_date      <date> 1974-01-15, 1976-07-06, 1936-05-29, 1942-05-25, …
-    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0…
-    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1…
     ## $ cohort_3_m180_to_180 <dbl> 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0…
+    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1…
+    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0…
 
 ``` r
 cdm$cohort1 |>
@@ -133,7 +133,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 3, 2, 3, 1, 1, 1, 1, 3, 1, 2, 3, 2, 3, 2, 1, 2, 3…
     ## $ subject_id           <int> 523, 899, 778, 85, 222, 140, 70, 591, 54, 137, 77…
     ## $ cohort_start_date    <date> 1962-10-26, 1950-03-28, 1925-07-30, 1939-09-06, …
@@ -162,14 +162,14 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
     ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
     ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
     ## $ cohort_end_date      <date> 2005-12-14, 1979-07-22, 1980-06-14, 1946-04-06, …
-    ## $ cohort_1_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
-    ## $ cohort_2_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
     ## $ cohort_3_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+    ## $ cohort_2_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+    ## $ cohort_1_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
 
 ``` r
 cdm$cohort1 |>
@@ -185,14 +185,14 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
     ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
     ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
     ## $ cohort_end_date      <date> 2005-12-14, 1979-07-22, 1980-06-14, 1946-04-06, …
+    ## $ cohort_3_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
     ## $ cohort_1_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
     ## $ cohort_2_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-    ## $ cohort_3_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
 
 ## Options for identifying cohort intersection
 
@@ -279,7 +279,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -303,7 +303,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -327,7 +327,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -351,7 +351,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -375,7 +375,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -399,7 +399,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -426,7 +426,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -452,7 +452,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -486,7 +486,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 6
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id    <int> 1
     ## $ subject_id              <int> 1
     ## $ cohort_start_date       <date> 2020-02-01

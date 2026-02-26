@@ -1,6 +1,7 @@
 # Query to add a new column to indicate if a certain record is within the observation period
 
-\`r lifecycle::badge("experimental")\` Same as \`addInObservation()\`,
+Same as
+[`addInObservation()`](https://darwin-eu.github.io/PatientProfiles/reference/addInObservation.md),
 except query is not computed to a table.
 
 ## Usage
@@ -54,19 +55,19 @@ cdm <- mockPatientProfiles(source = "duckdb")
 cdm$cohort1 |>
   addInObservationQuery()
 #> # Source:   SQL [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          8 1969-04-19        1969-08-09     
-#>  2                    3          6 1975-07-06        1983-03-02     
-#>  3                    2          5 1998-01-10        1999-01-16     
-#>  4                    3          7 1942-04-12        1942-08-26     
-#>  5                    1          9 1960-06-11        1964-11-20     
-#>  6                    2          1 1968-04-30        1971-05-27     
-#>  7                    1         10 1920-04-02        1925-09-24     
-#>  8                    3          4 1959-02-13        1966-04-24     
-#>  9                    2          3 1958-12-11        1959-12-25     
-#> 10                    2          2 1966-10-24        1968-09-04     
+#>  1                    3          6 1966-04-30        1979-09-09     
+#>  2                    1          7 1925-03-15        1929-02-16     
+#>  3                    2         10 1946-06-17        1951-07-31     
+#>  4                    1          2 2005-04-30        2005-05-30     
+#>  5                    1          4 1926-08-05        1928-07-27     
+#>  6                    3          8 1967-10-09        1975-07-20     
+#>  7                    3          5 1971-05-02        1972-07-26     
+#>  8                    1          3 1975-08-18        1990-06-25     
+#>  9                    2          9 1988-04-22        2021-05-07     
+#> 10                    1          1 1921-01-19        1954-01-29     
 #> # ℹ 1 more variable: in_observation <int>
 
 # }

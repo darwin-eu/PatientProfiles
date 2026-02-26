@@ -18,7 +18,7 @@ addTableIntersectField(
   inObservation = TRUE,
   order = "first",
   allowDuplicates = FALSE,
-  nameStyle = "{table_name}_{extra_value}_{window_name}",
+  nameStyle = "{table_name}_{field}_{window_name}",
   name = NULL
 )
 ```
@@ -74,7 +74,7 @@ addTableIntersectField(
 
   Whether to allow multiple records with same conceptSet, person_id and
   targetDate. If switched to TRUE, the created new columns (field) will
-  be collapsed to a character vector separated by \`;\` to account for
+  be collapsed to a character vector separated by `;` to account for
   multiple values per person.
 
 - nameStyle:
@@ -105,20 +105,20 @@ cdm$cohort1 |>
     order = "last",
     window = c(-Inf, -1)
   )
-#> # Source:   table<og_147_1771938036> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_159_1772095388> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          4 1960-04-20        1964-12-19     
-#>  2                    1          9 1920-08-26        1936-03-26     
-#>  3                    3          2 1978-09-30        1981-10-04     
-#>  4                    3          1 1973-08-08        1974-03-29     
-#>  5                    2          5 1915-08-25        1917-03-17     
-#>  6                    1          3 1911-09-19        1920-11-05     
-#>  7                    2         10 1975-11-07        1983-07-17     
-#>  8                    2          7 1926-09-25        1932-09-23     
-#>  9                    1          6 1969-08-26        1987-08-19     
-#> 10                    2          8 1998-03-28        2003-11-12     
+#>  1                    3          3 1953-10-11        1960-01-02     
+#>  2                    2         10 1943-12-12        1945-04-18     
+#>  3                    1          7 1998-06-21        2015-11-30     
+#>  4                    3          5 1939-05-06        1947-12-22     
+#>  5                    1          8 1932-04-07        1932-06-25     
+#>  6                    3          4 1995-10-08        1998-12-20     
+#>  7                    1          1 1961-02-13        1986-05-15     
+#>  8                    1          2 1961-02-03        1962-08-30     
+#>  9                    2          6 1970-12-18        1984-07-16     
+#> 10                    2          9 1969-08-19        1970-09-01     
 #> # ℹ 1 more variable: visit_occurrence_visit_concept_id_minf_to_m1 <int>
 
 # }

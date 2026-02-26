@@ -1,5 +1,21 @@
 # Changelog
 
+## PatientProfiles 1.5.0
+
+CRAN release: 2026-02-24
+
+- Fix tests for dplyr 1.2.0 by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#842](https://github.com/darwin-eu/PatientProfiles/issues/842)
+- add ageUnit to age functions by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#840](https://github.com/darwin-eu/PatientProfiles/issues/840)
+- addCohortIntersectField by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#843](https://github.com/darwin-eu/PatientProfiles/issues/843)
+- addBirthDay function by [@catalamarti](https://github.com/catalamarti)
+  in [\#841](https://github.com/darwin-eu/PatientProfiles/issues/841)
+
 ## PatientProfiles 1.4.5
 
 CRAN release: 2026-01-21

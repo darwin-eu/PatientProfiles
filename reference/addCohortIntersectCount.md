@@ -77,28 +77,26 @@ table with added columns with overlap information.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
-#> Warning: There are observation period end dates after the current date: 2026-02-24
-#> ℹ The latest max observation period end date found is 2031-12-31
 
 cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2"
   )
-#> # Source:   table<og_004_1771937928> [?? x 7]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_006_1772095280> [?? x 7]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    2          1 1960-12-30        1970-01-13     
-#>  2                    2          5 1924-06-10        1927-01-08     
-#>  3                    1          2 1996-01-27        2024-01-29     
-#>  4                    3          4 1931-08-24        1933-08-23     
-#>  5                    1          6 1981-06-18        1985-11-15     
-#>  6                    3          9 1920-03-18        1936-02-10     
-#>  7                    2          8 1931-10-08        1941-12-27     
-#>  8                    3         10 1942-01-22        1942-09-13     
-#>  9                    3          7 1930-12-06        1932-12-05     
-#> 10                    1          3 1986-10-23        1987-07-06     
-#> # ℹ 3 more variables: cohort_1_0_to_inf <dbl>, cohort_3_0_to_inf <dbl>,
+#>  1                    1          6 1941-06-04        1942-08-08     
+#>  2                    3         10 1943-06-09        1947-09-05     
+#>  3                    2          3 1964-03-01        1964-06-24     
+#>  4                    3          9 1916-12-17        1917-03-07     
+#>  5                    1          4 1978-04-06        1980-05-22     
+#>  6                    2          2 1956-08-20        1982-07-05     
+#>  7                    3          8 1952-12-02        1969-11-03     
+#>  8                    2          5 1950-08-19        1975-07-22     
+#>  9                    3          1 1945-07-30        1956-10-30     
+#> 10                    1          7 1917-10-08        1926-02-06     
+#> # ℹ 3 more variables: cohort_3_0_to_inf <dbl>, cohort_1_0_to_inf <dbl>,
 #> #   cohort_2_0_to_inf <dbl>
 
 # }

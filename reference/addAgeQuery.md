@@ -1,7 +1,8 @@
 # Query to add the age of the individuals at a certain date
 
-\`r lifecycle::badge("experimental")\` Same as \`addAge()\`, except
-query is not computed to a table.
+Same as
+[`addAge()`](https://darwin-eu.github.io/PatientProfiles/reference/addAge.md),
+except query is not computed to a table.
 
 ## Usage
 
@@ -15,6 +16,7 @@ addAgeQuery(
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
   ageImposeDay = FALSE,
+  ageUnit = "years",
   missingAgeGroupValue = "None"
 )
 ```
@@ -27,35 +29,38 @@ addAgeQuery(
 
 - indexDate:
 
-  Variable in x that contains the date to compute the age.
+  Variable in x that contains the date to compute the demographics
+  characteristics.
 
 - ageName:
 
-  Name of the new column that contains age.
+  Age variable name.
 
 - ageGroup:
 
-  List of age groups to be added.
+  if not NULL, a list of ageGroup vectors.
 
 - ageMissingMonth:
 
   Month of the year assigned to individuals with missing month of birth.
-  By default: 1.
 
 - ageMissingDay:
 
-  day of the month assigned to individuals with missing day of birth. By
-  default: 1.
+  day of the month assigned to individuals with missing day of birth.
 
 - ageImposeMonth:
 
-  Whether the month of the date of birth will be considered as missing
-  for all the individuals.
+  TRUE or FALSE. Whether the month of the date of birth will be
+  considered as missing for all the individuals.
 
 - ageImposeDay:
 
-  Whether the day of the date of birth will be considered as missing for
-  all the individuals.
+  TRUE or FALSE. Whether the day of the date of birth will be considered
+  as missing for all the individuals.
+
+- ageUnit:
+
+  Unit for age it can either be 'years', 'months' or 'days'.
 
 - missingAgeGroupValue:
 
@@ -76,7 +81,7 @@ cdm <- mockPatientProfiles(source = "duckdb")
 cdm$cohort1 |>
   addAgeQuery()
 #> # Source:   SQL [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age
 #>                   <int>      <int> <date>            <date>          <int>
 #>  1                    1         10 1917-06-03        1937-12-10          3

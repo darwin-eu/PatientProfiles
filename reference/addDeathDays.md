@@ -1,7 +1,7 @@
-# Add days to death for individuals. Only death within the same observation period than \`indexDate\` will be observed.
+# Add days to death for individuals. Only death within the same observation period than `indexDate` will be observed.
 
 Add days to death for individuals. Only death within the same
-observation period than \`indexDate\` will be observed.
+observation period than `indexDate` will be observed.
 
 ## Usage
 
@@ -53,23 +53,25 @@ table x with the added column with death information added.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> Warning: There are observation period end dates after the current date: 2026-02-26
+#> ℹ The latest max observation period end date found is 2028-08-29
 
 cdm$cohort1 |>
   addDeathDays()
-#> # Source:   table<og_102_1771937982> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_114_1772095337> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          7 1956-04-19        1958-01-10     
-#>  2                    1          2 1962-12-03        1965-11-27     
-#>  3                    3          3 1925-02-11        1948-09-24     
-#>  4                    1          6 1976-02-23        1985-03-03     
-#>  5                    2          4 1983-10-07        2001-05-01     
-#>  6                    3          9 1951-11-22        1954-01-23     
-#>  7                    1          8 1968-10-18        1968-12-01     
-#>  8                    1          5 1991-04-22        1999-03-10     
-#>  9                    2         10 1947-07-05        1952-03-22     
-#> 10                    1          1 1994-08-11        2005-10-27     
+#>  1                    2          6 1968-12-11        1970-09-01     
+#>  2                    2          8 1969-04-05        1971-02-21     
+#>  3                    1          7 1933-01-27        1941-02-22     
+#>  4                    1          5 1998-02-05        2025-01-08     
+#>  5                    2          9 1961-01-18        1961-01-19     
+#>  6                    1          1 1988-04-20        1989-02-08     
+#>  7                    2          3 1961-01-18        1963-01-07     
+#>  8                    1         10 1938-11-20        1946-09-15     
+#>  9                    3          4 1981-06-16        1982-05-13     
+#> 10                    2          2 1931-04-06        1931-09-05     
 #> # ℹ 1 more variable: days_to_death <dbl>
 
 # }

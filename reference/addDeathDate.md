@@ -1,7 +1,7 @@
-# Add date of death for individuals. Only death within the same observation period than \`indexDate\` will be observed.
+# Add date of death for individuals. Only death within the same observation period than `indexDate` will be observed.
 
 Add date of death for individuals. Only death within the same
-observation period than \`indexDate\` will be observed.
+observation period than `indexDate` will be observed.
 
 ## Usage
 
@@ -56,20 +56,20 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDeathDate()
-#> # Source:   table<og_096_1771937979> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_108_1772095334> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          5 1953-01-12        1962-11-27     
-#>  2                    3          2 1983-11-20        1994-12-24     
-#>  3                    1          3 1913-04-24        1915-04-02     
-#>  4                    1          4 1921-12-31        1936-11-05     
-#>  5                    1          7 1963-07-02        1976-10-04     
-#>  6                    3          8 1965-08-19        1967-12-02     
-#>  7                    3          6 1989-01-29        1989-05-08     
-#>  8                    1         10 1969-11-23        1980-12-17     
-#>  9                    2          1 1914-06-28        1917-01-06     
-#> 10                    3          9 1987-02-14        1987-07-20     
+#>  1                    3          8 1982-01-14        1982-03-06     
+#>  2                    2          3 1942-03-27        1948-01-24     
+#>  3                    2          5 1931-12-07        1932-08-20     
+#>  4                    3          7 1953-07-05        1955-08-30     
+#>  5                    2         10 1912-03-11        1930-12-09     
+#>  6                    1          4 1984-11-22        1990-06-14     
+#>  7                    1          2 1923-10-25        1925-11-01     
+#>  8                    1          9 1964-10-14        1990-09-13     
+#>  9                    2          1 1904-09-14        1932-02-21     
+#> 10                    2          6 1994-12-05        1998-11-04     
 #> # ℹ 1 more variable: date_of_death <date>
 
 # }

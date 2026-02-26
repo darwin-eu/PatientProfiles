@@ -94,20 +94,20 @@ cdm <- insertTable(cdm, "concept", concept)
 cdm$cohort1 |>
   addConceptIntersectDays(conceptSet = list("acetaminophen" = 1125315))
 #> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_064_1771937954> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_076_1772095310> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          8 1939-12-05        1956-09-11     
-#>  2                    1          1 1971-10-28        1973-03-11     
-#>  3                    3          9 2014-06-07        2015-10-11     
-#>  4                    3          6 1917-04-27        1932-08-27     
-#>  5                    2          2 1934-10-21        1947-04-20     
-#>  6                    1          7 1935-06-23        1959-03-27     
-#>  7                    3         10 1994-03-24        1996-04-16     
-#>  8                    1          5 1961-02-25        1963-06-03     
-#>  9                    1          3 2000-02-21        2001-01-18     
-#> 10                    1          4 1951-07-01        1951-10-05     
+#>  1                    1          9 1992-01-24        1992-05-08     
+#>  2                    1          5 1980-12-13        1982-04-28     
+#>  3                    1          6 1982-08-21        1992-03-07     
+#>  4                    1          2 1959-07-22        1972-08-26     
+#>  5                    1          7 1972-05-22        1980-07-04     
+#>  6                    1          1 1914-01-06        1914-07-07     
+#>  7                    2         10 1916-06-24        1917-07-12     
+#>  8                    3          8 1965-02-01        1965-05-24     
+#>  9                    2          3 1919-08-02        1931-04-26     
+#> 10                    1          4 1915-04-14        1919-07-19     
 #> # ℹ 1 more variable: acetaminophen_0_to_inf <dbl>
 
 # }

@@ -23,11 +23,12 @@ addPriorObservation(
 
 - indexDate:
 
-  Variable in x that contains the date to compute the prior observation.
+  Variable in x that contains the date to compute the demographics
+  characteristics.
 
 - priorObservationName:
 
-  name of the new column to be added.
+  Prior observation variable name.
 
 - priorObservationType:
 
@@ -52,20 +53,20 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addPriorObservation()
-#> # Source:   table<og_126_1771938014> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_138_1772095367> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          1 1920-09-28        1921-01-12     
-#>  2                    3          7 1928-01-23        1930-12-08     
-#>  3                    2          4 1973-12-20        1974-01-21     
-#>  4                    2          9 1921-04-01        1921-06-27     
-#>  5                    1          8 1981-06-23        1997-09-30     
-#>  6                    1          5 1954-09-15        1954-11-09     
-#>  7                    2         10 1966-06-02        1969-10-16     
-#>  8                    2          3 1929-04-04        1973-09-06     
-#>  9                    1          6 1959-12-20        1979-06-23     
-#> 10                    2          2 1968-11-02        1971-04-08     
+#>  1                    1          2 1918-08-21        1929-04-24     
+#>  2                    2          1 1930-09-13        1937-01-17     
+#>  3                    2          6 1916-12-31        1940-03-04     
+#>  4                    3          4 1944-02-21        1945-01-15     
+#>  5                    2          3 1948-06-27        1952-07-05     
+#>  6                    3          5 1968-08-03        1970-08-30     
+#>  7                    3          8 1920-11-18        1923-02-17     
+#>  8                    3          7 1942-08-28        1962-11-28     
+#>  9                    1          9 1929-11-10        1932-10-30     
+#> 10                    3         10 1977-07-29        1982-06-18     
 #> # ℹ 1 more variable: prior_observation <int>
 
 # }

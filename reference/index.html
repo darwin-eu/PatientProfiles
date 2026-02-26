@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PatientProfiles</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,6 +91,13 @@
 
         </dt>
         <dd>Indicate if a certain record is within the observation period</dd>
+
+        <dt>
+
+          <code><a href="addBirthday.html">addBirthday()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Add the birth day of an individual to a table</dd>
       </dl></div><div class="section level2">
 
       <h3 id="add-multiple-individual-patient-characteristics">Add multiple individual patient characteristics<a class="anchor" aria-label="anchor" href="#add-multiple-individual-patient-characteristics"></a></h3>
@@ -122,21 +129,21 @@
           <code><a href="addDeathDate.html">addDeathDate()</a></code>
 
         </dt>
-        <dd>Add date of death for individuals. Only death within the same observation period than `indexDate` will be observed.</dd>
+        <dd>Add date of death for individuals. Only death within the same observation period than <code>indexDate</code> will be observed.</dd>
 
         <dt>
 
           <code><a href="addDeathDays.html">addDeathDays()</a></code>
 
         </dt>
-        <dd>Add days to death for individuals. Only death within the same observation period than `indexDate` will be observed.</dd>
+        <dd>Add days to death for individuals. Only death within the same observation period than <code>indexDate</code> will be observed.</dd>
 
         <dt>
 
           <code><a href="addDeathFlag.html">addDeathFlag()</a></code>
 
         </dt>
-        <dd>Add flag for death for individuals. Only death within the same observation period than `indexDate` will be observed.</dd>
+        <dd>Add flag for death for individuals. Only death within the same observation period than <code>indexDate</code> will be observed.</dd>
       </dl></div><div class="section level2">
 
       <h3 id="add-a-value-from-a-cohort-intersection">Add a value from a cohort intersection<a class="anchor" aria-label="anchor" href="#add-a-value-from-a-cohort-intersection"></a></h3>
@@ -167,6 +174,13 @@
 
         </dt>
         <dd>It creates columns to indicate the number of days between the current table and a target cohort</dd>
+
+        <dt>
+
+          <code><a href="addCohortIntersectField.html">addCohortIntersectField()</a></code>
+
+        </dt>
+        <dd>It creates a column with the field of a desired intersection</dd>
 
         <dt>
 
@@ -278,6 +292,13 @@
 
         </dt>
         <dd>Query to add the age of the individuals at a certain date</dd>
+
+        <dt>
+
+          <code><a href="addBirthdayQuery.html">addBirthdayQuery()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Add the birth day of an individual to a table</dd>
 
         <dt>
 
@@ -446,7 +467,7 @@
           <code><a href="filterInObservation.html">filterInObservation()</a></code>
 
         </dt>
-        <dd>Filter the rows of a `cdm_table` to the ones in observation that `indexDate` is in observation.</dd>
+        <dd>Filter the rows of a <code>cdm_table</code> to the ones in observation that <code>indexDate</code> is in observation.</dd>
 
         <dt>
 

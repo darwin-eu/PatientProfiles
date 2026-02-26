@@ -17,7 +17,7 @@ addConceptName(table, column = NULL, nameStyle = "{column}_name")
 - column:
 
   Column to add the concept names from. If NULL any column that its name
-  ends with \`concept_id\` will be used.
+  ends with `concept_id` will be used.
 
 - nameStyle:
 
@@ -46,7 +46,7 @@ cdm$drug_exposure |>
   glimpse()
 #> Rows: ??
 #> Columns: 24
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpirWdCQ/file1d6057f979d5.duckdb]
+#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/Rtmp64fENM/file1acc66865328.duckdb]
 #> $ drug_exposure_id             <int> 26318, 60926, 26418, 54785, 47027, 38712,…
 #> $ person_id                    <int> 573, 1332, 576, 4550, 3895, 3199, 476, 11…
 #> $ drug_concept_id              <int> 40213160, 40213198, 40213260, 1118084, 40…
@@ -77,7 +77,7 @@ cdm$drug_exposure |>
   glimpse()
 #> Rows: ??
 #> Columns: 27
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpirWdCQ/file1d6057f979d5.duckdb]
+#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/Rtmp64fENM/file1acc66865328.duckdb]
 #> $ drug_exposure_id             <int> 26318, 60926, 26418, 54785, 47027, 38712,…
 #> $ person_id                    <int> 573, 1332, 576, 4550, 3895, 3199, 476, 11…
 #> $ drug_concept_id              <int> 40213160, 40213198, 40213260, 1118084, 40…

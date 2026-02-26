@@ -24,7 +24,7 @@ cdm$person |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id            <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
     ## $ gender_concept_id    <int> 8532, 8532, 8507, 8532, 8532, 8507, 8532, 8532, 8…
     ## $ year_of_birth        <int> 1940, 1952, 1958, 1906, 1950, 1917, 1967, 1972, 1…
@@ -44,7 +44,7 @@ cdm$observation_period |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                     <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1…
     ## $ observation_period_start_date <date> 1940-01-01, 1952-01-01, 1958-01-01, 190…
     ## $ observation_period_end_date   <date> 1969-04-09, 1977-04-26, 2000-12-04, 193…
@@ -67,7 +67,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 6
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 2284, 3335, 9438, 6762, 9433, 9393, 6360, 36…
     ## $ condition_start_date      <date> 1918-10-05, 1934-12-06, 1945-12-27, 1944-09…
     ## $ condition_end_date        <date> 1925-01-30, 1954-09-30, 1947-08-23, 1947-08…
@@ -94,7 +94,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -124,7 +124,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 8
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -157,7 +157,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 9
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -184,7 +184,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 10
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -214,7 +214,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 13
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -255,7 +255,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 13
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -286,7 +286,7 @@ cdm$condition_occurrence |>
 
     ## Rows: ??
     ## Columns: 13
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ person_id                 <int> 74, 266, 318, 410, 427, 434, 450, 457, 468, …
     ## $ condition_start_date      <date> 1969-08-01, 1936-01-11, 1952-08-18, 1957-01…
     ## $ condition_end_date        <date> 1978-06-27, 1959-01-10, 1967-10-03, 1957-09…
@@ -314,7 +314,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1, 1, 1, 1, 2, 1, 3, 2, 2, 2, 1, 3, 3, 1, 3, 2, 3…
     ## $ subject_id           <int> 5853, 1622, 8574, 6414, 7299, 4793, 6541, 1029, 5…
     ## $ cohort_start_date    <date> 1964-06-05, 1927-03-08, 1955-08-04, 1963-06-12, …
@@ -338,7 +338,7 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 10
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1, 1, 1, 1, 2, 1, 3, 2, 2, 2, 1, 3, 3, 1, 3, 2, 3…
     ## $ subject_id           <int> 5853, 1622, 8574, 6414, 7299, 4793, 6541, 1029, 5…
     ## $ cohort_start_date    <date> 1964-06-05, 1927-03-08, 1955-08-04, 1963-06-12, …
@@ -368,7 +368,7 @@ cdm$cohort2 |>
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 3, 3, 1, 3, 1, 1, 2, 3, 3, 1, 2, 1, 2, 2, 1, 1, 3…
     ## $ subject_id           <int> 6688, 3035, 5292, 1351, 8144, 699, 8733, 1007, 68…
     ## $ cohort_start_date    <date> 1999-06-28, 1977-03-24, 1931-10-19, 1993-07-08, …
@@ -388,8 +388,8 @@ cdm$cohort2 |>
   addFutureObservation()
 ```
 
-    ## # Source:   table<og_030_1771938140> [?? x 10]
-    ## # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## # Source:   table<og_030_1772095490> [?? x 10]
+    ## # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ##    cohort_definition_id subject_id cohort_start_date cohort_end_date   age
     ##                   <int>      <int> <date>            <date>          <int>
     ##  1                    3       6688 1999-06-28        2019-08-31         27
@@ -410,7 +410,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 1.613 sec elapsed
+    ## 1.514 sec elapsed
 
 ``` r
 tictoc::tic()
@@ -434,7 +434,7 @@ cdm$cohort2 |>
 
     ## Rows: ??
     ## Columns: 8
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 2, 3, 2, 3, 3, 2, 3, 2, 3, 3, 2, 1, 2, 3, 2, 3, 2…
     ## $ subject_id           <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
     ## $ cohort_start_date    <date> 1940-11-29, 1963-05-30, 1993-09-04, 1923-10-12, …
@@ -448,7 +448,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 0.636 sec elapsed
+    ## 0.627 sec elapsed
 
 In our small mock dataset we see a small improvement in performance, but
 this difference will become much more noticeable when working with real

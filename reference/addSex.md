@@ -16,7 +16,7 @@ addSex(x, sexName = "sex", missingSexValue = "None", name = NULL)
 
 - sexName:
 
-  name of the new column to be added.
+  Sex variable name.
 
 - missingSexValue:
 
@@ -40,20 +40,20 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addSex()
-#> # Source:   table<og_127_1771938019> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_139_1772095372> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date sex   
 #>                   <int>      <int> <date>            <date>          <chr> 
-#>  1                    2          1 1948-06-19        1950-07-03      Female
-#>  2                    2          2 1962-06-29        1975-04-09      Male  
-#>  3                    3          3 1949-06-07        1953-08-21      Female
-#>  4                    2          4 1909-10-22        1922-07-03      Female
-#>  5                    1          5 1956-12-18        1958-11-18      Male  
-#>  6                    1          6 1939-10-17        1944-10-16      Male  
-#>  7                    3          7 1998-09-06        2001-08-17      Female
-#>  8                    3          8 1957-08-22        1957-10-02      Male  
-#>  9                    1          9 1939-07-09        1940-05-30      Male  
-#> 10                    1         10 1962-08-08        1963-05-20      Female
+#>  1                    2          1 1924-05-15        1930-08-04      Female
+#>  2                    1          2 1990-11-09        1993-01-25      Female
+#>  3                    2          3 1964-06-13        1971-09-30      Male  
+#>  4                    2          4 1949-05-28        1951-01-23      Female
+#>  5                    2          5 1959-02-22        1973-07-27      Male  
+#>  6                    3          6 1928-09-17        1930-11-24      Female
+#>  7                    2          7 1980-01-11        1983-10-12      Female
+#>  8                    1          8 1974-12-14        1989-05-21      Male  
+#>  9                    1          9 1946-12-21        1950-01-27      Female
+#> 10                    3         10 1976-02-05        1976-07-22      Male  
 
 # }
 ```

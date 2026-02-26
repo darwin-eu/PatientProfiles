@@ -23,12 +23,12 @@ addFutureObservation(
 
 - indexDate:
 
-  Variable in x that contains the date to compute the future
-  observation.
+  Variable in x that contains the date to compute the demographics
+  characteristics.
 
 - futureObservationName:
 
-  name of the new column to be added.
+  Future observation variable name.
 
 - futureObservationType:
 
@@ -53,20 +53,20 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addFutureObservation()
-#> # Source:   table<og_121_1771937996> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_133_1772095350> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          3 1924-04-17        1946-05-22     
-#>  2                    1          7 1941-01-15        1953-03-25     
-#>  3                    2          8 1935-12-07        1940-12-16     
-#>  4                    3          6 1915-02-07        1915-11-29     
-#>  5                    1          5 1975-06-15        1995-01-05     
-#>  6                    3          1 1973-04-13        1996-05-26     
-#>  7                    3          4 1986-04-04        1986-07-02     
-#>  8                    2         10 1972-08-30        1973-01-23     
-#>  9                    1          9 1966-09-12        1967-07-20     
-#> 10                    1          2 1920-11-14        1925-01-04     
+#>  1                    1          3 2006-09-10        2007-11-17     
+#>  2                    3          5 1992-01-04        1998-05-31     
+#>  3                    2          2 1981-10-06        1987-06-13     
+#>  4                    1          4 1930-08-24        1931-02-07     
+#>  5                    1         10 1957-07-26        1967-01-12     
+#>  6                    1          8 1932-12-30        1950-09-07     
+#>  7                    1          7 1972-05-22        1984-11-05     
+#>  8                    3          1 1970-11-09        1985-08-12     
+#>  9                    1          9 1972-05-06        1972-11-12     
+#> 10                    3          6 1948-06-26        1953-02-16     
 #> # ℹ 1 more variable: future_observation <int>
 
 # }

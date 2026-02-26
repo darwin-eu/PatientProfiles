@@ -83,22 +83,22 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addCohortIntersectDays(targetCohortTable = "cohort2")
-#> # Source:   table<og_020_1771937935> [?? x 7]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_022_1772095288> [?? x 7]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          7 1936-06-28        1938-05-16     
-#>  2                    1         10 1945-04-11        1951-10-16     
-#>  3                    1          9 1983-02-02        1998-07-01     
-#>  4                    1          5 1979-08-10        1989-08-20     
-#>  5                    2          6 1945-03-20        1947-01-08     
-#>  6                    2          8 1964-11-30        1970-02-04     
-#>  7                    3          2 1946-02-18        1954-06-29     
-#>  8                    1          4 1979-07-06        2002-06-13     
-#>  9                    1          1 1924-07-27        1928-06-03     
-#> 10                    1          3 2009-06-20        2014-02-28     
-#> # ℹ 3 more variables: cohort_1_0_to_inf <dbl>, cohort_2_0_to_inf <dbl>,
-#> #   cohort_3_0_to_inf <dbl>
+#>  1                    3          3 1927-02-10        1931-11-24     
+#>  2                    2          5 1947-09-04        1963-07-20     
+#>  3                    1          2 1950-07-20        1960-11-01     
+#>  4                    2          6 1947-04-16        1948-12-29     
+#>  5                    2         10 1937-05-04        1939-09-25     
+#>  6                    3          4 1979-02-19        1981-12-01     
+#>  7                    2          7 1987-04-23        1988-03-07     
+#>  8                    1          9 1938-04-30        1939-03-02     
+#>  9                    3          1 1968-09-28        1973-01-15     
+#> 10                    1          8 1950-12-24        1950-12-27     
+#> # ℹ 3 more variables: cohort_2_0_to_inf <dbl>, cohort_3_0_to_inf <dbl>,
+#> #   cohort_1_0_to_inf <dbl>
 
 # }
 ```

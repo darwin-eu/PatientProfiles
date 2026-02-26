@@ -1,7 +1,7 @@
-# Add flag for death for individuals. Only death within the same observation period than \`indexDate\` will be observed.
+# Add flag for death for individuals. Only death within the same observation period than `indexDate` will be observed.
 
 Add flag for death for individuals. Only death within the same
-observation period than \`indexDate\` will be observed.
+observation period than `indexDate` will be observed.
 
 ## Usage
 
@@ -56,20 +56,20 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDeathFlag()
-#> # Source:   table<og_108_1771937986> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_120_1772095340> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date death
 #>                   <int>      <int> <date>            <date>          <dbl>
-#>  1                    1          7 1952-05-17        1978-12-05          0
-#>  2                    1          4 1990-01-13        1995-08-10          0
-#>  3                    2          2 1965-10-06        1997-09-15          0
-#>  4                    3          3 1993-03-17        1995-03-09          0
-#>  5                    3          8 1919-08-31        1936-04-13          0
-#>  6                    2          9 1981-12-14        1981-12-15          0
-#>  7                    3          5 1928-05-20        1928-06-17          0
-#>  8                    3          6 1937-03-12        1955-02-21          0
-#>  9                    3          1 1972-02-02        1972-03-11          0
-#> 10                    3         10 1949-11-12        1952-02-27          0
+#>  1                    1          5 1951-06-17        1952-01-02          0
+#>  2                    2          8 1920-07-09        1927-03-22          0
+#>  3                    3          6 1954-03-10        1955-06-01          0
+#>  4                    3          2 1963-02-28        1975-08-04          0
+#>  5                    2          9 1946-11-19        1949-04-28          0
+#>  6                    2         10 1962-11-23        1973-11-07          0
+#>  7                    2          3 1926-10-01        1928-10-24          0
+#>  8                    2          7 2001-04-05        2001-12-14          0
+#>  9                    2          4 1986-09-28        1993-10-09          0
+#> 10                    1          1 1999-08-13        2000-05-16          0
 
 # }
 ```

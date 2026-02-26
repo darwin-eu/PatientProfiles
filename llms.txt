@@ -471,6 +471,8 @@ Add patient characteristics to a table in the OMOP Common Data Model
   a certain date
 - [`addInObservation()`](https://darwin-eu.github.io/PatientProfiles/reference/addInObservation.md)
   : Indicate if a certain record is within the observation period
+- [`addBirthday()`](https://darwin-eu.github.io/PatientProfiles/reference/addBirthday.md)
+  **\[experimental\]** : Add the birth day of an individual to a table
 
 ### Add multiple individual patient characteristics
 
@@ -485,14 +487,22 @@ Model
 Add patient death information to a table in the OMOP Common Data Model
 
 - [`addDeathDate()`](https://darwin-eu.github.io/PatientProfiles/reference/addDeathDate.md)
-  : Add date of death for individuals. Only death within the same
-  observation period than \`indexDate\` will be observed.
+  :
+
+  Add date of death for individuals. Only death within the same
+  observation period than `indexDate` will be observed.
+
 - [`addDeathDays()`](https://darwin-eu.github.io/PatientProfiles/reference/addDeathDays.md)
-  : Add days to death for individuals. Only death within the same
-  observation period than \`indexDate\` will be observed.
+  :
+
+  Add days to death for individuals. Only death within the same
+  observation period than `indexDate` will be observed.
+
 - [`addDeathFlag()`](https://darwin-eu.github.io/PatientProfiles/reference/addDeathFlag.md)
-  : Add flag for death for individuals. Only death within the same
-  observation period than \`indexDate\` will be observed.
+  :
+
+  Add flag for death for individuals. Only death within the same
+  observation period than `indexDate` will be observed.
 
 ### Add a value from a cohort intersection
 
@@ -507,6 +517,8 @@ Common Data Model and a cohort table.
 - [`addCohortIntersectDays()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectDays.md)
   : It creates columns to indicate the number of days between the
   current table and a target cohort
+- [`addCohortIntersectField()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectField.md)
+  : It creates a column with the field of a desired intersection
 - [`addCohortIntersectFlag()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortIntersectFlag.md)
   : It creates columns to indicate the presence of cohorts
 
@@ -558,6 +570,8 @@ function but, the result is not computed into a table.
 
 - [`addAgeQuery()`](https://darwin-eu.github.io/PatientProfiles/reference/addAgeQuery.md)
   : Query to add the age of the individuals at a certain date
+- [`addBirthdayQuery()`](https://darwin-eu.github.io/PatientProfiles/reference/addBirthdayQuery.md)
+  **\[experimental\]** : Add the birth day of an individual to a table
 - [`addDateOfBirthQuery()`](https://darwin-eu.github.io/PatientProfiles/reference/addDateOfBirthQuery.md)
   : Query to add a column with the individual birth date
 - [`addDemographicsQuery()`](https://darwin-eu.github.io/PatientProfiles/reference/addDemographicsQuery.md)
@@ -612,37 +626,52 @@ Helper functions
 - [`benchmarkPatientProfiles()`](https://darwin-eu.github.io/PatientProfiles/reference/benchmarkPatientProfiles.md)
   : Benchmark intersections and demographics functions for a certain
   source (cdm).
+
 - [`addCohortName()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortName.md)
   : Add cohort name for each cohort_definition_id
+
 - [`addConceptName()`](https://darwin-eu.github.io/PatientProfiles/reference/addConceptName.md)
   : Add concept name for each concept_id
+
 - [`addCdmName()`](https://darwin-eu.github.io/PatientProfiles/reference/addCdmName.md)
   : Add cdm name
+
 - [`addCategories()`](https://darwin-eu.github.io/PatientProfiles/reference/addCategories.md)
   : Categorize a numeric variable
+
 - [`addObservationPeriodId()`](https://darwin-eu.github.io/PatientProfiles/reference/addObservationPeriodId.md)
   : Add the ordinal number of the observation period associated that a
   given date is in.
+
 - [`filterCohortId()`](https://darwin-eu.github.io/PatientProfiles/reference/filterCohortId.md)
   : Filter a cohort according to cohort_definition_id column, the result
   is not computed into a table. only a query is added. Used usually as
   internal functions of other packages.
+
 - [`filterInObservation()`](https://darwin-eu.github.io/PatientProfiles/reference/filterInObservation.md)
-  : Filter the rows of a \`cdm_table\` to the ones in observation that
-  \`indexDate\` is in observation.
+  :
+
+  Filter the rows of a `cdm_table` to the ones in observation that
+  `indexDate` is in observation.
+
 - [`variableTypes()`](https://darwin-eu.github.io/PatientProfiles/reference/variableTypes.md)
   : Classify the variables between 5 types: "numeric", "categorical",
   "logical", "date", "integer", or NA.
+
 - [`availableEstimates()`](https://darwin-eu.github.io/PatientProfiles/reference/availableEstimates.md)
   : Show the available estimates that can be used for the different
   variable_type supported.
+
 - [`startDateColumn()`](https://darwin-eu.github.io/PatientProfiles/reference/startDateColumn.md)
   : Get the name of the start date column for a certain table in the cdm
+
 - [`endDateColumn()`](https://darwin-eu.github.io/PatientProfiles/reference/endDateColumn.md)
   : Get the name of the end date column for a certain table in the cdm
+
 - [`sourceConceptIdColumn()`](https://darwin-eu.github.io/PatientProfiles/reference/sourceConceptIdColumn.md)
   : Get the name of the source concept_id column for a certain table in
   the cdm
+
 - [`standardConceptIdColumn()`](https://darwin-eu.github.io/PatientProfiles/reference/standardConceptIdColumn.md)
   : Get the name of the standard concept_id column for a certain table
   in the cdm

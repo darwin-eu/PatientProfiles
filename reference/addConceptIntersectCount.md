@@ -79,14 +79,6 @@ library(omopgenerics, warn.conflicts = TRUE)
 #> 
 #>     filter
 library(dplyr, warn.conflicts = TRUE)
-#> 
-#> Attaching package: ‘dplyr’
-#> The following objects are masked from ‘package:stats’:
-#> 
-#>     filter, lag
-#> The following objects are masked from ‘package:base’:
-#> 
-#>     intersect, setdiff, setequal, union
 
 cdm <- mockPatientProfiles(source = "duckdb")
 
@@ -107,20 +99,20 @@ cdm <- insertTable(cdm, "concept", concept)
 cdm$cohort1 |>
   addConceptIntersectCount(conceptSet = list("acetaminophen" = 1125315))
 #> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_040_1771937946> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_052_1772095302> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          1 1977-03-30        1979-05-26     
-#>  2                    1          9 1980-01-08        2001-05-31     
-#>  3                    3          6 1967-12-22        1974-01-10     
-#>  4                    1          5 1941-06-11        1944-03-19     
-#>  5                    1          7 1955-11-04        1958-10-11     
-#>  6                    3          3 1965-05-01        1977-08-18     
-#>  7                    3          2 1970-03-06        1998-04-24     
-#>  8                    1          8 1918-08-03        1925-01-19     
-#>  9                    1          4 1969-01-27        1990-07-08     
-#> 10                    2         10 1940-01-23        1942-06-15     
+#>  1                    1          6 1916-04-03        1919-05-03     
+#>  2                    2          8 1918-11-18        1920-01-17     
+#>  3                    3          1 1989-03-10        1993-09-30     
+#>  4                    1          2 1961-01-16        1961-02-20     
+#>  5                    1          7 1931-10-23        1932-09-18     
+#>  6                    2          9 1983-08-27        1984-03-18     
+#>  7                    3          5 1937-09-24        1946-02-19     
+#>  8                    3          4 1942-08-03        1955-12-21     
+#>  9                    2          3 2009-03-11        2011-11-12     
+#> 10                    3         10 1975-09-12        1986-10-10     
 #> # ℹ 1 more variable: acetaminophen_0_to_inf <dbl>
 
 # }

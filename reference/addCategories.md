@@ -63,8 +63,8 @@ The x table with the categorical variable added.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
-#> Warning: There are observation period end dates after the current date: 2026-02-24
-#> ℹ The latest max observation period end date found is 2028-05-24
+#> Warning: There are observation period end dates after the current date: 2026-02-26
+#> ℹ The latest max observation period end date found is 2026-07-13
 
 result <- cdm$cohort1 |>
   addAge() |>

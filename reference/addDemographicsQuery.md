@@ -1,6 +1,7 @@
 # Query to add demographic characteristics at a certain date
 
-\`r lifecycle::badge("experimental")\` Same as \`addDemographics()\`,
+Same as
+[`addDemographics()`](https://darwin-eu.github.io/PatientProfiles/reference/addDemographics.md),
 except query is not computed to a table.
 
 ## Usage
@@ -15,6 +16,7 @@ addDemographicsQuery(
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
   ageImposeDay = FALSE,
+  ageUnit = "years",
   ageGroup = NULL,
   missingAgeGroupValue = "None",
   sex = TRUE,
@@ -67,6 +69,10 @@ addDemographicsQuery(
 
   TRUE or FALSE. Whether the day of the date of birth will be considered
   as missing for all the individuals.
+
+- ageUnit:
+
+  Unit for age it can either be 'years', 'months' or 'days'.
 
 - ageGroup:
 
@@ -133,23 +139,25 @@ cohort table with the added demographic information columns.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> Warning: There are observation period end dates after the current date: 2026-02-26
+#> ℹ The latest max observation period end date found is 2027-11-18
 
 cdm$cohort1 |>
   addDemographicsQuery()
 #> # Source:   SQL [?? x 8]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age sex  
 #>                   <int>      <int> <date>            <date>          <int> <chr>
-#>  1                    1          1 1971-10-23        1979-03-22         15 Fema…
-#>  2                    1          2 1920-03-11        1933-10-14          5 Fema…
-#>  3                    2          3 1908-04-11        1910-04-27          5 Fema…
-#>  4                    1          4 1954-03-15        1955-08-02          0 Fema…
-#>  5                    3          5 1986-08-29        1987-05-05         15 Male 
-#>  6                    1          6 1966-03-21        1968-12-27          5 Male 
-#>  7                    2          7 1937-08-24        1943-05-16          6 Fema…
-#>  8                    2          8 1928-07-03        1930-02-28          6 Fema…
-#>  9                    1          9 1981-06-17        1991-02-28         28 Male 
-#> 10                    1         10 1966-08-12        1969-02-08         11 Fema…
+#>  1                    3          1 1915-06-02        1939-03-28         11 Male 
+#>  2                    2          2 1984-03-23        1992-03-22         14 Male 
+#>  3                    3          3 1949-02-01        1951-12-15         35 Male 
+#>  4                    2          4 1939-03-11        1949-08-22         15 Fema…
+#>  5                    1          5 1942-01-14        1944-05-30         15 Fema…
+#>  6                    1          6 1923-12-07        1931-08-16         12 Fema…
+#>  7                    2          7 1964-09-24        1968-09-16         10 Male 
+#>  8                    1          8 2011-06-05        2020-06-01         31 Male 
+#>  9                    3          9 1959-03-10        1989-01-01          1 Male 
+#> 10                    2         10 1988-10-01        1994-02-05         21 Fema…
 #> # ℹ 2 more variables: prior_observation <int>, future_observation <int>
 
 # }

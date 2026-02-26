@@ -88,8 +88,8 @@ result <- summariseResult(x)
 #> • sex: count, percentage
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side
-#> → Start summary of data, at 2026-02-24 13:00:46.273196
-#> ✔ Summary finished, at 2026-02-24 13:00:46.360424
+#> → Start summary of data, at 2026-02-26 08:43:18.018781
+#> ✔ Summary finished, at 2026-02-26 08:43:18.100267
 result
 #> # A tibble: 31 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -111,8 +111,8 @@ result
 
 # get only counts of records and subjects
 result <- summariseResult(x, variables = character())
-#> → Start summary of data, at 2026-02-24 13:00:46.691947
-#> ✔ Summary finished, at 2026-02-24 13:00:46.825038
+#> → Start summary of data, at 2026-02-26 08:43:18.416393
+#> ✔ Summary finished, at 2026-02-26 08:43:18.545316
 result
 #> # A tibble: 2 × 13
 #>   result_id cdm_name group_name group_level strata_name strata_level
@@ -134,8 +134,8 @@ result <- summariseResult(
 #> • age: mean, median, density
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side
-#> → Start summary of data, at 2026-02-24 13:00:47.310963
-#> ✔ Summary finished, at 2026-02-24 13:00:47.413894
+#> → Start summary of data, at 2026-02-26 08:43:19.026757
+#> ✔ Summary finished, at 2026-02-26 08:43:19.119749
 result
 #> # A tibble: 2,054 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -165,8 +165,8 @@ result <- summariseResult(
 #> • age: min, max
 #> • prior_observation: min, max
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-02-24 13:00:47.904607
-#> ✔ Summary finished, at 2026-02-24 13:00:48.351348
+#> → Start summary of data, at 2026-02-26 08:43:19.600459
+#> ✔ Summary finished, at 2026-02-26 08:43:20.029971
 
 # }
 ```

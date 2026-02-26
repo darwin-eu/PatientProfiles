@@ -66,7 +66,7 @@ addConceptIntersectField(
 
   Whether to allow multiple records with same conceptSet, person_id and
   targetDate. If switched to TRUE, the created new columns (field) will
-  be collapsed to a character vector separated by \`;\` to account for
+  be collapsed to a character vector separated by `;` to account for
   multiple values per person.
 
 - nameStyle:
@@ -80,7 +80,7 @@ addConceptIntersectField(
 
 ## Value
 
-Table with the \`field\` value obtained from the intersection
+Table with the `field` value obtained from the intersection
 
 ## Examples
 
@@ -91,6 +91,8 @@ library(omopgenerics, warn.conflicts = TRUE)
 library(dplyr, warn.conflicts = TRUE)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> Warning: There are observation period end dates after the current date: 2026-02-26
+#> ℹ The latest max observation period end date found is 2027-03-20
 
 concept <- tibble(
   concept_id = c(1125315),
@@ -112,20 +114,20 @@ cdm$cohort1 |>
     field = "drug_type_concept_id"
   )
 #> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_074_1771937958> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#> # Source:   table<og_086_1772095314> [?? x 5]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    2          2 1958-12-30        1959-08-13     
-#>  2                    3          4 1923-08-12        1927-07-17     
-#>  3                    2          3 1941-01-02        1941-10-30     
-#>  4                    2          5 1926-04-05        1935-12-06     
-#>  5                    1          8 1985-10-20        1992-01-16     
-#>  6                    2          9 1925-11-26        1952-08-02     
-#>  7                    2          6 1941-12-23        1949-02-18     
-#>  8                    2         10 1930-10-30        1945-08-03     
-#>  9                    3          7 1929-06-16        1944-07-01     
-#> 10                    1          1 1930-07-27        1938-12-12     
+#>  1                    2          6 1944-07-23        1960-02-06     
+#>  2                    3          3 1982-12-22        2002-10-29     
+#>  3                    3          5 1978-03-01        1979-03-08     
+#>  4                    2          8 1980-05-04        1981-10-24     
+#>  5                    2          9 1961-12-03        1969-03-24     
+#>  6                    3          4 1933-01-12        1957-09-19     
+#>  7                    2          7 1936-01-13        1942-04-30     
+#>  8                    2          2 1937-01-13        1939-06-17     
+#>  9                    2         10 1983-10-26        1995-10-25     
+#> 10                    2          1 1938-10-12        1956-08-24     
 #> # ℹ 1 more variable: drug_type_concept_id_acetaminophen_0_to_inf <chr>
 
 # }

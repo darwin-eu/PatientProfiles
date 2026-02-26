@@ -14,7 +14,7 @@ filterCohortId(cohort, cohortId = NULL)
 
 - cohort:
 
-  A \`cohort_table\` object.
+  A `cohort_table` object.
 
 - cohortId:
 
@@ -22,4 +22,4 @@ filterCohortId(cohort, cohortId = NULL)
 
 ## Value
 
-A \`cohort_table\` object.
+A `cohort_table` object.
