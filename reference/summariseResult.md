@@ -83,7 +83,7 @@ library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> ℹ /tmp/RtmpsAr3d4/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -105,8 +105,8 @@ result <- summariseResult(x)
 #> • sex: count, percentage
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side.
-#> → Start summary of data, at 2026-08-05 13:18:35.416838
-#> ✔ Summary finished, at 2026-08-05 13:18:35.498152
+#> → Start summary of data, at 2026-08-05 13:46:53.716657
+#> ✔ Summary finished, at 2026-08-05 13:46:53.799398
 result
 #> # A tibble: 31 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -128,8 +128,8 @@ result
 
 # get only counts of records and subjects
 result <- summariseResult(x, variables = character())
-#> → Start summary of data, at 2026-08-05 13:18:35.775327
-#> ✔ Summary finished, at 2026-08-05 13:18:35.874039
+#> → Start summary of data, at 2026-08-05 13:46:54.078388
+#> ✔ Summary finished, at 2026-08-05 13:46:54.175691
 result
 #> # A tibble: 2 × 13
 #>   result_id cdm_name group_name group_level strata_name strata_level
@@ -151,8 +151,8 @@ result <- summariseResult(
 #> • age: mean, median, density
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side.
-#> → Start summary of data, at 2026-08-05 13:18:36.300422
-#> ✔ Summary finished, at 2026-08-05 13:18:36.393207
+#> → Start summary of data, at 2026-08-05 13:46:54.612703
+#> ✔ Summary finished, at 2026-08-05 13:46:54.705373
 result
 #> # A tibble: 2,054 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -182,8 +182,8 @@ result <- summariseResult(
 #> • age: min, max
 #> • prior_observation: min, max
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-08-05 13:18:36.883631
-#> ✔ Summary finished, at 2026-08-05 13:18:37.124636
+#> → Start summary of data, at 2026-08-05 13:46:55.209971
+#> ✔ Summary finished, at 2026-08-05 13:46:55.451929
 
 # add a custom estimate
 ess <- function(x) sum(x^2) / sum(x)
@@ -196,8 +196,8 @@ result <- summariseResult(
 #> ℹ The following estimates will be calculated:
 #> • age: ess
 #> ! Table is collected to memory because custom estimates are evaluated in R.
-#> → Start summary of data, at 2026-08-05 13:18:37.670358
-#> ✔ Summary finished, at 2026-08-05 13:18:37.726836
+#> → Start summary of data, at 2026-08-05 13:46:56.018218
+#> ✔ Summary finished, at 2026-08-05 13:46:56.076171
 
 # }
 ```
