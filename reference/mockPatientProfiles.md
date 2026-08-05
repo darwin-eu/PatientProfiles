@@ -28,7 +28,10 @@ mockPatientProfiles(
 
 - source:
 
-  Source for the mock cdm, it can either be 'local' or 'duckdb'.
+  Source for the mock cdm, it can either be 'local' or 'duckdb'. By
+  default, vocabulary tables are populated from the GiBleed mock
+  vocabulary provided by omock. A user-provided `concept` table takes
+  precedence.
 
 - con:
 

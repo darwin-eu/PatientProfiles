@@ -51,6 +51,20 @@ Add patient death information to a table in the OMOP Common Data Model
   Add flag for death for individuals. Only death within the same
   observation period than `indexDate` will be observed.
 
+### Add the first or last event
+
+Add the first or last cohort or concept event in a window, together with
+its date or days relative to an index date.
+
+- [`addCohortEventDate()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortEventDate.md)
+  : Add the first or last cohort event and its date
+- [`addCohortEventDays()`](https://darwin-eu.github.io/PatientProfiles/reference/addCohortEventDays.md)
+  : Add the first or last cohort event and its relative days
+- [`addConceptEventDate()`](https://darwin-eu.github.io/PatientProfiles/reference/addConceptEventDate.md)
+  : Add the first or last concept event and its date
+- [`addConceptEventDays()`](https://darwin-eu.github.io/PatientProfiles/reference/addConceptEventDays.md)
+  : Add the first or last concept event and its relative days
+
 ### Add a value from a cohort intersection
 
 Add a variable indicating the intersection between a table in the OMOP
@@ -108,7 +122,7 @@ Common Data Model and a standard omop table.
   intersected entries with the target columns in a window of the user's
   choice.
 - [`addTableIntersectFlag()`](https://darwin-eu.github.io/PatientProfiles/reference/addTableIntersectFlag.md)
-  : Compute a flag intersect with an omop table.
+  : Compute a flag intersect with an omop table
 
 ### Query functions
 

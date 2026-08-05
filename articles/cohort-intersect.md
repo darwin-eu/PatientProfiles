@@ -16,6 +16,7 @@ OMOP CDM format. We can see the first cohort table contains 2 cohorts
 while the second contains 3 cohorts.
 
 ``` r
+
 library(PatientProfiles)
 library(dplyr)
 library(ggplot2)
@@ -28,13 +29,13 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
-    ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
-    ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
-    ## $ cohort_end_date      <date> 2005-12-14, 1979-07-22, 1980-06-14, 1946-04-06, …
+    ## $ cohort_definition_id <int> 3, 2, 2, 1, 1, 3, 2, 2, 2, 2, 2, 3, 3, 3, 2, 3, 1…
+    ## $ subject_id           <int> 440, 270, 42, 401, 665, 53, 459, 468, 31, 599, 29…
+    ## $ cohort_start_date    <date> 1910-04-04, 1944-11-04, 1974-07-16, 1951-01-20, …
+    ## $ cohort_end_date      <date> 1915-08-11, 1944-11-27, 1979-02-09, 1967-02-17, …
 
 ``` r
+
 settings(cdm$cohort1)
 ```
 
@@ -46,19 +47,20 @@ settings(cdm$cohort1)
     ## 3                    3 cohort_3
 
 ``` r
+
 cdm$cohort2 |>
   glimpse()
 ```
 
     ## Rows: ??
     ## Columns: 4
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 3, 1, 1, 3, 1, 2, 1, 1, 2, 2, 3, 2, 2, 3, 1, 3, 1…
-    ## $ subject_id           <int> 576, 112, 58, 256, 335, 291, 294, 615, 782, 721, …
-    ## $ cohort_start_date    <date> 1956-05-21, 1978-06-11, 1921-03-26, 1955-04-22, …
-    ## $ cohort_end_date      <date> 1973-09-24, 2001-11-10, 1923-07-03, 1955-07-27, …
+    ## $ cohort_definition_id <int> 1, 3, 2, 2, 2, 1, 1, 3, 1, 3, 3, 3, 2, 2, 3, 1, 2…
+    ## $ subject_id           <int> 353, 378, 645, 820, 121, 103, 294, 864, 731, 248,…
+    ## $ cohort_start_date    <date> 1913-04-23, 1944-07-02, 1965-11-17, 1922-04-15, …
+    ## $ cohort_end_date      <date> 1915-10-19, 1951-01-24, 1970-04-19, 1923-04-11, …
 
 ``` r
+
 settings(cdm$cohort2)
 ```
 
@@ -97,6 +99,7 @@ will be used as the index date, with the cohort start to cohort end date
 of the target cohort then used to check for an intersection.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectFlag(
     indexDate = "cohort_start_date",
@@ -110,16 +113,16 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 3, 2, 3, 1, 1, 1, 1, 3, 1, 2, 3, 2, 3, 2, 1, 2, 3…
-    ## $ subject_id           <int> 523, 899, 778, 85, 222, 140, 70, 591, 54, 137, 77…
-    ## $ cohort_start_date    <date> 1962-10-26, 1950-03-28, 1925-07-30, 1939-09-06, …
-    ## $ cohort_end_date      <date> 1974-01-15, 1976-07-06, 1936-05-29, 1942-05-25, …
-    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0…
-    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1…
-    ## $ cohort_3_m180_to_180 <dbl> 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0…
+    ## $ cohort_definition_id <int> 3, 2, 1, 3, 2, 2, 2, 3, 3, 1, 3, 1, 2, 1, 3, 2, 3…
+    ## $ subject_id           <int> 440, 42, 665, 53, 468, 599, 296, 969, 759, 37, 38…
+    ## $ cohort_start_date    <date> 1910-04-04, 1974-07-16, 1966-11-25, 1939-10-11, …
+    ## $ cohort_end_date      <date> 1915-08-11, 1979-02-09, 1970-05-18, 1942-09-20, …
+    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1…
+    ## $ cohort_3_m180_to_180 <dbl> 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0…
+    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectCount(
     indexDate = "cohort_start_date",
@@ -133,14 +136,13 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 3, 2, 3, 1, 1, 1, 1, 3, 1, 2, 3, 2, 3, 2, 1, 2, 3…
-    ## $ subject_id           <int> 523, 899, 778, 85, 222, 140, 70, 591, 54, 137, 77…
-    ## $ cohort_start_date    <date> 1962-10-26, 1950-03-28, 1925-07-30, 1939-09-06, …
-    ## $ cohort_end_date      <date> 1974-01-15, 1976-07-06, 1936-05-29, 1942-05-25, …
-    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0…
-    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1…
-    ## $ cohort_3_m180_to_180 <dbl> 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0…
+    ## $ cohort_definition_id <int> 3, 2, 1, 3, 2, 2, 2, 3, 3, 1, 3, 1, 2, 1, 3, 2, 3…
+    ## $ subject_id           <int> 440, 42, 665, 53, 468, 599, 296, 969, 759, 37, 38…
+    ## $ cohort_start_date    <date> 1910-04-04, 1974-07-16, 1966-11-25, 1939-10-11, …
+    ## $ cohort_end_date      <date> 1915-08-11, 1979-02-09, 1970-05-18, 1942-09-20, …
+    ## $ cohort_1_m180_to_180 <dbl> 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1…
+    ## $ cohort_3_m180_to_180 <dbl> 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0…
+    ## $ cohort_2_m180_to_180 <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
 
 Next we can add the date of the intersection and the days to the
 intersection. When identifying these variables we use only one date in
@@ -149,6 +151,7 @@ addition by default the first intersection that occurs within our window
 will be used.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     indexDate = "cohort_start_date",
@@ -162,16 +165,16 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
-    ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
-    ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
-    ## $ cohort_end_date      <date> 2005-12-14, 1979-07-22, 1980-06-14, 1946-04-06, …
-    ## $ cohort_3_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+    ## $ cohort_definition_id <int> 2, 2, 1, 1, 3, 2, 2, 2, 2, 2, 3, 3, 2, 3, 1, 3, 1…
+    ## $ subject_id           <int> 270, 42, 401, 665, 53, 459, 468, 31, 599, 296, 25…
+    ## $ cohort_start_date    <date> 1944-11-04, 1974-07-16, 1951-01-20, 1966-11-25, …
+    ## $ cohort_end_date      <date> 1944-11-27, 1979-02-09, 1967-02-17, 1970-05-18, …
     ## $ cohort_2_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+    ## $ cohort_3_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
     ## $ cohort_1_m180_to_180 <date> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDays(
     indexDate = "cohort_start_date",
@@ -185,14 +188,13 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 7
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-    ## $ cohort_definition_id <int> 2, 1, 1, 2, 2, 3, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 3…
-    ## $ subject_id           <int> 503, 261, 750, 1, 445, 523, 899, 929, 925, 200, 6…
-    ## $ cohort_start_date    <date> 2004-08-05, 1976-07-21, 1978-01-02, 1916-08-27, …
-    ## $ cohort_end_date      <date> 2005-12-14, 1979-07-22, 1980-06-14, 1946-04-06, …
-    ## $ cohort_1_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-    ## $ cohort_2_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+    ## $ cohort_definition_id <int> 2, 2, 1, 1, 3, 2, 2, 2, 2, 2, 3, 3, 2, 3, 1, 3, 1…
+    ## $ subject_id           <int> 270, 42, 401, 665, 53, 459, 468, 31, 599, 296, 25…
+    ## $ cohort_start_date    <date> 1944-11-04, 1974-07-16, 1951-01-20, 1966-11-25, …
+    ## $ cohort_end_date      <date> 1944-11-27, 1979-02-09, 1967-02-17, 1970-05-18, …
     ## $ cohort_3_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+    ## $ cohort_2_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+    ## $ cohort_1_m180_to_180 <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
 
 ## Options for identifying cohort intersection
 
@@ -204,6 +206,7 @@ aspirin, one ending shortly before their start date for common cold and
 the other starting during their record for common cold.
 
 ``` r
+
 common_cold <- tibble(
   cohort_definition_id = 1,
   subject_id = 1,
@@ -222,6 +225,7 @@ aspirin <- tibble(
 We can visualise what this person’s timeline looks like.
 
 ``` r
+
 bind_rows(
   common_cold |> mutate(cohort = "common cold"),
   aspirin |> mutate(cohort = "aspirin")
@@ -252,6 +256,7 @@ cold and aspirin cohorts will depend on what options we choose. To see
 this let’s first create a cdm reference containing our example.
 
 ``` r
+
 cdm <- mockPatientProfiles(
   cohort1 = common_cold,
   cohort2 = aspirin,
@@ -266,6 +271,7 @@ intersection will be identified as the individual did not have an
 ongoing record for aspirin on that date.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
@@ -279,7 +285,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -290,6 +295,7 @@ We could, however, change the index date to cohort end date in which
 case an intersection would be found.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
@@ -303,7 +309,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -314,6 +319,7 @@ Or we could also extend the window to include more time before or after
 which in both cases would lead to cohort intersections being found.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2",
@@ -327,7 +333,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -338,6 +343,7 @@ With a window of 90 days before to 90 days after cohort start, the
 person would have a count of two cohort intersections.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectCount(
     targetCohortTable = "cohort2",
@@ -351,7 +357,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -362,6 +367,7 @@ With this same window, if we add the first cohort intersect date we will
 get the start date of the first record of aspirin.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
@@ -375,7 +381,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -386,6 +391,7 @@ But if we instead set order to last, we get the start date of the second
 record of aspirin.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
@@ -399,7 +405,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -412,6 +417,7 @@ One last option relates to the naming convention used to for the new
 variables.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
@@ -426,7 +432,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -438,6 +443,7 @@ one new variable will be added, otherwise we will get an error to avoid
 duplicate names).
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
@@ -452,7 +458,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 5
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id <int> 1
     ## $ subject_id           <int> 1
     ## $ cohort_start_date    <date> 2020-02-01
@@ -464,6 +469,7 @@ name. This will be useful, for example, if we’re adding multiple
 different types of intersection values.
 
 ``` r
+
 cdm$cohort1 |>
   addCohortIntersectDate(
     targetCohortTable = "cohort2",
@@ -486,7 +492,6 @@ cdm$cohort1 |>
 
     ## Rows: ??
     ## Columns: 6
-    ## Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
     ## $ cohort_definition_id    <int> 1
     ## $ subject_id              <int> 1
     ## $ cohort_start_date       <date> 2020-02-01

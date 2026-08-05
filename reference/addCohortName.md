@@ -12,7 +12,7 @@ addCohortName(cohort)
 
 - cohort:
 
-  cohort to which add the cohort name
+  A `cohort_table` object.
 
 ## Value
 
@@ -25,21 +25,29 @@ cohort with an extra column with the cohort names
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 cdm$cohort1 |>
   addCohortName()
-#> # Source:   SQL [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date cohort_name
 #>                   <int>      <int> <date>            <date>          <chr>      
-#>  1                    1          4 1947-05-09        1956-07-21      cohort_1   
-#>  2                    2         10 1939-06-07        1954-04-05      cohort_2   
-#>  3                    1          3 1921-08-14        1923-05-15      cohort_1   
-#>  4                    1          7 1907-01-30        1907-02-21      cohort_1   
-#>  5                    3          1 1957-03-08        1958-08-11      cohort_3   
-#>  6                    1          9 1964-02-23        1965-10-17      cohort_1   
-#>  7                    1          2 1929-06-05        1931-04-22      cohort_1   
-#>  8                    1          5 1931-07-22        1963-05-14      cohort_1   
-#>  9                    1          6 1983-05-01        2019-06-09      cohort_1   
-#> 10                    3          8 1907-01-04        1927-05-05      cohort_3   
+#>  1                    3          8 1984-10-13        1987-04-10      cohort_3   
+#>  2                    1          1 1945-11-27        1948-11-14      cohort_1   
+#>  3                    1          7 1997-06-30        2009-09-16      cohort_1   
+#>  4                    2          2 1921-12-20        1943-06-20      cohort_2   
+#>  5                    2         10 1976-03-09        1978-05-30      cohort_2   
+#>  6                    3          5 1981-01-25        1981-05-11      cohort_3   
+#>  7                    1          4 1964-07-22        1967-02-06      cohort_1   
+#>  8                    1          3 1971-06-03        1972-07-05      cohort_1   
+#>  9                    3          9 1978-08-19        1992-10-14      cohort_3   
+#> 10                    3          6 1963-08-04        1969-07-23      cohort_3   
 # }
 ```

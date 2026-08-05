@@ -12,19 +12,19 @@ addSex(x, sexName = "sex", missingSexValue = "None", name = NULL)
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - sexName:
 
-  Sex variable name.
+  Name of the sex column to add.
 
 - missingSexValue:
 
-  Value to include if missing sex.
+  Value to use when sex is missing.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
 
 ## Value
 
@@ -37,23 +37,31 @@ table x with the added column with sex information.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addSex()
-#> # Source:   table<og_139_1772095767> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date sex   
 #>                   <int>      <int> <date>            <date>          <chr> 
-#>  1                    2          1 1924-05-15        1930-08-04      Female
-#>  2                    1          2 1990-11-09        1993-01-25      Female
-#>  3                    2          3 1964-06-13        1971-09-30      Male  
-#>  4                    2          4 1949-05-28        1951-01-23      Female
-#>  5                    2          5 1959-02-22        1973-07-27      Male  
-#>  6                    3          6 1928-09-17        1930-11-24      Female
-#>  7                    2          7 1980-01-11        1983-10-12      Female
-#>  8                    1          8 1974-12-14        1989-05-21      Male  
-#>  9                    1          9 1946-12-21        1950-01-27      Female
-#> 10                    3         10 1976-02-05        1976-07-22      Male  
+#>  1                    1          1 1946-09-12        1954-07-28      Male  
+#>  2                    2          2 1944-05-21        1944-06-18      Male  
+#>  3                    3          3 1984-11-13        1987-11-11      Male  
+#>  4                    1          4 1931-01-22        1938-03-10      Male  
+#>  5                    3          5 1951-07-09        1957-02-15      Female
+#>  6                    3          6 2006-03-19        2007-09-21      Male  
+#>  7                    1          7 1924-04-24        1925-03-13      Female
+#>  8                    1          8 1941-09-18        1954-04-15      Female
+#>  9                    2          9 1937-09-18        1940-12-23      Male  
+#> 10                    3         10 1937-12-07        1946-10-05      Female
 
 # }
 ```

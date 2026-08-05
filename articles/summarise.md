@@ -29,78 +29,79 @@ We support different types of variables, variable type is assigned using
 
 We can summarise this data using different estimates:
 
-| Estimate name           | Description                                                                                      | Estimate type |
-|-------------------------|--------------------------------------------------------------------------------------------------|---------------|
-| date                    |                                                                                                  |               |
-| mean                    | mean of the variable of interest.                                                                | date          |
-| sd                      | standard deviation of the variable of interest.                                                  | numeric       |
-| median                  | median of the variable of interest.                                                              | date          |
-| qXX                     | qualtile of XX% the variable of interest.                                                        | date          |
-| min                     | minimum of the variable of interest.                                                             | date          |
-| max                     | maximum of the variable of interest.                                                             | date          |
-| count_missing           | number of missing values.                                                                        | integer       |
-| percentage_missing      | percentage of missing values                                                                     | percentage    |
-| density                 | density distribution                                                                             | multiple      |
-| numeric                 |                                                                                                  |               |
-| sum                     | sum of all the values for the variable of interest.                                              | numeric       |
-| mean                    | mean of the variable of interest.                                                                | numeric       |
-| sd                      | standard deviation of the variable of interest.                                                  | numeric       |
-| median                  | median of the variable of interest.                                                              | numeric       |
-| qXX                     | qualtile of XX% the variable of interest.                                                        | numeric       |
-| min                     | minimum of the variable of interest.                                                             | numeric       |
-| max                     | maximum of the variable of interest.                                                             | numeric       |
-| count_missing           | number of missing values.                                                                        | integer       |
-| percentage_missing      | percentage of missing values                                                                     | percentage    |
-| count                   | count number of \`1\`. Only allowed for binary numeric variables.                                | integer       |
-| percentage              | percentage of occurrences of \`1\` (NA are excluded). Only allowed for binary numeric variables. | percentage    |
-| count_0                 | count number of \`1\`.                                                                           | integer       |
-| percentage_0            | percentage of occurrences of \`0\` (NA are excluded).                                            | percentage    |
-| count_negative          | count negative values.                                                                           | integer       |
-| percentage_negative     | percentage of negative values.                                                                   | percentage    |
-| count_positive          | count positive values.                                                                           | integer       |
-| percentage_positive     | percentage of positive values.                                                                   | percentage    |
-| count_not_negative      | count not negative values.                                                                       | integer       |
-| percentage_not_negative | percentage of not negative values.                                                               | percentage    |
-| count_not_positive      | count not positive values.                                                                       | integer       |
-| percentage_not_positive | percentage of not positive values.                                                               | percentage    |
-| density                 | density distribution                                                                             | multiple      |
-| integer                 |                                                                                                  |               |
-| sum                     | sum of all the values for the variable of interest.                                              | integer       |
-| mean                    | mean of the variable of interest.                                                                | numeric       |
-| sd                      | standard deviation of the variable of interest.                                                  | numeric       |
-| median                  | median of the variable of interest.                                                              | integer       |
-| qXX                     | qualtile of XX% the variable of interest.                                                        | integer       |
-| min                     | minimum of the variable of interest.                                                             | integer       |
-| max                     | maximum of the variable of interest.                                                             | integer       |
-| count_missing           | number of missing values.                                                                        | integer       |
-| percentage_missing      | percentage of missing values                                                                     | percentage    |
-| count                   | count number of \`1\`. Only allowed for binary numeric variables.                                | integer       |
-| percentage              | percentage of occurrences of \`1\` (NA are excluded). Only allowed for binary numeric variables. | percentage    |
-| count_0                 | count number of \`1\`.                                                                           | integer       |
-| percentage_0            | percentage of occurrences of \`0\` (NA are excluded).                                            | percentage    |
-| count_negative          | count negative values.                                                                           | integer       |
-| percentage_negative     | percentage of negative values.                                                                   | percentage    |
-| count_positive          | count positive values.                                                                           | integer       |
-| percentage_positive     | percentage of positive values.                                                                   | percentage    |
-| count_not_negative      | count not negative values.                                                                       | integer       |
-| percentage_not_negative | percentage of not negative values.                                                               | percentage    |
-| count_not_positive      | count not positive values.                                                                       | integer       |
-| percentage_not_positive | percentage of not positive values.                                                               | percentage    |
-| density                 | density distribution                                                                             | multiple      |
-| categorical             |                                                                                                  |               |
-| count                   | number of times that each category is observed.                                                  | integer       |
-| percentage              | percentage of individuals with that category.                                                    | percentage    |
-| count_person            | distinct counts of \`person_id\`.                                                                | integer       |
-| count_subject           | distinct counts of \`subject_id\`.                                                               | integer       |
-| logical                 |                                                                                                  |               |
-| count                   | count number of \`TRUE\`.                                                                        | integer       |
-| percentage              | percentage of occurrences of \`TRUE\` (NA are excluded).                                         | percentage    |
+| Estimate name | Description | Estimate type |
+|----|----|----|
+| date |  |  |
+| mean | mean of the variable of interest. | date |
+| sd | standard deviation of the variable of interest. | numeric |
+| median | median of the variable of interest. | date |
+| qXX | qualtile of XX% the variable of interest. | date |
+| min | minimum of the variable of interest. | date |
+| max | maximum of the variable of interest. | date |
+| count_missing | number of missing values. | integer |
+| percentage_missing | percentage of missing values | percentage |
+| density | density distribution | multiple |
+| numeric |  |  |
+| sum | sum of all the values for the variable of interest. | numeric |
+| mean | mean of the variable of interest. | numeric |
+| sd | standard deviation of the variable of interest. | numeric |
+| median | median of the variable of interest. | numeric |
+| qXX | qualtile of XX% the variable of interest. | numeric |
+| min | minimum of the variable of interest. | numeric |
+| max | maximum of the variable of interest. | numeric |
+| count_missing | number of missing values. | integer |
+| percentage_missing | percentage of missing values | percentage |
+| count | count number of \`1\`. Only allowed for binary numeric variables. | integer |
+| percentage | percentage of occurrences of \`1\` (NA are excluded). Only allowed for binary numeric variables. | percentage |
+| count_0 | count number of \`1\`. | integer |
+| percentage_0 | percentage of occurrences of \`0\` (NA are excluded). | percentage |
+| count_negative | count negative values. | integer |
+| percentage_negative | percentage of negative values. | percentage |
+| count_positive | count positive values. | integer |
+| percentage_positive | percentage of positive values. | percentage |
+| count_not_negative | count not negative values. | integer |
+| percentage_not_negative | percentage of not negative values. | percentage |
+| count_not_positive | count not positive values. | integer |
+| percentage_not_positive | percentage of not positive values. | percentage |
+| density | density distribution | multiple |
+| integer |  |  |
+| sum | sum of all the values for the variable of interest. | integer |
+| mean | mean of the variable of interest. | numeric |
+| sd | standard deviation of the variable of interest. | numeric |
+| median | median of the variable of interest. | integer |
+| qXX | qualtile of XX% the variable of interest. | integer |
+| min | minimum of the variable of interest. | integer |
+| max | maximum of the variable of interest. | integer |
+| count_missing | number of missing values. | integer |
+| percentage_missing | percentage of missing values | percentage |
+| count | count number of \`1\`. Only allowed for binary numeric variables. | integer |
+| percentage | percentage of occurrences of \`1\` (NA are excluded). Only allowed for binary numeric variables. | percentage |
+| count_0 | count number of \`1\`. | integer |
+| percentage_0 | percentage of occurrences of \`0\` (NA are excluded). | percentage |
+| count_negative | count negative values. | integer |
+| percentage_negative | percentage of negative values. | percentage |
+| count_positive | count positive values. | integer |
+| percentage_positive | percentage of positive values. | percentage |
+| count_not_negative | count not negative values. | integer |
+| percentage_not_negative | percentage of not negative values. | percentage |
+| count_not_positive | count not positive values. | integer |
+| percentage_not_positive | percentage of not positive values. | percentage |
+| density | density distribution | multiple |
+| categorical |  |  |
+| count | number of times that each category is observed. | integer |
+| percentage | percentage of individuals with that category. | percentage |
+| count_person | distinct counts of \`person_id\`. | integer |
+| count_subject | distinct counts of \`subject_id\`. | integer |
+| logical |  |  |
+| count | count number of \`TRUE\`. | integer |
+| percentage | percentage of occurrences of \`TRUE\` (NA are excluded). | percentage |
 
 ## Summarise our first table
 
 Lets get started creating our data that we are going to summarise:
 
 ``` r
+
 library(PatientProfiles)
 library(dplyr)
 #> 
@@ -113,6 +114,9 @@ library(dplyr)
 #>     intersect, setdiff, setequal, union
 library(CohortConstructor)
 library(CodelistGenerator)
+#> Registered S3 method overwritten by 'CodelistGenerator':
+#>   method            from        
+#>   print.code_search omopgenerics
 library(omock)
 
 cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
@@ -120,6 +124,14 @@ cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 #> ℹ Inserting <cdm_reference> into duckdb.
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpN3mszi/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$my_cohort <- conceptCohort(
   cdm = cdm,
@@ -127,7 +139,7 @@ cdm$my_cohort <- conceptCohort(
   name = "my_cohort"
 ) |>
   requireIsFirstEntry()
-#> Warning: ! `codelist` casted to integers.
+#> Warning: ! `codelist` cast to integers.
 #> ℹ Subsetting table condition_occurrence using 4 concepts with domain:
 #>   condition.
 #> ℹ Combining tables.
@@ -175,21 +187,20 @@ x <- cdm$my_cohort |>
     window = c(1, Inf),
     nameStyle = "days_to_next_visit"
   )
-#> Warning: ! `codelist` casted to integers.
+#> Warning: ! `codelist` cast to integers.
 
 x |>
   glimpse()
 #> Rows: ??
 #> Columns: 17
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpAACkNn/file207c6cd7d5ff.duckdb]
 #> $ cohort_definition_id  <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
 #> $ subject_id            <int> 42, 187, 96, 32, 5, 222, 1, 176, 116, 236, 101, …
 #> $ cohort_start_date     <date> 1926-05-12, 1953-02-18, 1933-11-16, 1967-01-29,…
 #> $ cohort_end_date       <date> 1926-05-19, 1953-03-04, 1933-12-07, 1967-07-02,…
-#> $ age                   <int> 16, 7, 8, 23, 9, 6, 18, 4, 12, 6, 4, 2, 23, 4, 3…
+#> $ age                   <dbl> 16, 7, 8, 23, 9, 6, 18, 4, 12, 6, 4, 2, 23, 4, 3…
 #> $ sex                   <chr> "Female", "Male", "Male", "Male", "Male", "Femal…
-#> $ prior_observation     <int> 6034, 2767, 3246, 8495, 3308, 2379, 6696, 1537, …
-#> $ future_observation    <int> 33908, 24015, 23088, 17496, 14990, 22191, 18987,…
+#> $ prior_observation     <dbl> 6034, 2767, 3246, 8495, 3308, 2379, 6696, 1537, …
+#> $ future_observation    <dbl> 33908, 24015, 23088, 17496, 14990, 22191, 18987,…
 #> $ prior_7804_oxycodone  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, …
 #> $ prior_7052_morphine   <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
 #> $ future_1191_aspirin   <dbl> 3, 2, 2, 0, 1, 2, 2, 1, 1, 0, 3, 1, 0, 3, 1, 0, …
@@ -211,14 +222,15 @@ If we want to summarise the age stratified by sex we could use tidyverse
 functions like:
 
 ``` r
+
 x |>
   group_by(sex) |>
   summarise(mean_age = mean(age), sd_age = sd(age))
 #> Warning: Missing values are always removed in SQL aggregation functions.
 #> Use `na.rm = TRUE` to silence this warning
 #> This warning is displayed once every 8 hours.
-#> # Source:   SQL [?? x 3]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/RtmpAACkNn/file207c6cd7d5ff.duckdb]
+#> # A query:  ?? x 3
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1//tmp/RtmpN3mszi/file24a522b84c12.duckdb]
 #>   sex    mean_age sd_age
 #>   <chr>     <dbl>  <dbl>
 #> 1 Female     7.51   7.46
@@ -240,6 +252,7 @@ In PatientProfiles we have built a function that:
 For example we could get the same information like before using:
 
 ``` r
+
 x |>
   summariseResult(
     strata = "sex",
@@ -250,9 +263,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:48.778788
+#> → Start summary of data, at 2026-08-05 13:21:09.9795
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:49.164561
+#> ✔ Summary finished, at 2026-08-05 13:21:10.283264
 #> # A tibble: 6 × 4
 #>   strata_name strata_level variable_name estimate_value  
 #>   <chr>       <chr>        <chr>         <chr>           
@@ -267,6 +280,7 @@ x |>
 You can stratify the results also by “pharyngitis_before”:
 
 ``` r
+
 x |>
   summariseResult(
     strata = list("sex", "pharyngitis_before"),
@@ -277,9 +291,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:49.833043
+#> → Start summary of data, at 2026-08-05 13:21:10.922239
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:50.461257
+#> ✔ Summary finished, at 2026-08-05 13:21:11.426067
 #> # A tibble: 10 × 4
 #>    strata_name        strata_level variable_name estimate_value  
 #>    <chr>              <chr>        <chr>         <chr>           
@@ -299,6 +313,7 @@ Note that the interaction term was not included, if we want to include
 it we have to specify it as follows:
 
 ``` r
+
 x |>
   summariseResult(
     strata = list("sex", "pharyngitis_before", c("sex", "pharyngitis_before")),
@@ -310,9 +325,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:51.136638
+#> → Start summary of data, at 2026-08-05 13:21:12.077505
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:52.029287
+#> ✔ Summary finished, at 2026-08-05 13:21:12.81653
 #> # A tibble: 18 × 4
 #>    strata_name                strata_level variable_name estimate_value  
 #>    <chr>                      <chr>        <chr>         <chr>           
@@ -339,6 +354,7 @@ x |>
 You can remove overall strata with the includeOverallStrata option:
 
 ``` r
+
 x |>
   summariseResult(
     includeOverallStrata = FALSE,
@@ -351,9 +367,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:52.705077
+#> → Start summary of data, at 2026-08-05 13:21:13.489731
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:53.204874
+#> ✔ Summary finished, at 2026-08-05 13:21:13.906563
 #> # A tibble: 8 × 4
 #>   strata_name        strata_level variable_name estimate_value  
 #>   <chr>              <chr>        <chr>         <chr>           
@@ -371,6 +387,7 @@ The results model has two levels of grouping (group and strata), you can
 specify them independently:
 
 ``` r
+
 x |>
   addCohortName() |>
   summariseResult(
@@ -386,9 +403,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:54.079451
+#> → Start summary of data, at 2026-08-05 13:21:14.77094
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:54.910701
+#> ✔ Summary finished, at 2026-08-05 13:21:15.615368
 #> # A tibble: 10 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         
@@ -408,6 +425,7 @@ We can add or remove number subjects and records (if a person identifier
 is found) counts with the counts parameter:
 
 ``` r
+
 x |>
   summariseResult(
     variables = "age",
@@ -418,9 +436,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-02-26 08:51:55.587248
+#> → Start summary of data, at 2026-08-05 13:21:16.237739
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:55.826487
+#> ✔ Summary finished, at 2026-08-05 13:21:16.384115
 #> # A tibble: 4 × 4
 #>   strata_name strata_level variable_name   estimate_value  
 #>   <chr>       <chr>        <chr>           <chr>           
@@ -434,6 +452,7 @@ If you want to specify different groups of estimates per different
 groups of variables you can use lists:
 
 ``` r
+
 x |>
   summariseResult(
     strata = "pharyngitis_before",
@@ -448,9 +467,9 @@ x |>
 #> • age: mean, sd
 #> • prior_observation: mean, sd
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-02-26 08:51:56.512518
+#> → Start summary of data, at 2026-08-05 13:21:17.001621
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:56.9555
+#> ✔ Summary finished, at 2026-08-05 13:21:17.309334
 #> # A tibble: 16 × 4
 #>    strata_name        strata_level variable_name     estimate_value  
 #>    <chr>              <chr>        <chr>             <chr>           
@@ -475,6 +494,7 @@ x |>
 An example of a complete analysis would be:
 
 ``` r
+
 drugs <- settings(cdm$drugs)$cohort_name
 x |>
   addCohortName() |>
@@ -516,10 +536,10 @@ x |>
 #> • cohort_start_date: median, q25, q75, min, max
 #> • cohort_end_date: median, q25, q75, min, max
 #> ! Table is collected to memory as not all requested estimates are supported on
-#>   the database side
-#> → Start summary of data, at 2026-02-26 08:51:57.926392
+#>   the database side.
+#> → Start summary of data, at 2026-08-05 13:21:18.247737
 #> 
-#> ✔ Summary finished, at 2026-02-26 08:51:58.211367
+#> ✔ Summary finished, at 2026-08-05 13:21:18.527724
 #> # A tibble: 159 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         

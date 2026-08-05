@@ -20,33 +20,31 @@ addDateOfBirth(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - dateOfBirthName:
 
-  dateOfBirth column name.
+  Name of the date-of-birth column to add.
 
 - missingDay:
 
-  day of the month assigned to individuals with missing day of birth.
+  Day of the month assigned when day of birth is missing.
 
 - missingMonth:
 
-  Month of the year assigned to individuals with missing month of birth.
+  Month of the year assigned when month of birth is missing.
 
 - imposeDay:
 
-  TRUE or FALSE. Whether the day of the date of birth will be considered
-  as missing for all the individuals.
+  If `TRUE`, day of birth is treated as missing for all individuals.
 
 - imposeMonth:
 
-  TRUE or FALSE. Whether the month of the date of birth will be
-  considered as missing for all the individuals.
+  If `TRUE`, month of birth is treated as missing for all individuals.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
 
 ## Value
 
@@ -60,23 +58,31 @@ date of birth.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addDateOfBirth()
-#> # Source:   table<og_107_1772095724> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          8 1956-09-02        1960-11-23     
-#>  2                    1          1 1941-08-06        1944-08-31     
-#>  3                    2          4 1995-08-16        1996-10-05     
-#>  4                    1          6 1963-07-12        1973-03-10     
-#>  5                    1          5 1967-04-17        1968-03-07     
-#>  6                    2          2 1947-12-13        1948-07-26     
-#>  7                    1         10 1927-01-15        1938-05-21     
-#>  8                    3          7 1950-09-27        1975-05-31     
-#>  9                    1          3 1934-05-01        1940-11-11     
-#> 10                    3          9 1985-04-16        2000-01-02     
+#>  1                    2          3 1927-01-29        1927-04-11     
+#>  2                    2          5 1918-05-25        1943-07-20     
+#>  3                    1          8 1926-09-16        1927-07-22     
+#>  4                    2          6 1976-12-10        1983-10-04     
+#>  5                    3          9 1958-03-07        1959-07-12     
+#>  6                    1          2 1951-01-21        1957-10-02     
+#>  7                    3          1 1949-12-23        1983-06-21     
+#>  8                    3         10 1982-05-05        1991-04-26     
+#>  9                    1          7 1958-08-28        1961-06-13     
+#> 10                    3          4 1920-09-24        1927-07-08     
 #> # ℹ 1 more variable: date_of_birth <date>
 
 # }

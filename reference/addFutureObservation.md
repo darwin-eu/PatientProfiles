@@ -11,7 +11,8 @@ addFutureObservation(
   indexDate = "cohort_start_date",
   futureObservationName = "future_observation",
   futureObservationType = "days",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 ```
 
@@ -19,24 +20,32 @@ addFutureObservation(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the demographics
-  characteristics.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - futureObservationName:
 
-  Future observation variable name.
+  Name of the future-observation column to add.
 
 - futureObservationType:
 
-  Whether to return a "date" or the number of "days".
+  Whether to return a `"date"` or a number of `"days"`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
@@ -50,24 +59,32 @@ individuals.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addFutureObservation()
-#> # Source:   table<og_133_1772095745> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          3 2006-09-10        2007-11-17     
-#>  2                    3          5 1992-01-04        1998-05-31     
-#>  3                    2          2 1981-10-06        1987-06-13     
-#>  4                    1          4 1930-08-24        1931-02-07     
-#>  5                    1         10 1957-07-26        1967-01-12     
-#>  6                    1          8 1932-12-30        1950-09-07     
-#>  7                    1          7 1972-05-22        1984-11-05     
-#>  8                    3          1 1970-11-09        1985-08-12     
-#>  9                    1          9 1972-05-06        1972-11-12     
-#> 10                    3          6 1948-06-26        1953-02-16     
-#> # ℹ 1 more variable: future_observation <int>
+#>  1                    2          9 1936-07-06        1940-10-20     
+#>  2                    2          1 1947-01-15        1947-06-08     
+#>  3                    2          8 1933-05-15        1944-10-06     
+#>  4                    1          6 1990-11-01        1993-03-03     
+#>  5                    3         10 1945-03-09        1965-08-24     
+#>  6                    1          4 1910-11-05        1918-12-16     
+#>  7                    2          2 1938-07-14        1943-10-06     
+#>  8                    3          3 1983-12-15        1989-11-22     
+#>  9                    3          7 1959-02-12        1964-07-29     
+#> 10                    1          5 1949-10-19        1952-01-16     
+#> # ℹ 1 more variable: future_observation <dbl>
 
 # }
 ```

@@ -5,5 +5,5 @@ to see their documentation.
 
 - omopgenerics:
 
-  [`settings`](https://darwin-eu.github.io/omopgenerics/reference/settings.html),
-  [`suppress`](https://darwin-eu.github.io/omopgenerics/reference/suppress.html)
+  [`settings()`](https://darwin-eu.github.io/omopgenerics/reference/settings.html),
+  [`suppress()`](https://darwin-eu.github.io/omopgenerics/reference/suppress.html)

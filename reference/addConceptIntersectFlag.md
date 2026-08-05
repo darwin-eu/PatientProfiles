@@ -16,7 +16,8 @@ addConceptIntersectFlag(
   targetEndDate = "event_end_date",
   inObservation = TRUE,
   nameStyle = "{concept_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 ```
 
@@ -24,48 +25,67 @@ addConceptIntersectFlag(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - conceptSet:
 
-  Concept set list.
+  A named list of concept sets.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the intersection.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  whether to censor overlap events at a date column of x
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - window:
 
-  window to consider events in.
+  Window or windows of time relative to `indexDate` to consider.
 
 - targetStartDate:
 
-  Event start date to use for the intersection.
+  Name or names of start-date columns in the target tables to use for
+  the intersection.
 
 - targetEndDate:
 
-  Event end date to use for the intersection.
+  Name or names of end-date columns in the target tables to use for the
+  intersection. If `NULL`, the target is treated as a point event.
 
 - inObservation:
 
-  If TRUE only records inside an observation period will be considered.
+  If `TRUE`, only records that occur during an observation period are
+  considered.
 
 - nameStyle:
 
-  naming of the added column or columns, should include required
-  parameters.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
-table with added columns with overlap information
+The original table (`x`) with one added column per intersection with the
+desired conceptSet in a specific window. One column will be created for
+each combination of window and conceptSet. The value of the column can
+either indicate presence (1 or TRUE), no intersection (0 or FALSE), or
+NA if the individual is not in observation at any time of the window.
+The representation depends on `type`.
 
 ## Examples
 
@@ -76,6 +96,14 @@ library(omopgenerics, warn.conflicts = TRUE)
 library(dplyr, warn.conflicts = TRUE)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 concept <- tibble(
   concept_id = c(1125315),
@@ -93,21 +121,21 @@ cdm <- insertTable(cdm, "concept", concept)
 
 cdm$cohort1 |>
   addConceptIntersectFlag(conceptSet = list("acetaminophen" = 1125315))
-#> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_096_1772095715> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> Warning: ! `codelist` cast to integers.
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          7 1911-02-28        1911-11-21     
-#>  2                    3          4 1951-04-20        1978-07-05     
-#>  3                    1          6 1936-04-04        1938-07-17     
-#>  4                    1          8 1932-09-05        1936-01-13     
-#>  5                    2          5 1923-05-17        1924-11-29     
-#>  6                    2          2 1956-04-29        1968-08-05     
-#>  7                    3          1 1975-06-01        1977-07-12     
-#>  8                    3         10 1977-07-17        1986-11-09     
-#>  9                    2          3 1959-02-10        1959-10-18     
-#> 10                    3          9 1971-07-20        1985-11-24     
+#>  1                    1         10 1972-10-28        1972-12-18     
+#>  2                    3          4 1958-09-18        1982-05-31     
+#>  3                    2          6 1933-04-02        1934-03-20     
+#>  4                    3          9 1988-03-12        1991-06-02     
+#>  5                    2          2 1995-11-21        2004-05-28     
+#>  6                    1          5 1922-11-15        1922-12-21     
+#>  7                    3          7 1971-09-25        1975-06-23     
+#>  8                    1          3 1923-04-19        1924-11-30     
+#>  9                    3          1 1986-09-05        1989-12-06     
+#> 10                    3          8 1942-04-30        1961-05-31     
 #> # ℹ 1 more variable: acetaminophen_0_to_inf <dbl>
 
 # }

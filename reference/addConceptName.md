@@ -12,7 +12,7 @@ addConceptName(table, column = NULL, nameStyle = "{column}_name")
 
 - table:
 
-  cdm_table that contains column.
+  A table to process.
 
 - column:
 
@@ -21,7 +21,9 @@ addConceptName(table, column = NULL, nameStyle = "{column}_name")
 
 - nameStyle:
 
-  Name of the new column.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 ## Value
 
@@ -40,13 +42,20 @@ cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 #> ℹ Inserting <cdm_reference> into duckdb.
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$drug_exposure |>
   addConceptName(column = "drug_concept_id", nameStyle = "drug_name") |>
   glimpse()
 #> Rows: ??
 #> Columns: 24
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/Rtmpf1oBjA/file1ac37fb38fea.duckdb]
 #> $ drug_exposure_id             <int> 26318, 60926, 26418, 54785, 47027, 38712,…
 #> $ person_id                    <int> 573, 1332, 576, 4550, 3895, 3199, 476, 11…
 #> $ drug_concept_id              <int> 40213160, 40213198, 40213260, 1118084, 40…
@@ -77,7 +86,6 @@ cdm$drug_exposure |>
   glimpse()
 #> Rows: ??
 #> Columns: 27
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2//tmp/Rtmpf1oBjA/file1ac37fb38fea.duckdb]
 #> $ drug_exposure_id             <int> 26318, 60926, 26418, 54785, 47027, 38712,…
 #> $ person_id                    <int> 573, 1332, 576, 4550, 3895, 3199, 476, 11…
 #> $ drug_concept_id              <int> 40213160, 40213198, 40213260, 1118084, 40…

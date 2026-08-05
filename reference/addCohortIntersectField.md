@@ -16,7 +16,8 @@ addCohortIntersectField(
   order = "first",
   window = list(c(0, Inf)),
   nameStyle = "{cohort_name}_{field}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "auto"
 )
 ```
 
@@ -24,52 +25,62 @@ addCohortIntersectField(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - targetCohortTable:
 
-  name of the cohort that we want to check for overlap.
+  Name of the cohort table to intersect with.
 
 - field:
 
-  Column of interest in the targetCohort.
+  Name or names of columns in the target tables to add to `x`.
 
 - targetCohortId:
 
-  vector of cohort definition ids to include.
+  Cohort definition IDs to include from `targetCohortTable`. If `NULL`,
+  all cohorts are included.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the intersection.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  whether to censor overlap events at a specific date or a column date
-  of x.
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - targetDate:
 
-  Date of interest in the other cohort table. Either cohort_start_date
-  or cohort_end_date.
+  Name or names of date columns in the target tables to use for the
+  intersection.
 
 - order:
 
-  date to use if there are multiple records for an individual during the
-  window of interest. Either first or last.
+  Which record to use when multiple records occur in a window: `"first"`
+  or `"last"`.
 
 - window:
 
-  Window of time to identify records relative to the indexDate. Records
-  outside of this time period will be ignored.
+  Window or windows of time relative to `indexDate` to consider.
 
 - nameStyle:
 
-  naming of the added column or columns, should include required
-  parameters.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
@@ -83,6 +94,14 @@ library(PatientProfiles)
 library(dplyr)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort2 <- cdm$cohort2 |>
   mutate(even = if_else(subject_id %% 2, "yes", "no")) |>
@@ -92,22 +111,22 @@ cdm$cohort1 |>
   addCohortIntersectFlag(
     targetCohortTable = "cohort2"
   )
-#> # Source:   table<og_029_1772095689> [?? x 7]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 7
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1          7 1958-03-20        1965-11-22     
-#>  2                    2          1 1973-04-05        1986-03-27     
-#>  3                    2          2 1967-12-06        1987-09-22     
-#>  4                    2          4 1988-03-06        1997-09-26     
-#>  5                    3          5 1995-09-19        1996-06-17     
-#>  6                    3          3 1984-11-16        2009-06-10     
-#>  7                    1          6 1919-08-03        1924-03-22     
-#>  8                    3         10 1980-02-26        2003-12-11     
-#>  9                    1          9 1961-12-05        1983-03-17     
-#> 10                    2          8 1919-08-10        1922-05-11     
-#> # ℹ 3 more variables: cohort_2_0_to_inf <dbl>, cohort_1_0_to_inf <dbl>,
-#> #   cohort_3_0_to_inf <dbl>
+#>  1                    2          6 1952-08-01        1965-06-15     
+#>  2                    1          7 1912-04-22        1921-06-29     
+#>  3                    1          3 1984-02-05        1985-10-29     
+#>  4                    2          4 1988-09-20        1992-11-03     
+#>  5                    3         10 1947-01-21        1947-04-18     
+#>  6                    1          9 1950-08-14        1951-02-10     
+#>  7                    1          5 1912-06-23        1920-04-13     
+#>  8                    1          8 1982-12-10        1985-02-05     
+#>  9                    3          2 1967-10-12        1975-01-21     
+#> 10                    3          1 1922-07-04        1939-05-11     
+#> # ℹ 3 more variables: cohort_1_0_to_inf <dbl>, cohort_3_0_to_inf <dbl>,
+#> #   cohort_2_0_to_inf <dbl>
 
 # }
 ```

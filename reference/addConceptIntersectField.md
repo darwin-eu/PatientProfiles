@@ -19,7 +19,8 @@ addConceptIntersectField(
   inObservation = TRUE,
   allowDuplicates = FALSE,
   nameStyle = "{field}_{concept_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "auto"
 )
 ```
 
@@ -27,56 +28,69 @@ addConceptIntersectField(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - conceptSet:
 
-  Concept set list.
+  A named list of concept sets.
 
 - field:
 
-  Column in the standard omop table that you want to add.
+  Name or names of columns in the target tables to add to `x`.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the intersection.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  Whether to censor overlap events at a date column of x
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - window:
 
-  Window to consider events in.
+  Window or windows of time relative to `indexDate` to consider.
 
 - targetDate:
 
-  Event date to use for the intersection.
+  Name or names of date columns in the target tables to use for the
+  intersection.
 
 - order:
 
-  'last' or 'first' to refer to which event consider if multiple events
-  are present in the same window.
+  Which record to use when multiple records occur in a window: `"first"`
+  or `"last"`.
 
 - inObservation:
 
-  If TRUE only records inside an observation period will be considered.
+  If `TRUE`, only records that occur during an observation period are
+  considered.
 
 - allowDuplicates:
 
-  Whether to allow multiple records with same conceptSet, person_id and
-  targetDate. If switched to TRUE, the created new columns (field) will
-  be collapsed to a character vector separated by `;` to account for
-  multiple values per person.
+  Whether to allow multiple records for the same person, target, and
+  date. If `TRUE`, multiple values are collapsed into a
+  semicolon-separated character value; otherwise, duplicates result in
+  an error.
 
 - nameStyle:
 
-  naming of the added column or columns, should include required
-  parameters.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
@@ -91,8 +105,14 @@ library(omopgenerics, warn.conflicts = TRUE)
 library(dplyr, warn.conflicts = TRUE)
 
 cdm <- mockPatientProfiles(source = "duckdb")
-#> Warning: There are observation period end dates after the current date: 2026-02-26
-#> ℹ The latest max observation period end date found is 2027-03-20
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 concept <- tibble(
   concept_id = c(1125315),
@@ -113,21 +133,21 @@ cdm$cohort1 |>
     conceptSet = list("acetaminophen" = 1125315),
     field = "drug_type_concept_id"
   )
-#> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_086_1772095711> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> Warning: ! `codelist` cast to integers.
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    2          6 1944-07-23        1960-02-06     
-#>  2                    3          3 1982-12-22        2002-10-29     
-#>  3                    3          5 1978-03-01        1979-03-08     
-#>  4                    2          8 1980-05-04        1981-10-24     
-#>  5                    2          9 1961-12-03        1969-03-24     
-#>  6                    3          4 1933-01-12        1957-09-19     
-#>  7                    2          7 1936-01-13        1942-04-30     
-#>  8                    2          2 1937-01-13        1939-06-17     
-#>  9                    2         10 1983-10-26        1995-10-25     
-#> 10                    2          1 1938-10-12        1956-08-24     
+#>  1                    3          3 1929-01-19        1948-12-31     
+#>  2                    3          6 1976-02-09        2005-12-23     
+#>  3                    2          5 1959-12-19        1974-09-28     
+#>  4                    1          2 1970-05-08        1983-06-17     
+#>  5                    1          8 2001-04-01        2011-04-24     
+#>  6                    3          1 1955-06-24        1971-05-25     
+#>  7                    2          7 1907-04-19        1923-09-29     
+#>  8                    2          4 1962-03-19        1964-07-01     
+#>  9                    2         10 2012-11-03        2019-03-04     
+#> 10                    3          9 2006-03-06        2008-02-17     
 #> # ℹ 1 more variable: drug_type_concept_id_acetaminophen_0_to_inf <chr>
 
 # }

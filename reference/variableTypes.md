@@ -13,7 +13,7 @@ variableTypes(table)
 
 - table:
 
-  Tibble.
+  A table to process.
 
 ## Value
 

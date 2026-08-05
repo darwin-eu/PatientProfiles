@@ -17,7 +17,8 @@ addBirthdayQuery(
   ageMissingMonth = 1,
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
-  ageImposeDay = FALSE
+  ageImposeDay = FALSE,
+  ageUnit = "years"
 )
 ```
 
@@ -25,33 +26,35 @@ addBirthdayQuery(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - birthdayName:
 
-  Birth day variable name.
+  Name of the birthday column to add.
 
 - birthday:
 
-  Number of birth day.
+  Day of birth to add.
 
 - ageMissingMonth:
 
-  Month of the year assigned to individuals with missing month of birth.
+  Month of the year assigned when month of birth is missing.
 
 - ageMissingDay:
 
-  day of the month assigned to individuals with missing day of birth.
+  Day of the month assigned when day of birth is missing.
 
 - ageImposeMonth:
 
-  TRUE or FALSE. Whether the month of the date of birth will be
-  considered as missing for all the individuals.
+  If `TRUE`, month of birth is treated as missing for all individuals.
 
 - ageImposeDay:
 
-  TRUE or FALSE. Whether the day of the date of birth will be considered
-  as missing for all the individuals.
+  If `TRUE`, day of birth is treated as missing for all individuals.
+
+- ageUnit:
+
+  Unit in which to express age: `"years"`, `"months"`, or `"days"`.
 
 ## Value
 
@@ -65,29 +68,35 @@ library(PatientProfiles)
 library(dplyr)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addBirthdayQuery() |>
   glimpse()
 #> Rows: ??
 #> Columns: 5
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-#> $ cohort_definition_id <int> 2, 1, 2, 3, 1, 1, 3, 3, 1, 3
-#> $ subject_id           <int> 1, 9, 10, 6, 7, 4, 5, 2, 3, 8
-#> $ cohort_start_date    <date> 1936-02-12, 1930-11-29, 1982-10-08, 1940-09-08, 1…
-#> $ cohort_end_date      <date> 1948-01-09, 1941-07-03, 1983-05-21, 1965-11-10, 1…
-#> $ birthday             <date> 1918-01-01, 1911-01-01, 1952-01-01, 1929-01-01, …
+#> $ cohort_definition_id <int> 1, 2, 1, 3, 3, 3, 2, 2, 2, 2
+#> $ subject_id           <int> 7, 2, 6, 1, 5, 4, 3, 10, 8, 9
+#> $ cohort_start_date    <date> 1946-06-19, 1936-05-24, 1944-02-21, 1955-11-25, 1…
+#> $ cohort_end_date      <date> 1975-09-23, 1945-12-27, 1961-09-26, 1972-09-09, 1…
+#> $ birthday             <date> 1925-01-01, 1929-01-01, 1927-01-01, 1953-01-01, …
 
 cdm$cohort1 |>
   addBirthdayQuery(birthday = 5) |>
   glimpse()
 #> Rows: ??
 #> Columns: 5
-#> Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
-#> $ cohort_definition_id <int> 2, 1, 2, 3, 1, 1, 3, 3, 1, 3
-#> $ subject_id           <int> 1, 9, 10, 6, 7, 4, 5, 2, 3, 8
-#> $ cohort_start_date    <date> 1936-02-12, 1930-11-29, 1982-10-08, 1940-09-08, 1…
-#> $ cohort_end_date      <date> 1948-01-09, 1941-07-03, 1983-05-21, 1965-11-10, 1…
-#> $ birthday             <date> 1923-01-01, 1916-01-01, 1957-01-01, 1934-01-01, …
+#> $ cohort_definition_id <int> 1, 2, 1, 3, 3, 3, 2, 2, 2, 2
+#> $ subject_id           <int> 7, 2, 6, 1, 5, 4, 3, 10, 8, 9
+#> $ cohort_start_date    <date> 1946-06-19, 1936-05-24, 1944-02-21, 1955-11-25, 1…
+#> $ cohort_end_date      <date> 1975-09-23, 1945-12-27, 1961-09-26, 1972-09-09, 1…
+#> $ birthday             <date> 1930-01-01, 1934-01-01, 1932-01-01, 1958-01-01, …
 # }
 ```

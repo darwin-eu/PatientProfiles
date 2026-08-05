@@ -13,11 +13,12 @@ filterInObservation(x, indexDate)
 
 - x:
 
-  A `cdm_table` object.
+  A table containing individuals in a CDM reference.
 
 - indexDate:
 
-  Name of a column of x that is a date.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 ## Value
 

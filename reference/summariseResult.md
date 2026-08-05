@@ -15,7 +15,8 @@ summariseResult(
   variables = NULL,
   estimates = NULL,
   counts = TRUE,
-  weights = NULL
+  weights = NULL,
+  customEstimates = list()
 )
 ```
 
@@ -23,7 +24,7 @@ summariseResult(
 
 - table:
 
-  Table with different records.
+  A table to process.
 
 - group:
 
@@ -62,6 +63,14 @@ summariseResult(
   Name of the column in the table that contains the weights to be used
   when measuring the estimates.
 
+- customEstimates:
+
+  Named list of custom functions. Each function must accept a variable
+  vector as its first argument and return one numeric value. If
+  `weights` are supplied, they are passed as the second argument when
+  the function provides one; otherwise the estimate is calculated
+  without weights.
+
 ## Value
 
 A summarised_result object with the summarised data of interest.
@@ -73,6 +82,14 @@ A summarised_result object with the summarised data of interest.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 x <- cdm$cohort1 |>
   addDemographics()
@@ -87,9 +104,9 @@ result <- summariseResult(x)
 #> • prior_observation: min, q25, median, q75, max
 #> • sex: count, percentage
 #> ! Table is collected to memory as not all requested estimates are supported on
-#>   the database side
-#> → Start summary of data, at 2026-02-26 08:49:52.153425
-#> ✔ Summary finished, at 2026-02-26 08:49:52.232529
+#>   the database side.
+#> → Start summary of data, at 2026-08-05 13:18:35.416838
+#> ✔ Summary finished, at 2026-08-05 13:18:35.498152
 result
 #> # A tibble: 31 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -111,8 +128,8 @@ result
 
 # get only counts of records and subjects
 result <- summariseResult(x, variables = character())
-#> → Start summary of data, at 2026-02-26 08:49:52.529442
-#> ✔ Summary finished, at 2026-02-26 08:49:52.666443
+#> → Start summary of data, at 2026-08-05 13:18:35.775327
+#> ✔ Summary finished, at 2026-08-05 13:18:35.874039
 result
 #> # A tibble: 2 × 13
 #>   result_id cdm_name group_name group_level strata_name strata_level
@@ -133,9 +150,9 @@ result <- summariseResult(
 #> • cohort_start_date: mean, median, density
 #> • age: mean, median, density
 #> ! Table is collected to memory as not all requested estimates are supported on
-#>   the database side
-#> → Start summary of data, at 2026-02-26 08:49:53.124179
-#> ✔ Summary finished, at 2026-02-26 08:49:53.208018
+#>   the database side.
+#> → Start summary of data, at 2026-08-05 13:18:36.300422
+#> ✔ Summary finished, at 2026-08-05 13:18:36.393207
 result
 #> # A tibble: 2,054 × 13
 #>    result_id cdm_name group_name group_level strata_name strata_level
@@ -165,8 +182,22 @@ result <- summariseResult(
 #> • age: min, max
 #> • prior_observation: min, max
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-02-26 08:49:53.654035
-#> ✔ Summary finished, at 2026-02-26 08:49:54.071178
+#> → Start summary of data, at 2026-08-05 13:18:36.883631
+#> ✔ Summary finished, at 2026-08-05 13:18:37.124636
+
+# add a custom estimate
+ess <- function(x) sum(x^2) / sum(x)
+result <- summariseResult(
+  table = x,
+  variables = "age",
+  estimates = "ess",
+  customEstimates = list(ess = ess)
+)
+#> ℹ The following estimates will be calculated:
+#> • age: ess
+#> ! Table is collected to memory because custom estimates are evaluated in R.
+#> → Start summary of data, at 2026-08-05 13:18:37.670358
+#> ✔ Summary finished, at 2026-08-05 13:18:37.726836
 
 # }
 ```

@@ -4,6 +4,8 @@
 
 - [Adding patient
   demographics](https://darwin-eu.github.io/PatientProfiles/articles/demographics.md):
+- [Adding first or last
+  events](https://darwin-eu.github.io/PatientProfiles/articles/event.md):
 - [Adding cohort
   intersections](https://darwin-eu.github.io/PatientProfiles/articles/cohort-intersect.md):
 - [Adding concept

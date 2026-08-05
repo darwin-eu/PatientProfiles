@@ -20,19 +20,21 @@ addDeathDate(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - indexDate:
 
-  Variable in x that contains the window origin.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  Name of a column to stop followup.
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - window:
 
-  window to consider events over.
+  Window or windows of time relative to `indexDate` to consider.
 
 - deathDateName:
 
@@ -40,7 +42,7 @@ addDeathDate(
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
 
 ## Value
 
@@ -53,23 +55,31 @@ table x with the added column with death information added.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addDeathDate()
-#> # Source:   table<og_108_1772095730> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          8 1982-01-14        1982-03-06     
-#>  2                    2          3 1942-03-27        1948-01-24     
-#>  3                    2          5 1931-12-07        1932-08-20     
-#>  4                    3          7 1953-07-05        1955-08-30     
-#>  5                    2         10 1912-03-11        1930-12-09     
-#>  6                    1          4 1984-11-22        1990-06-14     
-#>  7                    1          2 1923-10-25        1925-11-01     
-#>  8                    1          9 1964-10-14        1990-09-13     
-#>  9                    2          1 1904-09-14        1932-02-21     
-#> 10                    2          6 1994-12-05        1998-11-04     
+#>  1                    2          3 1965-04-14        1984-04-18     
+#>  2                    2         10 1954-05-16        1967-12-15     
+#>  3                    1          2 1930-01-21        1930-08-14     
+#>  4                    3          9 1960-08-28        1991-06-07     
+#>  5                    1          4 2005-08-26        2006-04-23     
+#>  6                    1          7 2006-11-09        2013-05-16     
+#>  7                    3          5 1925-10-08        1940-04-07     
+#>  8                    1          8 1955-09-19        1957-04-08     
+#>  9                    1          6 1922-03-18        1927-01-07     
+#> 10                    2          1 1908-04-14        1919-12-09     
 #> # ℹ 1 more variable: date_of_death <date>
 
 # }

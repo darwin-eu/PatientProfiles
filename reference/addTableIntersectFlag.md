@@ -1,6 +1,6 @@
-# Compute a flag intersect with an omop table.
+# Compute a flag intersect with an omop table
 
-Compute a flag intersect with an omop table.
+Compute a flag intersect with an omop table
 
 ## Usage
 
@@ -15,7 +15,8 @@ addTableIntersectFlag(
   targetEndDate = endDateColumn(tableName),
   inObservation = TRUE,
   nameStyle = "{table_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 ```
 
@@ -23,52 +24,67 @@ addTableIntersectFlag(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - tableName:
 
-  Name of the table to intersect with. Options: visit_occurrence,
-  condition_occurrence, drug_exposure, procedure_occurrence,
-  device_exposure, measurement, observation, drug_era, condition_era,
-  specimen, episode.
+  Names of one or more OMOP CDM tables to intersect with.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the intersection.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  whether to censor overlap events at a specific date or a column date
-  of x.
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - window:
 
-  window to consider events in.
+  Window or windows of time relative to `indexDate` to consider.
 
 - targetStartDate:
 
-  Column name with start date for comparison.
+  Name or names of start-date columns in the target tables to use for
+  the intersection.
 
 - targetEndDate:
 
-  Column name with end date for comparison.
+  Name or names of end-date columns in the target tables to use for the
+  intersection. If `NULL`, the target is treated as a point event.
 
 - inObservation:
 
-  If TRUE only records inside an observation period will be considered.
+  If `TRUE`, only records that occur during an observation period are
+  considered.
 
 - nameStyle:
 
-  naming of the added column or columns, should include required
-  parameters.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
-table with added columns with intersect information.
+The original table (`x`) with one added column per intersection with the
+desired table in a specific window. One column will be created for each
+combination of window and table. The value of the column can either
+indicate presence (1 or TRUE), no intersection (0 or FALSE), or NA if
+the individual is not in observation at any time of the window. The
+representation depends on `type`.
 
 ## Examples
 
@@ -77,23 +93,31 @@ table with added columns with intersect information.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addTableIntersectFlag(tableName = "visit_occurrence")
-#> # Source:   table<og_164_1772095786> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    3          3 1961-12-26        1966-09-07     
-#>  2                    1         10 1909-12-26        1914-09-26     
-#>  3                    3          1 1917-11-09        1957-01-23     
-#>  4                    1          9 1949-01-04        1974-11-17     
-#>  5                    2          8 1944-08-31        1964-03-15     
-#>  6                    1          5 1937-12-04        1948-09-23     
-#>  7                    1          2 1939-07-31        1943-12-09     
-#>  8                    2          4 2013-01-07        2014-01-05     
-#>  9                    3          6 2003-07-22        2007-08-03     
-#> 10                    3          7 1982-10-03        1982-12-13     
+#>  1                    1          8 1951-12-08        1967-06-26     
+#>  2                    3          6 1976-01-01        1983-05-05     
+#>  3                    1          9 1962-08-14        1969-08-08     
+#>  4                    3          1 1940-11-06        1959-03-18     
+#>  5                    1          4 1942-03-13        1960-12-05     
+#>  6                    1          3 1912-01-10        1917-12-18     
+#>  7                    3         10 1976-09-04        1977-12-25     
+#>  8                    2          5 1944-02-26        1944-05-18     
+#>  9                    3          2 2002-06-12        2003-09-20     
+#> 10                    1          7 1947-05-30        1957-05-14     
 #> # ℹ 1 more variable: visit_occurrence_0_to_inf <dbl>
 
 # }

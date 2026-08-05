@@ -24,44 +24,50 @@ addConceptIntersectDate(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - conceptSet:
 
-  Concept set list.
+  A named list of concept sets.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the intersection.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - censorDate:
 
-  whether to censor overlap events at a date column of x
+  Date or name of a date column in `x` on which to censor follow-up. If
+  `NULL`, no censoring is applied.
 
 - window:
 
-  window to consider events in.
+  Window or windows of time relative to `indexDate` to consider.
 
 - targetDate:
 
-  Event date to use for the intersection.
+  Name or names of date columns in the target tables to use for the
+  intersection.
 
 - order:
 
-  last or first date to use for date/days calculations.
+  Which record to use when multiple records occur in a window: `"first"`
+  or `"last"`.
 
 - inObservation:
 
-  If TRUE only records inside an observation period will be considered.
+  If `TRUE`, only records that occur during an observation period are
+  considered.
 
 - nameStyle:
 
-  naming of the added column or columns, should include required
-  parameters.
+  Naming pattern for the added column or columns. It should include the
+  required formatting variables. If more than one `tableName` is
+  provided, it must include `{table_name}`.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
 
 ## Value
 
@@ -76,6 +82,14 @@ library(omopgenerics, warn.conflicts = TRUE)
 library(dplyr, warn.conflicts = TRUE)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 concept <- tibble(
   concept_id = c(1125315),
@@ -93,21 +107,21 @@ cdm <- insertTable(cdm, "concept", concept)
 
 cdm$cohort1 |>
   addConceptIntersectDate(conceptSet = list("acetaminophen" = 1125315))
-#> Warning: ! `codelist` casted to integers.
-#> # Source:   table<og_066_1772095703> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> Warning: ! `codelist` cast to integers.
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
-#>  1                    1         10 1962-11-18        1989-03-27     
-#>  2                    3          6 2005-05-03        2011-12-07     
-#>  3                    3          9 1994-10-05        1998-02-12     
-#>  4                    1          3 1924-03-30        1955-11-14     
-#>  5                    3          5 1962-07-11        1966-03-21     
-#>  6                    3          1 1944-03-18        1944-07-16     
-#>  7                    2          4 1923-01-14        1926-01-07     
-#>  8                    2          8 2014-09-29        2016-07-04     
-#>  9                    2          7 1957-06-27        1965-08-08     
-#> 10                    3          2 1916-10-01        1923-06-12     
+#>  1                    3          4 1925-04-29        1927-10-04     
+#>  2                    2          5 2010-10-10        2012-03-21     
+#>  3                    2         10 1989-11-30        1994-02-24     
+#>  4                    3          7 1922-12-20        1939-02-12     
+#>  5                    1          9 1953-08-05        1964-11-29     
+#>  6                    2          1 1957-11-18        1959-03-25     
+#>  7                    3          3 1984-08-17        1985-02-17     
+#>  8                    1          8 2006-09-02        2009-06-16     
+#>  9                    3          6 1974-08-07        1982-10-15     
+#> 10                    3          2 1981-06-08        1982-12-05     
 #> # ℹ 1 more variable: acetaminophen_0_to_inf <date>
 
 # }

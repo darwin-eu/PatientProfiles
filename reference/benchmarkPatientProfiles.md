@@ -13,7 +13,7 @@ benchmarkPatientProfiles(cdm, n = 50000, iterations = 1)
 
 - cdm:
 
-  A cdm_reference object.
+  A `cdm_reference` object.
 
 - n:
 

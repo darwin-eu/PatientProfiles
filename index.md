@@ -26,12 +26,14 @@ patient level data or other cohort tables.
 You can install the latest version of PatientProfiles like so:
 
 ``` r
+
 install.packages("PatientProfiles")
 ```
 
 ## Citation
 
 ``` r
+
 citation("PatientProfiles")
 #> To cite package 'PatientProfiles' in publications use:
 #> 
@@ -59,6 +61,7 @@ CDM format, so our first step is to create a reference to the data using
 the CDMConnector package.
 
 ``` r
+
 library(PatientProfiles)
 library(dplyr)
 ```
@@ -67,6 +70,7 @@ Creating a connection to a Postgres database would for example look
 like:
 
 ``` r
+
 library(RPostgres)
 library(CDMConnector)
 
@@ -92,6 +96,7 @@ For this example though we’ll work with simulated data, and we’ll
 generate an example cdm reference like so:
 
 ``` r
+
 cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "duckdb")
 ```
 
@@ -104,6 +109,7 @@ records in the condition occurrence table. We can use the `addAge` and
 `addSex` functions to do this:
 
 ``` r
+
 cdm$condition_occurrence |>
   glimpse()
 #> Rows: ??
@@ -139,6 +145,7 @@ We could, for example, then limit our data to only males aged between 18
 and 65
 
 ``` r
+
 cdm$condition_occurrence |>
   filter(age >= 18 & age <= 65) |>
   filter(sex == "Male")
@@ -160,6 +167,7 @@ As with other tables in the OMOP CDM, we can work in a similar way with
 cohort tables. For example, say we have the below cohort table
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -175,6 +183,7 @@ We can add age, age groups, sex, and days of prior observation to a
 cohort like so
 
 ``` r
+
 cdm$cohort1 <- cdm$cohort1 |>
   addAge(
     indexDate = "cohort_start_date",
@@ -203,6 +212,7 @@ to those with at least 365 days of prior observation available before
 their cohort start date like so
 
 ``` r
+
 cdm$cohort1 |>
   filter(prior_observation >= 365)
 #> # Source:   SQL [?? x 8]
@@ -231,6 +241,7 @@ We can use `addCohortIntersectFlag` to add a flag for the presence (or
 not) of a cohort in a certain window.
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -267,6 +278,7 @@ If we wanted the number of appearances, we could instead use the
 `addCohortIntersectCount` function
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -307,6 +319,7 @@ the last appearance in that cohort.
 First occurrence:
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -340,6 +353,7 @@ cdm$cohort1 |>
 Last occurrence:
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -376,6 +390,7 @@ Instead of returning a date, we could return the days to the
 intersection by using `addCohortIntersectDays`
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -412,6 +427,7 @@ If we want to combine multiple cohort intersects we can concatenate the
 operations using the `pipe` operator:
 
 ``` r
+
 cdm$cohort1 |>
   glimpse()
 #> Rows: ??
@@ -448,5 +464,6 @@ cdm$cohort1 |>
 ```
 
 ``` r
+
 mockDisconnect(cdm)
 ```

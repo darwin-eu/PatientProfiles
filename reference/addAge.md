@@ -16,7 +16,8 @@ addAge(
   ageImposeDay = FALSE,
   ageUnit = "years",
   missingAgeGroupValue = "None",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 ```
 
@@ -24,50 +25,56 @@ addAge(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the demographics
-  characteristics.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - ageName:
 
-  Age variable name.
+  Name of the age column to add.
 
 - ageGroup:
 
-  if not NULL, a list of ageGroup vectors.
+  If not `NULL`, a list of age-group vectors.
 
 - ageMissingMonth:
 
-  Month of the year assigned to individuals with missing month of birth.
+  Month of the year assigned when month of birth is missing.
 
 - ageMissingDay:
 
-  day of the month assigned to individuals with missing day of birth.
+  Day of the month assigned when day of birth is missing.
 
 - ageImposeMonth:
 
-  TRUE or FALSE. Whether the month of the date of birth will be
-  considered as missing for all the individuals.
+  If `TRUE`, month of birth is treated as missing for all individuals.
 
 - ageImposeDay:
 
-  TRUE or FALSE. Whether the day of the date of birth will be considered
-  as missing for all the individuals.
+  If `TRUE`, day of birth is treated as missing for all individuals.
 
 - ageUnit:
 
-  Unit for age it can either be 'years', 'months' or 'days'.
+  Unit in which to express age: `"years"`, `"months"`, or `"days"`.
 
 - missingAgeGroupValue:
 
-  Value to include if missing age.
+  Value to use when age is missing.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
@@ -80,23 +87,31 @@ tibble with the age column added.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addAge()
-#> # Source:   table<og_001_1772095661> [?? x 5]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 5
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age
-#>                   <int>      <int> <date>            <date>          <int>
-#>  1                    1         10 1995-08-12        2002-08-14         33
-#>  2                    2          4 1986-05-17        1986-07-22          7
-#>  3                    3          6 1938-08-02        1938-08-19         36
-#>  4                    1          7 1970-09-20        1973-06-22          8
-#>  5                    3          9 1956-11-27        1965-01-19         13
-#>  6                    1          2 1927-11-21        1933-10-31         22
-#>  7                    1          3 1926-01-03        1931-07-22          2
-#>  8                    1          5 1983-11-23        1990-12-19          6
-#>  9                    1          1 1971-08-26        1979-02-11          2
-#> 10                    2          8 1973-08-11        1978-10-05         18
+#>                   <int>      <int> <date>            <date>          <dbl>
+#>  1                    2          4 1962-01-27        1987-07-17          7
+#>  2                    3          2 1907-02-25        1908-05-30          5
+#>  3                    2          5 1949-06-14        1951-09-10          6
+#>  4                    1          8 1936-04-16        1953-07-04         31
+#>  5                    2          6 1980-08-13        1987-10-18         18
+#>  6                    3          3 1971-12-14        1983-12-15          9
+#>  7                    1          1 1983-08-01        2010-02-24          6
+#>  8                    3          9 1946-11-14        1963-10-27          2
+#>  9                    2          7 1966-01-28        1969-07-08         23
+#> 10                    3         10 1994-05-21        1995-06-26         33
 
 # }
 ```

@@ -21,7 +21,7 @@ addCategories(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - variable:
 
@@ -50,7 +50,7 @@ addCategories(
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
 
 ## Value
 
@@ -63,8 +63,14 @@ The x table with the categorical variable added.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
-#> Warning: There are observation period end dates after the current date: 2026-02-26
-#> ℹ The latest max observation period end date found is 2026-07-13
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 result <- cdm$cohort1 |>
   addAge() |>

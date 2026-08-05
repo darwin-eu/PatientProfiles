@@ -28,7 +28,8 @@ addDemographics(
   futureObservationType = "days",
   dateOfBirth = FALSE,
   dateOfBirthName = "date_of_birth",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 ```
 
@@ -36,100 +37,106 @@ addDemographics(
 
 - x:
 
-  Table with individuals in the cdm.
+  A table containing individuals in a CDM reference.
 
 - indexDate:
 
-  Variable in x that contains the date to compute the demographics
-  characteristics.
+  Name of a date column in `x`, or a single date to use for all rows,
+  used as the reference date.
 
 - age:
 
-  TRUE or FALSE. If TRUE, age will be calculated relative to indexDate.
+  If `TRUE`, age is calculated relative to `indexDate`.
 
 - ageName:
 
-  Age variable name.
+  Name of the age column to add.
 
 - ageMissingMonth:
 
-  Month of the year assigned to individuals with missing month of birth.
+  Month of the year assigned when month of birth is missing.
 
 - ageMissingDay:
 
-  day of the month assigned to individuals with missing day of birth.
+  Day of the month assigned when day of birth is missing.
 
 - ageImposeMonth:
 
-  TRUE or FALSE. Whether the month of the date of birth will be
-  considered as missing for all the individuals.
+  If `TRUE`, month of birth is treated as missing for all individuals.
 
 - ageImposeDay:
 
-  TRUE or FALSE. Whether the day of the date of birth will be considered
-  as missing for all the individuals.
+  If `TRUE`, day of birth is treated as missing for all individuals.
 
 - ageUnit:
 
-  Unit for age it can either be 'years', 'months' or 'days'.
+  Unit in which to express age: `"years"`, `"months"`, or `"days"`.
 
 - ageGroup:
 
-  if not NULL, a list of ageGroup vectors.
+  If not `NULL`, a list of age-group vectors.
 
 - missingAgeGroupValue:
 
-  Value to include if missing age.
+  Value to use when age is missing.
 
 - sex:
 
-  TRUE or FALSE. If TRUE, sex will be identified.
+  If `TRUE`, sex is identified.
 
 - sexName:
 
-  Sex variable name.
+  Name of the sex column to add.
 
 - missingSexValue:
 
-  Value to include if missing sex.
+  Value to use when sex is missing.
 
 - priorObservation:
 
-  TRUE or FALSE. If TRUE, days of between the start of the current
-  observation period and the indexDate will be calculated.
+  If `TRUE`, the time between the start of the current observation
+  period and `indexDate` is calculated.
 
 - priorObservationName:
 
-  Prior observation variable name.
+  Name of the prior-observation column to add.
 
 - priorObservationType:
 
-  Whether to return a "date" or the number of "days".
+  Whether to return a `"date"` or a number of `"days"`.
 
 - futureObservation:
 
-  TRUE or FALSE. If TRUE, days between the indexDate and the end of the
-  current observation period will be calculated.
+  If `TRUE`, the time between `indexDate` and the end of the current
+  observation period is calculated.
 
 - futureObservationName:
 
-  Future observation variable name.
+  Name of the future-observation column to add.
 
 - futureObservationType:
 
-  Whether to return a "date" or the number of "days".
+  Whether to return a `"date"` or a number of `"days"`.
 
 - dateOfBirth:
 
-  TRUE or FALSE, if true the date of birth will be return.
+  If `TRUE`, date of birth is returned.
 
 - dateOfBirthName:
 
-  dateOfBirth column name.
+  Name of the date-of-birth column to add.
 
 - name:
 
-  Name of the new table, if NULL a temporary table is returned.
+  Name of the new table. If `NULL`, a temporary table is returned.
+
+- type:
+
+  Type of the created column(s). Counts, days, age, and observation
+  durations can be `"numeric"` or `"integer"`. Flag columns can also be
+  `"logical"`. Field columns can use `"auto"` to preserve the source
+  type, or can be converted to `"numeric"`, `"integer"`, `"logical"`, or
+  `"character"`.
 
 ## Value
 
@@ -142,26 +149,50 @@ cohort table with the added demographic information columns.
 library(PatientProfiles)
 
 cdm <- mockPatientProfiles(source = "duckdb")
-#> Warning: There are observation period end dates after the current date: 2026-02-26
-#> ℹ The latest max observation period end date found is 2029-12-15
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpSvnpxc/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 
 cdm$cohort1 |>
   addDemographics()
-#> # Source:   table<og_131_1772095740> [?? x 8]
-#> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
+#> # A query:  ?? x 8
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age sex  
-#>                   <int>      <int> <date>            <date>          <int> <chr>
-#>  1                    2          1 2023-05-14        2026-11-25         50 Male 
-#>  2                    1          2 1986-09-20        1994-11-19         20 Fema…
-#>  3                    2          3 2004-07-17        2005-03-13         29 Fema…
-#>  4                    2          4 1927-05-24        1929-10-09          3 Male 
-#>  5                    1          5 1981-07-13        1985-02-11         37 Male 
-#>  6                    2          6 1958-09-05        1979-02-08         14 Fema…
-#>  7                    1          7 1922-03-10        1958-02-03          2 Male 
-#>  8                    3          8 1931-09-03        1932-12-27         18 Male 
-#>  9                    1          9 1942-04-30        1961-10-14         13 Fema…
-#> 10                    2         10 1936-02-16        1936-06-10         29 Fema…
-#> # ℹ 2 more variables: prior_observation <int>, future_observation <int>
+#>                   <int>      <int> <date>            <date>          <dbl> <chr>
+#>  1                    3          1 1963-12-07        1968-08-16         34 Male 
+#>  2                    3          2 1931-07-22        1939-11-03         21 Male 
+#>  3                    2          3 1987-12-07        2005-11-04          9 Fema…
+#>  4                    2          4 1985-01-21        1998-12-18         28 Male 
+#>  5                    1          5 1939-02-14        1952-04-29          2 Fema…
+#>  6                    3          6 1981-10-07        1989-11-11         11 Male 
+#>  7                    1          7 1990-04-23        2004-03-22         25 Fema…
+#>  8                    1          8 1969-11-05        1971-09-14          0 Fema…
+#>  9                    1          9 1909-11-03        1913-04-16          5 Male 
+#> 10                    1         10 1909-03-17        1926-08-21          3 Male 
+#> # ℹ 2 more variables: prior_observation <dbl>, future_observation <dbl>
+
+cdm$cohort1 |>
+  addDemographics(indexDate = as.Date("2010-01-01"))
+#> # A query:  ?? x 8
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
+#>    cohort_definition_id subject_id cohort_start_date cohort_end_date   age sex  
+#>                   <int>      <int> <date>            <date>          <dbl> <chr>
+#>  1                    3          1 1963-12-07        1968-08-16         81 Male 
+#>  2                    3          2 1931-07-22        1939-11-03        100 Male 
+#>  3                    2          3 1987-12-07        2005-11-04         32 Fema…
+#>  4                    2          4 1985-01-21        1998-12-18         53 Male 
+#>  5                    1          5 1939-02-14        1952-04-29         73 Fema…
+#>  6                    3          6 1981-10-07        1989-11-11         40 Male 
+#>  7                    1          7 1990-04-23        2004-03-22         45 Fema…
+#>  8                    1          8 1969-11-05        1971-09-14         41 Fema…
+#>  9                    1          9 1909-11-03        1913-04-16        106 Male 
+#> 10                    1         10 1909-03-17        1926-08-21        104 Male 
+#> # ℹ 2 more variables: prior_observation <dbl>, future_observation <dbl>
 
 # }
 ```

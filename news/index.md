@@ -1,5 +1,56 @@
 # Changelog
 
+## PatientProfiles 1.6.0
+
+CRAN release: 2026-07-25
+
+- Add a `type` argument to choose the storage type of generated flag,
+  count, days, age, observation, and intersect field columns by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#877](https://github.com/darwin-eu/PatientProfiles/issues/877)
+- Allow indexDate to be an actual date by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#871](https://github.com/darwin-eu/PatientProfiles/issues/871)
+- Add Events functions by [@catalamarti](https://github.com/catalamarti)
+  in [\#873](https://github.com/darwin-eu/PatientProfiles/issues/873)
+- Add ageUnit for addBirthday by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#868](https://github.com/darwin-eu/PatientProfiles/issues/868)
+- Add NA documentation for intersections by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#851](https://github.com/darwin-eu/PatientProfiles/issues/851)
+- Use explicit [`as.character()`](https://rdrr.io/r/base/character.html)
+  in `str_flattern()` for addIntersectField functions (allowDuplicates =
+  TRUE) by [@catalamarti](https://github.com/catalamarti) in
+  [\#863](https://github.com/darwin-eu/PatientProfiles/issues/863)
+- Correct censor date missclassification by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#860](https://github.com/darwin-eu/PatientProfiles/issues/860)
+- Document `allowDuplicates = FALSE` by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#864](https://github.com/darwin-eu/PatientProfiles/issues/864)
+- Make sure concept is also selectionable by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#865](https://github.com/darwin-eu/PatientProfiles/issues/865)
+- Allow multiple table arguments by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#866](https://github.com/darwin-eu/PatientProfiles/issues/866)
+- Fix inconsistent NA matching for empty tables by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#869](https://github.com/darwin-eu/PatientProfiles/issues/869)
+- Fix Sql server empty tables edge case by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#870](https://github.com/darwin-eu/PatientProfiles/issues/870)
+- Consistent documentation by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#872](https://github.com/darwin-eu/PatientProfiles/issues/872)
+- Use `date_build` to build dates by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#867](https://github.com/darwin-eu/PatientProfiles/issues/867)
+- Allow to provide custom estimates to summarisedResult by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#874](https://github.com/darwin-eu/PatientProfiles/issues/874)
+
 ## PatientProfiles 1.5.0
 
 CRAN release: 2026-02-24
