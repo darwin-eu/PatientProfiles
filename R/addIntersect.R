@@ -379,8 +379,7 @@
     x <- x |>
       dplyr::left_join(
         resultCountFlagPivot,
-        by = joinKey,
-        na_matches = "na"
+        by = joinKey
       ) |>
       dplyr::compute(name = omopgenerics::uniqueTableName(tablePrefix))
 
@@ -434,8 +433,7 @@
     x <- x |>
       dplyr::left_join(
         resultDateTimeOther,
-        by = joinKey,
-        na_matches = "na"
+        by = joinKey
       ) |>
       dplyr::compute(name = omopgenerics::uniqueTableName(tablePrefix))
   }

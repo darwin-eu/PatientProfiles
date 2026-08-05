@@ -330,6 +330,19 @@ checkCensorDate <- function(x, censorDate, call = parent.frame()) {
   if (!check) {
     cli::cli_abort("{censorDate} is not a date variable", call = call)
   }
+
+  hasMissing <- x |>
+    dplyr::filter(is.na(.data[[censorDate]])) |>
+    utils::head(1) |>
+    dplyr::collect() |>
+    nrow() > 0
+
+  if (hasMissing) {
+    cli::cli_abort(
+      "{censorDate} cannot contain missing values when used as censorDate.",
+      call = call
+    )
+  }
 }
 
 correctStrata <- function(strata, overall) {

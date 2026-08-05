@@ -1296,7 +1296,19 @@ test_that("censor date distinguishes records with the same index date", {
   ) |>
     copyCdm()
 
+  expect_error(
+    cdm$condition_occurrence |>
+      .addIntersect(
+        tableName = "cohort1",
+        value = c("count", "flag", "date", "days"),
+        indexDate = "condition_start_date",
+        censorDate = "condition_end_date"
+      ),
+    "condition_end_date cannot contain missing values"
+  )
+
   result <- cdm$condition_occurrence |>
+    dplyr::filter(!is.na(.data$condition_end_date)) |>
     .addIntersect(
       tableName = "cohort1",
       value = c("count", "flag", "date", "days"),
@@ -1306,13 +1318,13 @@ test_that("censor date distinguishes records with the same index date", {
     dplyr::collect() |>
     dplyr::arrange(.data$condition_end_date)
 
-  expect_identical(result$count_all_0_to_inf, c(0, 1, 1))
-  expect_identical(result$flag_all_0_to_inf, c(0, 1, 1))
+  expect_identical(result$count_all_0_to_inf, c(0, 1))
+  expect_identical(result$flag_all_0_to_inf, c(0, 1))
   expect_identical(
     result$date_all_0_to_inf,
-    as.Date(c(NA, "2020-01-15", "2020-01-15"))
+    as.Date(c(NA, "2020-01-15"))
   )
-  expect_identical(result$days_all_0_to_inf, c(NA_real_, 14, 14))
+  expect_identical(result$days_all_0_to_inf, c(NA_real_, 14))
 
   dropCreatedTables(cdm = cdm)
 })
