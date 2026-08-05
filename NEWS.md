@@ -1,4 +1,8 @@
 
+# PatientProfiles 1.6.1
+
+* Fix na_matches = "na" performance by @catalamarti
+
 # PatientProfiles 1.6.0
 
 * Add a `type` argument to choose the storage type of generated flag, count,
