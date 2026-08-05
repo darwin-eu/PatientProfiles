@@ -125,7 +125,7 @@ cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Creating local <cdm_reference> object.
 #> ℹ Inserting <cdm_reference> into duckdb.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpKCjqmI/duckdb
+#> ℹ /tmp/RtmpVB70Tx/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -202,11 +202,11 @@ x |>
 #> $ prior_observation     <dbl> 6034, 2767, 3246, 8495, 3308, 2379, 6696, 1537, …
 #> $ future_observation    <dbl> 33908, 24015, 23088, 17496, 14990, 22191, 18987,…
 #> $ future_1191_aspirin   <dbl> 3, 2, 2, 0, 1, 2, 2, 1, 1, 0, 3, 1, 0, 3, 1, 0, …
-#> $ prior_1191_aspirin    <dbl> 2, 3, 1, 3, 0, 2, 0, 0, 3, 1, 0, 2, 0, 2, 0, 2, …
 #> $ prior_7804_oxycodone  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, …
 #> $ prior_7052_morphine   <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-#> $ future_7804_oxycodone <dbl> 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, …
+#> $ prior_1191_aspirin    <dbl> 2, 3, 1, 3, 0, 2, 0, 0, 3, 1, 0, 2, 0, 2, 0, 2, …
 #> $ future_7052_morphine  <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+#> $ future_7804_oxycodone <dbl> 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, …
 #> $ pharyngitis_before    <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
 #> $ first_visit           <date> 1933-10-30, 1985-02-09, 1985-04-13, 1987-06-09,…
 #> $ days_to_next_visit    <dbl> 2728, 11679, 18776, 7436, 4619, 10966, 5194, 229…
@@ -230,7 +230,7 @@ x |>
 #> Use `na.rm = TRUE` to silence this warning
 #> This warning is displayed once every 8 hours.
 #> # A query:  ?? x 3
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1//tmp/RtmpKCjqmI/file23ff4d036af7.duckdb]
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1//tmp/RtmpVB70Tx/file24337517643c.duckdb]
 #>   sex    mean_age sd_age
 #>   <chr>     <dbl>  <dbl>
 #> 1 Female     7.51   7.46
@@ -263,9 +263,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:18.145997
+#> → Start summary of data, at 2026-08-05 15:49:41.048439
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:18.493165
+#> ✔ Summary finished, at 2026-08-05 15:49:41.35581
 #> # A tibble: 6 × 4
 #>   strata_name strata_level variable_name estimate_value  
 #>   <chr>       <chr>        <chr>         <chr>           
@@ -291,9 +291,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:19.23384
+#> → Start summary of data, at 2026-08-05 15:49:41.990539
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:19.808115
+#> ✔ Summary finished, at 2026-08-05 15:49:42.492564
 #> # A tibble: 10 × 4
 #>    strata_name        strata_level variable_name estimate_value  
 #>    <chr>              <chr>        <chr>         <chr>           
@@ -325,9 +325,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:20.543792
+#> → Start summary of data, at 2026-08-05 15:49:43.14058
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:21.381154
+#> ✔ Summary finished, at 2026-08-05 15:49:43.864785
 #> # A tibble: 18 × 4
 #>    strata_name                strata_level variable_name estimate_value  
 #>    <chr>                      <chr>        <chr>         <chr>           
@@ -367,9 +367,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:22.127165
+#> → Start summary of data, at 2026-08-05 15:49:44.519929
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:22.594626
+#> ✔ Summary finished, at 2026-08-05 15:49:44.931759
 #> # A tibble: 8 × 4
 #>   strata_name        strata_level variable_name estimate_value  
 #>   <chr>              <chr>        <chr>         <chr>           
@@ -403,9 +403,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:23.595596
+#> → Start summary of data, at 2026-08-05 15:49:45.87208
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:24.549689
+#> ✔ Summary finished, at 2026-08-05 15:49:46.81702
 #> # A tibble: 10 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         
@@ -436,9 +436,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:40:25.28752
+#> → Start summary of data, at 2026-08-05 15:49:47.506156
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:25.456491
+#> ✔ Summary finished, at 2026-08-05 15:49:47.668624
 #> # A tibble: 4 × 4
 #>   strata_name strata_level variable_name   estimate_value  
 #>   <chr>       <chr>        <chr>           <chr>           
@@ -467,9 +467,9 @@ x |>
 #> • age: mean, sd
 #> • prior_observation: mean, sd
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-08-05 15:40:26.189871
+#> → Start summary of data, at 2026-08-05 15:49:48.33933
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:26.537446
+#> ✔ Summary finished, at 2026-08-05 15:49:48.661495
 #> # A tibble: 16 × 4
 #>    strata_name        strata_level variable_name     estimate_value  
 #>    <chr>              <chr>        <chr>             <chr>           
@@ -537,9 +537,9 @@ x |>
 #> • cohort_end_date: median, q25, q75, min, max
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side.
-#> → Start summary of data, at 2026-08-05 15:40:27.615787
+#> → Start summary of data, at 2026-08-05 15:49:49.65676
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:40:27.9447
+#> ✔ Summary finished, at 2026-08-05 15:49:49.955233
 #> # A tibble: 159 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         

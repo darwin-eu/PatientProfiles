@@ -83,7 +83,7 @@ library(dplyr, warn.conflicts = TRUE)
 
 cdm <- mockPatientProfiles(source = "duckdb")
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpIdk5b4/duckdb
+#> ℹ /tmp/RtmpB2T0r9/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
