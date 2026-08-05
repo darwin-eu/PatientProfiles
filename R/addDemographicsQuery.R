@@ -19,7 +19,29 @@
 #' @description
 #' Same as `addDemographics()`, except query is not computed to a table.
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams ageDoc
+#' @inheritParams ageNameDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
+#' @inheritParams ageGroupDoc
+#' @inheritParams missingAgeGroupValueDoc
+#' @inheritParams sexDoc
+#' @inheritParams sexNameDoc
+#' @inheritParams missingSexValueDoc
+#' @inheritParams priorObservationDoc
+#' @inheritParams priorObservationNameDoc
+#' @inheritParams priorObservationTypeDoc
+#' @inheritParams futureObservationDoc
+#' @inheritParams futureObservationNameDoc
+#' @inheritParams futureObservationTypeDoc
+#' @inheritParams dateOfBirthDoc
+#' @inheritParams dateOfBirthNameDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with the added demographic information columns.
 #' @export
@@ -56,7 +78,8 @@ addDemographicsQuery <- function(x,
                                  futureObservationName = "future_observation",
                                  futureObservationType = "days",
                                  dateOfBirth = FALSE,
-                                 dateOfBirthName = "date_of_birth") {
+                                 dateOfBirthName = "date_of_birth",
+                                 type = "numeric") {
   x |>
     .addDemographicsQuery(
       indexDate = indexDate,
@@ -79,7 +102,8 @@ addDemographicsQuery <- function(x,
       priorObservationType = priorObservationType,
       futureObservationType = futureObservationType,
       dateOfBirth = dateOfBirth,
-      dateOfBirthName = dateOfBirthName
+      dateOfBirthName = dateOfBirthName,
+      type = type
     )
 }
 
@@ -88,7 +112,17 @@ addDemographicsQuery <- function(x,
 #' @description
 #' Same as `addAge()`, except query is not computed to a table.
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams ageNameDoc
+#' @inheritParams ageGroupDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
+#' @inheritParams missingAgeGroupValueDoc
+#' @inheritParams typeDoc
 #'
 #' @return tibble with the age column added.
 #' @export
@@ -112,7 +146,8 @@ addAgeQuery <- function(x,
                         ageImposeMonth = FALSE,
                         ageImposeDay = FALSE,
                         ageUnit = "years",
-                        missingAgeGroupValue = "None") {
+                        missingAgeGroupValue = "None",
+                        type = "numeric") {
   x |>
     .addDemographicsQuery(
       indexDate = indexDate,
@@ -135,7 +170,8 @@ addAgeQuery <- function(x,
       priorObservationType = NULL,
       futureObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      type = type
     )
 }
 
@@ -145,7 +181,11 @@ addAgeQuery <- function(x,
 #' @description
 #' Same as `addFutureObservation()`, except query is not computed to a table.
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams futureObservationNameDoc
+#' @inheritParams futureObservationTypeDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with added column containing future observation of the
 #' individuals.
@@ -164,7 +204,8 @@ addAgeQuery <- function(x,
 addFutureObservationQuery <- function(x,
                                       indexDate = "cohort_start_date",
                                       futureObservationName = "future_observation",
-                                      futureObservationType = "days") {
+                                      futureObservationType = "days",
+                                      type = "numeric") {
   x |>
     .addDemographicsQuery(
       indexDate = indexDate,
@@ -187,7 +228,8 @@ addFutureObservationQuery <- function(x,
       missingSexValue = NULL,
       priorObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      type = type
     )
 }
 
@@ -197,7 +239,11 @@ addFutureObservationQuery <- function(x,
 #' @description
 #' Same as `addPriorObservation()`, except query is not computed to a table.
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams priorObservationNameDoc
+#' @inheritParams priorObservationTypeDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with added column containing prior observation of the
 #' individuals.
@@ -217,7 +263,8 @@ addFutureObservationQuery <- function(x,
 addPriorObservationQuery <- function(x,
                                      indexDate = "cohort_start_date",
                                      priorObservationName = "prior_observation",
-                                     priorObservationType = "days") {
+                                     priorObservationType = "days",
+                                     type = "numeric") {
   x |>
     .addDemographicsQuery(
       indexDate = indexDate,
@@ -240,7 +287,8 @@ addPriorObservationQuery <- function(x,
       missingSexValue = NULL,
       futureObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      type = type
     )
 }
 
@@ -249,7 +297,9 @@ addPriorObservationQuery <- function(x,
 #' @description
 #' Same as `addSex()`, except query is not computed to a table.
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams sexNameDoc
+#' @inheritParams missingSexValueDoc
 #'
 #' @return table x with the added column with sex information.
 #'
@@ -300,7 +350,12 @@ addSexQuery <- function(x,
 #' @description
 #' Same as `addDateOfBirth()`, except query is not computed to a table.
 #'
-#' @inheritParams addDateOfBirth
+#' @inheritParams xDoc
+#' @inheritParams dateOfBirthNameDoc
+#' @inheritParams missingDayDoc
+#' @inheritParams missingMonthDoc
+#' @inheritParams imposeDayDoc
+#' @inheritParams imposeMonthDoc
 #'
 #' @return The function returns the table x with an extra column that contains
 #' the date of birth.
@@ -371,10 +426,14 @@ addDateOfBirthQuery <- function(x,
                                   futureObservationType,
                                   dateOfBirth,
                                   dateOfBirthName,
+                                  type = "numeric",
                                   tmpName = NULL,
                                   call = parent.frame()) {
+  type <- validateColumnType(type, "observation", call)
+
   # initial checks
   x <- omopgenerics::validateCdmTable(table = x)
+  originalColumns <- colnames(x)
   omopgenerics::assertLogical(age, length = 1, call = call)
   omopgenerics::assertLogical(sex, length = 1, call = call)
   omopgenerics::assertLogical(priorObservation, length = 1, call = call)
@@ -384,7 +443,11 @@ addDateOfBirthQuery <- function(x,
   notIndexDate <- !any(c(
     age, !is.null(ageGroup), priorObservation, futureObservation
   ))
-  indexDate <- validateIndexDate(indexDate, null = notIndexDate, x = x, call = call)
+  indexDateInput <- materialiseIndexDate(
+    indexDate = indexDate, x = x, null = notIndexDate, call = call
+  )
+  x <- indexDateInput$x
+  indexDate <- indexDateInput$indexDate
   ageName <- validateColumn(ageName, null = !age, call = call)
   sexName <- validateColumn(sexName, null = !sex, call = call)
   priorObservationName <- validateColumn(priorObservationName, null = !priorObservation, call = call)
@@ -515,21 +578,28 @@ addDateOfBirthQuery <- function(x,
       } else {
         mB <- "dplyr::if_else(is.na(.data$month_of_birth), .env$ageMissingMonth, .data$month_of_birth)"
       }
+      dBQ <- dB |>
+        rlang::parse_exprs() |>
+        rlang::set_names("day_of_birth")
+      mBQ <- mB |>
+        rlang::parse_exprs() |>
+        rlang::set_names("month_of_birth")
       if (!dateOfBirth) {
         dateOfBirthName <- newCols[1]
       }
-      if (inherits(x, "data.frame")) {
-        ft <- ", format = '%Y-%m-%d'"
-      } else {
-        ft <- ""
-      }
+      dateBuild <- .dateBuildQuery(
+        x = x,
+        year = "as.integer(.data$year_of_birth)",
+        month = "as.integer(.data$month_of_birth)",
+        day = "as.integer(.data$day_of_birth)"
+      )
       dtBQ <- "dplyr::if_else(
         is.na(.data$year_of_birth),
         as.Date(NA),
-        as.Date(paste0(as.character(as.integer(.data$year_of_birth)), '-',
-          as.character(as.integer({mB})), '-', as.character(as.integer({dB}))){ft})
-      )" |>
-        glue::glue() |>
+        {dateBuild}
+      )"
+      dtBQ <- dtBQ |>
+        glue::glue(dateBuild = dateBuild) |>
         rlang::parse_exprs() |>
         rlang::set_names(dateOfBirthName)
       if (age || length(ageGroup) > 0) {
@@ -574,7 +644,7 @@ addDateOfBirthQuery <- function(x,
     xnew <- xnew |>
       dplyr::left_join(
         cdm$person |>
-          dplyr::mutate(!!!c(dtBQ, sQ)) |>
+          dplyr::mutate(!!!c(dBQ, mBQ, dtBQ, sQ)) |>
           dplyr::select(dplyr::all_of(c(
             rlang::set_names("person_id", personVariable),
             sexName, dateOfBirthName
@@ -584,8 +654,23 @@ addDateOfBirthQuery <- function(x,
       dplyr::mutate(!!!c(aQ, agQ))
   }
 
-  xnew <- xnew |>
-    dplyr::select(dplyr::all_of(c(colnames(x), newColumns)))
+  xnew <- removeMaterialisedIndexDate(xnew, indexDateInput)
+
+  columnsToConvert <- c(
+    if (age) ageName,
+    if (priorObservation && priorObservationType == "days") {
+      priorObservationName
+    },
+    if (futureObservation && futureObservationType == "days") {
+      futureObservationName
+    }
+  )
+  xnew <- .convertColumnType(
+    x = xnew,
+    columns = columnsToConvert,
+    type = type
+  ) |>
+    dplyr::select(dplyr::all_of(c(originalColumns, newColumns)))
 
   return(xnew)
 }
@@ -643,16 +728,15 @@ ageGroupQuery <- function(ageName, ageGroup, missingAgeGroupValue) {
 #' @description
 #' Same as `addInObservation()`, except query is not computed to a table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' observation flag.
-#' @param window window to consider events of.
-#' @param completeInterval If the individuals are in observation for the full window.
-#' @param nameStyle Name of the new columns to create, it must contain
-#' "window_name" if multiple windows are provided.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams completeIntervalDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams typeDoc
 #'
-#' @return cohort table with the added numeric column assessing observation (1
-#' in observation, 0 not in observation).
+#' @return Cohort table with an added column assessing observation. Values are
+#' 1/`TRUE` in observation and 0/`FALSE` otherwise, according to `type`.
 #' @export
 #'
 #' @examples
@@ -670,14 +754,16 @@ addInObservationQuery <- function(x,
                                   indexDate = "cohort_start_date",
                                   window = c(0, 0),
                                   completeInterval = FALSE,
-                                  nameStyle = "in_observation") {
+                                  nameStyle = "in_observation",
+                                  type = "numeric") {
 
   x |>
     .addInObservationQuery(
       indexDate = indexDate,
       window = window,
       completeInterval = completeInterval,
-      nameStyle = nameStyle
+      nameStyle = nameStyle,
+      type = type
     )
 }
 
@@ -686,10 +772,18 @@ addInObservationQuery <- function(x,
                                    window = c(0, 0),
                                    completeInterval = FALSE,
                                    nameStyle = "in_observation",
+                                   type = "numeric",
                                    tmpName = NULL,
                                    call = parent.frame()) {
+  type <- validateColumnType(type, "flag", call)
+
   x <- omopgenerics::validateCdmTable(table = x)
-  indexDate <- validateIndexDate(indexDate, null = FALSE, x = x, call = call)
+  originalColumns <- colnames(x)
+  indexDateInput <- materialiseIndexDate(
+    indexDate = indexDate, x = x, call = call
+  )
+  x <- indexDateInput$x
+  indexDate <- indexDateInput$indexDate
   if (!is.list(window)) window <- list(window)
   window <- omopgenerics::validateWindowArgument(window, call = call)
   assertNameStyle(nameStyle = nameStyle, values = list("window_name" = window), call = call)
@@ -787,6 +881,15 @@ addInObservationQuery <- function(x,
     dplyr::mutate(dplyr::across(
       dplyr::all_of(newColumns), ~ dplyr::coalesce(as.integer(.x), 0L)
     ))
+
+  x <- removeMaterialisedIndexDate(x, indexDateInput)
+
+  x <- .convertColumnType(
+    x = x,
+    columns = newColumns,
+    type = type
+  ) |>
+    dplyr::select(dplyr::all_of(c(originalColumns, newColumns)))
 
   return(x)
 }

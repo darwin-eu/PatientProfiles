@@ -9,19 +9,25 @@ addPriorObservationQuery(
   x,
   indexDate = "cohort_start_date",
   priorObservationName = "prior_observation",
-  priorObservationType = "days"
+  priorObservationType = "days",
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-demographics characteristics.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{priorObservationName}{Prior observation variable name.}
+\item{priorObservationName}{Name of the prior-observation column to add.}
 
-\item{priorObservationType}{Whether to return a "date" or the number of
-"days".}
+\item{priorObservationType}{Whether to return a \code{"date"} or a number of
+\code{"days"}.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 cohort table with added column containing prior observation of the

@@ -96,6 +96,31 @@ test_that("addConceptIntersect", {
   dropCreatedTables(cdm = cdm)
 })
 
+test_that("addConceptIntersectField retains the standard concept field", {
+  skip_on_cran()
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
+
+  cdm$my_cohort <- CohortConstructor::conceptCohort(
+    cdm = cdm,
+    conceptSet = list(x = 28060L),
+    name = "my_cohort"
+  )
+
+  result <- cdm$my_cohort |>
+    addConceptIntersectField(
+      conceptSet = list(x = 28060L),
+      field = "condition_concept_id",
+      window = c(0, 0)
+    ) |>
+    dplyr::collect()
+
+  expect_true("condition_concept_id_x_0_to_0" %in% colnames(result))
+  expect_true(all(result$condition_concept_id_x_0_to_0 == 28060L))
+
+  dropCreatedTables(cdm = cdm)
+})
+
 test_that("conceptSetExpression", {
   skip_on_cran()
   skip_if_not_installed("omopgenerics", minimum_version = "1.1.0")
@@ -164,6 +189,9 @@ test_that("unsupported domain name", {
     invalid_reason = NA_character_
   ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
+  concept <- cdm$concept |>
+    dplyr::collect() |>
+    dplyr::bind_rows(concept)
   cdm <- omopgenerics::insertTable(cdm = cdm, name = "concept", table = concept)
 
   expect_no_warning(result <- cdm$cohort1 |>
@@ -178,12 +206,13 @@ test_that("unsupported domain name", {
         colnames())
   )
 
-  expect_no_error(
+  expect_warning(
     cdm$cohort1a <- cdm$cohort1 |>
     addConceptIntersectFlag(
       conceptSet = list("not_in_concept_table" = 99L),
       nameStyle = "new_col"
-    )
+    ),
+    "not present in `cdm\\$concept`"
   )
  expect_true(all(cdm$cohort1a |>
     dplyr::pull("new_col") == 0L))
@@ -220,6 +249,14 @@ test_that("NA domain name", {
       (result |>
         colnames())
   )
+
+  expect_no_warning(countResult <- cdm$cohort1 |>
+    addConceptIntersectCount(
+      conceptSet = list("random2" = 1125315L)
+    ) |>
+    dplyr::collect())
+
+  expect_true(all(countResult$random2_0_to_inf == 0))
 
   dropCreatedTables(cdm = cdm)
 })

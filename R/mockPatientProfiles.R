@@ -21,6 +21,8 @@
 #' @param ... User self defined tables to put in cdm, it can input as many
 #' as the user want.
 #' @param source Source for the mock cdm, it can either be 'local' or 'duckdb'.
+#' By default, vocabulary tables are populated from the GiBleed mock vocabulary
+#' provided by omock. A user-provided `concept` table takes precedence.
 #' @param con deprecated.
 #' @param writeSchema deprecated.
 #' @param seed deprecated.
@@ -43,6 +45,11 @@ mockPatientProfiles <- function(numberIndividuals = 10,
                                 con = lifecycle::deprecated(),
                                 writeSchema = lifecycle::deprecated(),
                                 seed = lifecycle::deprecated()) {
+  rlang::check_installed(
+    "omock",
+    reason = "to use `mockPatientProfiles()`."
+  )
+
   if (lifecycle::is_present(con)) {
     lifecycle::deprecate_soft(
       when = "1.4.3",
@@ -69,6 +76,34 @@ mockPatientProfiles <- function(numberIndividuals = 10,
   tables <- list(...)
   omopgenerics::assertList(tables, named = TRUE, class = "data.frame")
   omopgenerics::assertChoice(source, choices = c("local", "duckdb"), length = 1)
+
+  # Use a realistic vocabulary unless the user supplies their own concept
+  # table. Keep the vocabulary local until all synthetic clinical tables have
+  # been created so it does not affect identification of the mock population.
+  useDefaultVocabulary <- !"concept" %in% names(tables)
+  vocabularyCdm <- NULL
+  if (useDefaultVocabulary) {
+    vocabularyCdm <- suppressWarnings(suppressMessages(
+      omock::mockCdmReference(
+        cdmName = "PP_MOCK",
+        vocabularySet = "GiBleed"
+      )
+    ))
+    concepts <- vocabularyCdm$concept |>
+      dplyr::collect()
+    drugConceptIds <- concepts |>
+      dplyr::filter(
+        .data$domain_id == "Drug",
+        .data$standard_concept == "S"
+      ) |>
+      dplyr::pull("concept_id")
+    conditionConceptIds <- concepts |>
+      dplyr::filter(
+        .data$domain_id == "Condition",
+        .data$standard_concept == "S"
+      ) |>
+      dplyr::pull("concept_id")
+  }
 
   # get persons
   if (length(tables) == 0) {
@@ -142,18 +177,22 @@ mockPatientProfiles <- function(numberIndividuals = 10,
       dplyr::mutate(
         "observation_period_start_date" = dplyr::if_else(
           is.na(.data$observation_period_start_date),
-          as.Date(
-            x = paste0(
-              .data$year_of_birth + sample.int(34, n, TRUE), "-", sample(1:12, n, TRUE), "-",
-              sample(1:28, n, TRUE)
-            ),
-            format = "%Y-%m-%d"
+          clock::date_build(
+            year = .data$year_of_birth + sample.int(34, n, TRUE),
+            month = sample(1:12, n, TRUE),
+            day = sample(1:28, n, TRUE)
           ),
           .data$observation_period_start_date
         ),
         "observation_period_end_date" = dplyr::if_else(
           is.na(.data$observation_period_end_date),
-          .data$observation_period_start_date + sample.int(1e4, n, TRUE),
+          pmax(
+            .data$observation_period_start_date,
+            pmin(
+              .data$observation_period_start_date + sample.int(1e4, n, TRUE),
+              as.Date("2020-12-31")
+            )
+          ),
           .data$observation_period_end_date
         ),
         "period_type_concept_id" = 0L,
@@ -161,7 +200,9 @@ mockPatientProfiles <- function(numberIndividuals = 10,
         "observation_period_start_date" = dplyr::if_else(
           as.integer(format(.data$observation_period_start_date, "%Y")) >=
             .data$year_of_birth,
-          as.Date(paste0(.data$year_of_birth, "-01-01")),
+          clock::date_build(
+            year = .data$year_of_birth, month = 1L, day = 1L
+          ),
           .data$observation_period_start_date
         )
       ) |>
@@ -206,7 +247,11 @@ mockPatientProfiles <- function(numberIndividuals = 10,
       addDate(c("drug_exposure_start_date", "drug_exposure_end_date")) |>
       dplyr::mutate(
         "drug_exposure_id" = dplyr::row_number(),
-        "drug_concept_id" = sample.int(10, nr, T),
+        "drug_concept_id" = if (useDefaultVocabulary) {
+          sample(drugConceptIds, nr, TRUE)
+        } else {
+          sample.int(10, nr, TRUE)
+        },
         "drug_type_concept_id" = 0L
       )
   }
@@ -229,7 +274,11 @@ mockPatientProfiles <- function(numberIndividuals = 10,
       addDate(c("condition_start_date", "condition_end_date")) |>
       dplyr::mutate(
         "condition_occurrence_id" = seq_len(nr),
-        "condition_concept_id" = sample.int(10, nr, T),
+        "condition_concept_id" = if (useDefaultVocabulary) {
+          sample(conditionConceptIds, nr, TRUE)
+        } else {
+          sample.int(10, nr, TRUE)
+        },
         "condition_type_concept_id" = 0L
       )
   }
@@ -316,12 +365,43 @@ mockPatientProfiles <- function(numberIndividuals = 10,
                     "cohort_start_date", "cohort_end_date")
   }
 
+  if (useDefaultVocabulary) {
+    vocabularyTableNames <- setdiff(
+      names(vocabularyCdm), c("person", "observation_period")
+    )
+    for (nm in vocabularyTableNames) {
+      if (!nm %in% names(tables)) {
+        tables[[nm]] <- vocabularyCdm[[nm]] |>
+          dplyr::collect()
+      }
+    }
+  }
+
   # identify table types
   ot <- names(tables)[names(tables) %in% omopgenerics::omopTables()]
   ct <- tables[!names(tables) %in% ot] |>
     purrr::keep(\(x) all(omopgenerics::cohortColumns(table = "cohort") %in% colnames(x))) |>
     names()
   oth <- names(tables)[!names(tables) %in% c(ot, ct)]
+
+  integerColumns <- c(
+    "year_of_birth", "month_of_birth", "day_of_birth"
+  )
+  tables[c(ot, ct)] <- lapply(tables[c(ot, ct)], function(table) {
+    columns <- union(
+      grep("_id$", colnames(table), value = TRUE),
+      integerColumns
+    )
+    columns <- columns[vapply(
+      table[intersect(columns, colnames(table))],
+      is.numeric,
+      logical(1)
+    )]
+    table |>
+      dplyr::mutate(
+        dplyr::across(dplyr::any_of(columns), as.integer)
+      )
+  })
 
   # local cdm
   cdm <- omopgenerics::cdmFromTables(tables = tables[ot],
@@ -385,7 +465,7 @@ addDate <- function(x, cols) {
 
 #' Deprecated
 #'
-#' @param cdm A cdm_reference object.
+#' @inheritParams cdmDoc
 #'
 #' @export
 #'

@@ -7,7 +7,7 @@
 mockDisconnect(cdm)
 }
 \arguments{
-\item{cdm}{A cdm_reference object.}
+\item{cdm}{A \code{cdm_reference} object.}
 }
 \description{
 Deprecated

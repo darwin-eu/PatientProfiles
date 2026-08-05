@@ -129,6 +129,7 @@ test_that("test all functions", {
 })
 
 test_that("groups and strata", {
+  skip_on_cran()
   cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
     copyCdm()
 
@@ -214,6 +215,7 @@ test_that("groups and strata", {
 })
 
 test_that("table in db or local", {
+  skip_on_cran()
   cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "local") |>
     copyCdm()
 
@@ -246,6 +248,33 @@ test_that("table in db or local", {
       summariseResult(
         group = "sex", variables = character(), estimates = character()
       )
+  )
+
+  dropCreatedTables(cdm = cdm)
+})
+
+test_that("missing group levels give the same result in database and memory", {
+  skip_on_cran()
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+
+  table <- cdm$cohort1 |>
+    dplyr::mutate(
+      "empty_col" = NA_character_,
+      "sex" = "male"
+    )
+
+  databaseResult <- table |>
+    summariseResult(group = list("empty_col"), variables = "sex")
+  memoryResult <- table |>
+    dplyr::collect() |>
+    summariseResult(group = list("empty_col"), variables = "sex")
+
+  expect_equal(nrow(databaseResult), 4)
+  expect_equal(
+    databaseResult |> dplyr::select(-"cdm_name"),
+    memoryResult |> dplyr::select(-"cdm_name"),
+    ignore_attr = TRUE
   )
 
   dropCreatedTables(cdm = cdm)
@@ -745,6 +774,7 @@ test_that("NA when min, max and mean works", {
 })
 
 test_that("density works correctly", {
+  skip_on_cran()
   x <- dplyr::tibble(
     sex = c("M", "F", "F", "F", "F", "F"),
     group = c("g1", "g1", "g2", "g12", "g2", "g12"),
@@ -1113,6 +1143,7 @@ test_that("new counts functions", {
 })
 
 test_that("no cdm_table still works", {
+  skip_on_cran()
   skip_if(dbToTest == "duckdb")
 
   con <- duckdb::dbConnect(drv = duckdb::duckdb())
@@ -1122,4 +1153,93 @@ test_that("no cdm_table still works", {
   expect_no_warning(summariseResult(cars_db, variables = "speed"))
 
   duckdb::dbDisconnect(conn = con)
+})
+
+test_that("custom estimates work with and without weights", {
+  skip_on_cran()
+  cdm <- mockPatientProfiles(source = "local") |>
+    copyCdm()
+  x <- dplyr::tibble(
+    value = c(1, 2, 3, 4),
+    weight = c(1, 1, 2, 2)
+  )
+  cdm <- omopgenerics::insertTable(
+    cdm = cdm, name = "custom_estimates", table = x
+  )
+
+  ess <- function(x) sum(x^2) / sum(x)
+  weightedMean <- function(x, weights) sum(x * weights) / sum(weights)
+
+  expect_message(
+    result <- summariseResult(
+      table = cdm$custom_estimates,
+      variables = "value",
+      estimates = c("mean", "ess", "iqr"),
+      customEstimates = list(ess = ess, iqr = stats::IQR),
+      counts = FALSE
+    ),
+    "custom estimates are evaluated in R"
+  )
+  expect_equal(
+    as.numeric(result$estimate_value[result$estimate_name == "ess"]),
+    ess(x$value)
+  )
+  expect_equal(
+    as.numeric(result$estimate_value[result$estimate_name == "iqr"]),
+    stats::IQR(x$value)
+  )
+
+  expect_message(
+    weightedResult <- summariseResult(
+      table = cdm$custom_estimates,
+      variables = "value",
+      estimates = c("ess", "weighted_mean"),
+      customEstimates = list(
+        ess = ess,
+        weighted_mean = weightedMean
+      ),
+      counts = FALSE,
+      weights = "weight"
+    ),
+    "calculated without weighting"
+  )
+  expect_equal(
+    as.numeric(
+      weightedResult$estimate_value[
+        weightedResult$estimate_name == "ess"
+      ]
+    ),
+    ess(x$value)
+  )
+  expect_equal(
+    as.numeric(
+      weightedResult$estimate_value[
+        weightedResult$estimate_name == "weighted_mean"
+      ]
+    ),
+    weightedMean(x$value, x$weight)
+  )
+
+  expect_error(
+    summariseResult(
+      table = cdm$custom_estimates,
+      variables = "value",
+      estimates = "invalid",
+      customEstimates = list(invalid = \(x) x),
+      counts = FALSE
+    ),
+    "must return one numeric value"
+  )
+  expect_error(
+    summariseResult(
+      table = cdm$custom_estimates,
+      variables = "value",
+      estimates = "mean",
+      customEstimates = list(mean = ess),
+      counts = FALSE
+    ),
+    "cannot overwrite built-in estimates"
+  )
+
+  dropCreatedTables(cdm)
 })

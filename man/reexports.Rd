@@ -12,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{omopgenerics}{\code{\link[omopgenerics]{settings}}, \code{\link[omopgenerics]{suppress}}}
+  \item{omopgenerics}{\code{\link[omopgenerics:settings]{settings()}}, \code{\link[omopgenerics:suppress]{suppress()}}}
 }}
 

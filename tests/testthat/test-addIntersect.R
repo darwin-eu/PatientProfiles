@@ -857,13 +857,13 @@ test_that("test checkWindow function", {
     copyCdm()
 
   expect_error(cdm$cohort1 |>
-    .addIntersect(
-      value = "days",
-      filterId = 1,
-      filterVariable = "cohort_definition_id",
-      tableName = "cohort2",
-      window = c(150, -90)
-    ))
+                 .addIntersect(
+                   value = "days",
+                   filterId = 1,
+                   filterVariable = "cohort_definition_id",
+                   tableName = "cohort2",
+                   window = c(150, -90)
+                 ))
 
   dropCreatedTables(cdm = cdm)
 })
@@ -912,28 +912,28 @@ test_that("test if column exist, overwrite", {
 
   expect_true(sum(colnames(result) == "flag_all_0_to_30") == 1)
   expect_true(all(result |> dplyr::arrange(cohort_start_date, subject_id) |>
-    dplyr::select(flag_all_0_to_30) !=
-    cohort1 |>
-      dplyr::arrange(cohort_start_date, subject_id) |>
-      dplyr::select(flag_all_0_to_30), na.rm = TRUE))
+                    dplyr::select(flag_all_0_to_30) !=
+                    cohort1 |>
+                    dplyr::arrange(cohort_start_date, subject_id) |>
+                    dplyr::select(flag_all_0_to_30), na.rm = TRUE))
 
   expect_true(all(result |> dplyr::arrange(cohort_start_date, subject_id) |>
-    dplyr::select(count_all_0_to_30) !=
-    cohort1 |>
-      dplyr::arrange(cohort_start_date, subject_id) |>
-      dplyr::select(count_all_0_to_30), na.rm = TRUE))
+                    dplyr::select(count_all_0_to_30) !=
+                    cohort1 |>
+                    dplyr::arrange(cohort_start_date, subject_id) |>
+                    dplyr::select(count_all_0_to_30), na.rm = TRUE))
 
   expect_true(all(result |> dplyr::arrange(cohort_start_date, subject_id) |>
-    dplyr::select(days_all_0_to_30) !=
-    cohort1 |>
-      dplyr::arrange(cohort_start_date, subject_id) |>
-      dplyr::select(days_all_0_to_30), na.rm = TRUE))
+                    dplyr::select(days_all_0_to_30) !=
+                    cohort1 |>
+                    dplyr::arrange(cohort_start_date, subject_id) |>
+                    dplyr::select(days_all_0_to_30), na.rm = TRUE))
 
   expect_true(all(result |> dplyr::arrange(cohort_start_date, subject_id) |>
-    dplyr::select(date_all_0_to_30) !=
-    cohort1 |>
-      dplyr::arrange(cohort_start_date, subject_id) |>
-      dplyr::select(date_all_0_to_30), na.rm = TRUE))
+                    dplyr::select(date_all_0_to_30) !=
+                    cohort1 |>
+                    dplyr::arrange(cohort_start_date, subject_id) |>
+                    dplyr::select(date_all_0_to_30), na.rm = TRUE))
 
   dropCreatedTables(cdm = cdm)
 })
@@ -1173,13 +1173,13 @@ test_that("overlap is empty or not, multiple ids, check return columns", {
   expect_true(all(is.na(result$date_num1_m30_to_m1)))
 
   expect_error(cdm$cohort1 |>
-    addCohortIntersectDate(
-      targetCohortTable = "cohort2",
-      targetCohortId = c(1, 2, 3),
-      window = list(c(0, Inf), c(-30, -1))
-    ) |>
-    dplyr::collect() |>
-    dplyr::arrange(subject_id, cohort_start_date))
+                 addCohortIntersectDate(
+                   targetCohortTable = "cohort2",
+                   targetCohortId = c(1, 2, 3),
+                   window = list(c(0, Inf), c(-30, -1))
+                 ) |>
+                 dplyr::collect() |>
+                 dplyr::arrange(subject_id, cohort_start_date))
 
   result <- cdm$cohort1 |>
     addCohortIntersectDate(
@@ -1265,6 +1265,54 @@ test_that("no NA when overwrite column", {
   )
 
   expect_true(!any(is.na(cdm$cohort1 |> dplyr::pull("cohort_1"))))
+
+  dropCreatedTables(cdm = cdm)
+})
+
+test_that("censor date distinguishes records with the same index date", {
+  skip_on_cran()
+  cohort1 <- dplyr::tibble(
+    cohort_definition_id = as.integer(1),
+    subject_id = as.integer(1),
+    cohort_start_date = as.Date("2020-01-15"),
+    cohort_end_date = as.Date("2020-01-15")
+  )
+  conditionOccurrence <- dplyr::tibble(
+    condition_occurrence_id = as.integer(c(1, 2, 3)),
+    condition_concept_id = as.integer(c(1, 1, 1)),
+    condition_type_concept_id = as.integer(c(1, 1, 1)),
+    person_id = as.integer(c(1, 1, 1)),
+    condition_start_date = as.Date(c(
+      "2020-01-01", "2020-01-01", "2020-01-01"
+    )),
+    condition_end_date = as.Date(c("2020-01-10", "2020-01-20", NA))
+  )
+
+  cdm <- mockPatientProfiles(
+    cohort1 = cohort1,
+    condition_occurrence = conditionOccurrence,
+    numberIndividuals = 1,
+    source = "local"
+  ) |>
+    copyCdm()
+
+  result <- cdm$condition_occurrence |>
+    .addIntersect(
+      tableName = "cohort1",
+      value = c("count", "flag", "date", "days"),
+      indexDate = "condition_start_date",
+      censorDate = "condition_end_date"
+    ) |>
+    dplyr::collect() |>
+    dplyr::arrange(.data$condition_end_date)
+
+  expect_identical(result$count_all_0_to_inf, c(0, 1, 1))
+  expect_identical(result$flag_all_0_to_inf, c(0, 1, 1))
+  expect_identical(
+    result$date_all_0_to_inf,
+    as.Date(c(NA, "2020-01-15", "2020-01-15"))
+  )
+  expect_identical(result$days_all_0_to_inf, c(NA_real_, 14, 14))
 
   dropCreatedTables(cdm = cdm)
 })

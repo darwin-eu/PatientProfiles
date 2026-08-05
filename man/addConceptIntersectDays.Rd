@@ -15,32 +15,42 @@ addConceptIntersectDays(
   order = "first",
   inObservation = TRUE,
   nameStyle = "{concept_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{conceptSet}{Concept set list.}
+\item{conceptSet}{A named list of concept sets.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-intersection.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{whether to censor overlap events at a date column of x}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{window}{window to consider events in.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
-\item{targetDate}{Event date to use for the intersection.}
+\item{targetDate}{Name or names of date columns in the target tables to use
+for the intersection.}
 
-\item{order}{last or first date to use for date/days calculations.}
+\item{order}{Which record to use when multiple records occur in a window:
+\code{"first"} or \code{"last"}.}
 
-\item{inObservation}{If TRUE only records inside an observation period
-will be considered.}
+\item{inObservation}{If \code{TRUE}, only records that occur during an observation
+period are considered.}
 
-\item{nameStyle}{naming of the added column or columns, should include
-required parameters.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 table with added columns with overlap information

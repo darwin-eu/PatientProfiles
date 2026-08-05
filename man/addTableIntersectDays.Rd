@@ -14,37 +14,42 @@ addTableIntersectDays(
   inObservation = TRUE,
   order = "first",
   nameStyle = "{table_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{tableName}{Name of the table to intersect with. Options:
-visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-device_exposure, measurement, observation, drug_era, condition_era, specimen,
-episode.}
+\item{tableName}{Names of one or more OMOP CDM tables to intersect with.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-intersection.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{whether to censor overlap events at a specific date
-or a column date of x.}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{window}{window to consider events in.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
-\item{targetDate}{Target date in tableName.}
+\item{targetDate}{Name or names of date columns in the target tables to use
+for the intersection.}
 
-\item{inObservation}{If TRUE only records inside an observation period
-will be considered.}
+\item{inObservation}{If \code{TRUE}, only records that occur during an observation
+period are considered.}
 
-\item{order}{which record is considered in case of multiple records (only
-required for date and days options).}
+\item{order}{Which record to use when multiple records occur in a window:
+\code{"first"} or \code{"last"}.}
 
-\item{nameStyle}{naming of the added column or columns, should include
-required parameters.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 table with added columns with intersect information.

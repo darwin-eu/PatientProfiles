@@ -1,3 +1,24 @@
+
+# PatientProfiles 1.6.0
+
+* Add a `type` argument to choose the storage type of generated flag, count,
+  days, age, observation, and intersect field columns by @catalamarti in #877
+* Allow indexDate to be an actual date by @catalamarti in #871
+* Add Events functions by @catalamarti in #873
+* Add ageUnit for addBirthday by @catalamarti in #868
+* Add NA documentation for intersections by @catalamarti in #851
+* Use explicit `as.character()` in `str_flattern()` for addIntersectField 
+  functions (allowDuplicates = TRUE) by @catalamarti in #863
+* Correct censor date missclassification by @catalamarti in #860
+* Document `allowDuplicates = FALSE` by @catalamarti in #864
+* Make sure concept is also selectionable by @catalamarti in #865
+* Allow multiple table arguments by @catalamarti in #866
+* Fix inconsistent NA matching for empty tables by @catalamarti in #869
+* Fix Sql server empty tables edge case by @catalamarti in #870
+* Consistent documentation by @catalamarti in #872
+* Use `date_build` to build dates by @catalamarti in #867
+* Allow to provide custom estimates to summarisedResult by @catalamarti in #874
+
 # PatientProfiles 1.5.0
 
 * Fix tests for dplyr 1.2.0 by @catalamarti in #842
@@ -7,14 +28,19 @@
 
 # PatientProfiles 1.4.5
 
-* Add new estimates count_0, count_negative, count_positive, count_not_positive, count_not_negative + percentages by @catalamarti in #825
+* Add new estimates count_0, count_negative, count_positive, count_not_positive,
+  count_not_negative + percentages by @catalamarti in #825
 * Restrict count and percentage to binary variables by @catalamarti in #836
-* Limit x values of density estimation to .005 and .995 percentiles of the distribution by @ablack3 in #820
+* Limit x values of density estimation to .005 and .995 percentiles of the
+  distribution by @ablack3 in #820
 * Improve summariseResult examples by @catalamarti in #827
-* Add message when no result is provided in summariseResult by @catalamarti in #826
+* Add message when no result is provided in summariseResult by @catalamarti in
+  #826
 * Add new estimates count_person and count_subject by @catalamarti in #828
-* Fix warning when table is no cdm_table in summariseResult by @catalamarti in #835
-* Standard deviation is corrected to numeric for all variables by @catalamarti in #834
+* Fix warning when table is no cdm_table in summariseResult by @catalamarti in
+  #835
+* Standard deviation is corrected to numeric for all variables by @catalamarti
+  in #834
 
 # PatientProfiles 1.4.4
 
@@ -41,8 +67,10 @@
 
 * Fix readme lifecycle badge by @catalamarti in #778
 * create new function `addConceptName` by @catalamarti in #783
-* Support visit domain and drop non supported concepts in `addConceptIntersect` by @catalamarti in #784
-* Collect in SummariseResult if median is asked in a sql server by @catalamarti in #789
+* Support visit domain and drop non supported concepts in `addConceptIntersect`
+  by @catalamarti in #784
+* Collect in SummariseResult if median is asked in a sql server by @catalamarti
+  in #789
 * arrange strata in summariseResult by @catalamarti in #790
 * Improve performance of .addIntersect by @catalamarti in #788
 

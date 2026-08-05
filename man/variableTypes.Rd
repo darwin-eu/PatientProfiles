@@ -8,7 +8,7 @@
 variableTypes(table)
 }
 \arguments{
-\item{table}{Tibble.}
+\item{table}{A table to process.}
 }
 \value{
 Tibble with the variables type and classification.

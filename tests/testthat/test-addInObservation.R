@@ -60,7 +60,7 @@ test_that("addInObservation, parameters", {
 })
 
 test_that("addInObservation, window", {
-  cdm <- mockPatientProfiles(
+  expect_warning(cdm <- mockPatientProfiles(
     cohort1 = dplyr::tibble(
       cohort_definition_id = 1L,
       subject_id = 1L,
@@ -76,7 +76,7 @@ test_that("addInObservation, window", {
     ),
     source = "local"
   ) |>
-    copyCdm()
+    copyCdm(), "after the current date")
 
   # both true
   expect_true(all(

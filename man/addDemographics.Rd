@@ -27,66 +27,70 @@ addDemographics(
   futureObservationType = "days",
   dateOfBirth = FALSE,
   dateOfBirthName = "date_of_birth",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-demographics characteristics.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{age}{TRUE or FALSE. If TRUE, age will be calculated relative to
-indexDate.}
+\item{age}{If \code{TRUE}, age is calculated relative to \code{indexDate}.}
 
-\item{ageName}{Age variable name.}
+\item{ageName}{Name of the age column to add.}
 
-\item{ageMissingMonth}{Month of the year assigned to individuals with missing
-month of birth.}
+\item{ageMissingMonth}{Month of the year assigned when month of birth is
+missing.}
 
-\item{ageMissingDay}{day of the month assigned to individuals
-with missing day of birth.}
+\item{ageMissingDay}{Day of the month assigned when day of birth is missing.}
 
-\item{ageImposeMonth}{TRUE or FALSE. Whether the month of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeMonth}{If \code{TRUE}, month of birth is treated as missing for all
+individuals.}
 
-\item{ageImposeDay}{TRUE or FALSE. Whether the day of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeDay}{If \code{TRUE}, day of birth is treated as missing for all
+individuals.}
 
-\item{ageUnit}{Unit for age it can either be 'years', 'months' or 'days'.}
+\item{ageUnit}{Unit in which to express age: \code{"years"}, \code{"months"}, or
+\code{"days"}.}
 
-\item{ageGroup}{if not NULL, a list of ageGroup vectors.}
+\item{ageGroup}{If not \code{NULL}, a list of age-group vectors.}
 
-\item{missingAgeGroupValue}{Value to include if missing age.}
+\item{missingAgeGroupValue}{Value to use when age is missing.}
 
-\item{sex}{TRUE or FALSE. If TRUE, sex will be identified.}
+\item{sex}{If \code{TRUE}, sex is identified.}
 
-\item{sexName}{Sex variable name.}
+\item{sexName}{Name of the sex column to add.}
 
-\item{missingSexValue}{Value to include if missing sex.}
+\item{missingSexValue}{Value to use when sex is missing.}
 
-\item{priorObservation}{TRUE or FALSE. If TRUE, days of between the start
-of the current observation period and the indexDate will be calculated.}
+\item{priorObservation}{If \code{TRUE}, the time between the start of the current
+observation period and \code{indexDate} is calculated.}
 
-\item{priorObservationName}{Prior observation variable name.}
+\item{priorObservationName}{Name of the prior-observation column to add.}
 
-\item{priorObservationType}{Whether to return a "date" or the number of
-"days".}
+\item{priorObservationType}{Whether to return a \code{"date"} or a number of
+\code{"days"}.}
 
-\item{futureObservation}{TRUE or FALSE. If TRUE, days between the
-indexDate and the end of the current observation period will be
-calculated.}
+\item{futureObservation}{If \code{TRUE}, the time between \code{indexDate} and the end
+of the current observation period is calculated.}
 
-\item{futureObservationName}{Future observation variable name.}
+\item{futureObservationName}{Name of the future-observation column to add.}
 
-\item{futureObservationType}{Whether to return a "date" or the number of
-"days".}
+\item{futureObservationType}{Whether to return a \code{"date"} or a number of
+\code{"days"}.}
 
-\item{dateOfBirth}{TRUE or FALSE, if true the date of birth will be return.}
+\item{dateOfBirth}{If \code{TRUE}, date of birth is returned.}
 
-\item{dateOfBirthName}{dateOfBirth column name.}
+\item{dateOfBirthName}{Name of the date-of-birth column to add.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 cohort table with the added demographic information columns.
@@ -102,6 +106,9 @@ cdm <- mockPatientProfiles(source = "duckdb")
 
 cdm$cohort1 |>
   addDemographics()
+
+cdm$cohort1 |>
+  addDemographics(indexDate = as.Date("2010-01-01"))
 
 }
 

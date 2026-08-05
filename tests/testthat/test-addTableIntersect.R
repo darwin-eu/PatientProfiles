@@ -24,6 +24,23 @@ test_that("basic structures", {
     "visit_occurrence_date_0_to_inf", "visit_occurrence_days_0_to_inf"
   ) %in% colnames(cdm$ati_visit)))
 
+  multiTable <- cdm$cohort1 |>
+    addTableIntersectCount(
+      tableName = c("drug_exposure", "visit_occurrence")
+    )
+  expect_true(all(c(
+    "drug_exposure_0_to_inf", "visit_occurrence_0_to_inf"
+  ) %in% colnames(multiTable)))
+
+  expect_error(
+    cdm$cohort1 |>
+      addTableIntersectCount(
+        tableName = c("drug_exposure", "visit_occurrence"),
+        nameStyle = "{window_name}"
+      ),
+    "must include.*table_name"
+  )
+
   dropCreatedTables(cdm = cdm)
 })
 

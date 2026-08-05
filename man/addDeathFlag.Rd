@@ -11,24 +11,32 @@ addDeathFlag(
   censorDate = NULL,
   window = c(0, Inf),
   deathFlagName = "death",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the window origin.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{Name of a column to stop followup.}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{window}{window to consider events over.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
 \item{deathFlagName}{name of the new column to be added.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
-table x with the added column with death information added.
+The original table (\code{x}) with one added column per window indicating whether the individual's death record intersects that window. The value of the column can either indicate presence (1 or TRUE), no intersection (0 or FALSE), or NA if the individual is not in observation at any time of the window. The representation depends on \code{type}.
 }
 \description{
 Add flag for death for individuals. Only death within the same observation

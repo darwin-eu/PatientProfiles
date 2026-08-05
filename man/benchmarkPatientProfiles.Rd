@@ -8,7 +8,7 @@
 benchmarkPatientProfiles(cdm, n = 50000, iterations = 1)
 }
 \arguments{
-\item{cdm}{A cdm_reference object.}
+\item{cdm}{A \code{cdm_reference} object.}
 
 \item{n}{Size of the synthetic cohorts used to benchmark.}
 

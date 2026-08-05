@@ -1,4 +1,5 @@
 test_that("test filterInObservation", {
+  skip_on_cran()
   skip_if_not_installed("CDMConnector", "2.0.0")
   cdm <- omopgenerics::cdmFromTables(
     tables = list(

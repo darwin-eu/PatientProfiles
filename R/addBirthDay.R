@@ -6,9 +6,15 @@
 #' The function accounts for leap years and corrects the invalid dates to the
 #' next valid date.
 #'
-#' @inheritParams addDemographics
-#' @param birthday Number of birth day.
-#' @param birthdayName Birth day variable name.
+#' @inheritParams xDoc
+#' @inheritParams birthdayDoc
+#' @inheritParams birthdayNameDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
+#' @inheritParams nameDoc
 #'
 #' @return The table with a new column containing the birth day.
 #' @export
@@ -36,6 +42,7 @@ addBirthday <- function(x,
                         ageMissingDay = 1L,
                         ageImposeMonth = FALSE,
                         ageImposeDay = FALSE,
+                        ageUnit = "years",
                         name = NULL) {
   name <- omopgenerics::validateNameArgument(name = name, null = TRUE)
   .addBirthdayQuery(
@@ -45,7 +52,8 @@ addBirthday <- function(x,
     ageMissingMonth = ageMissingMonth,
     ageMissingDay = ageMissingDay,
     ageImposeMonth = ageImposeMonth,
-    ageImposeDay = ageImposeDay
+    ageImposeDay = ageImposeDay,
+    ageUnit = ageUnit
   ) |>
     dplyr::compute(name = name)
 }
@@ -59,7 +67,14 @@ addBirthday <- function(x,
 #' The function accounts for leap years and corrects the invalid dates to the
 #' next valid date.
 #'
-#' @inheritParams addBirthday
+#' @inheritParams xDoc
+#' @inheritParams birthdayDoc
+#' @inheritParams birthdayNameDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
 #'
 #' @return The table with a query that add the new column containing the birth
 #' day.
@@ -87,7 +102,8 @@ addBirthdayQuery <- function(x,
                              ageMissingMonth = 1,
                              ageMissingDay = 1,
                              ageImposeMonth = FALSE,
-                             ageImposeDay = FALSE) {
+                             ageImposeDay = FALSE,
+                             ageUnit = "years") {
   .addBirthdayQuery(
     x = x,
     birthdayName = birthdayName,
@@ -95,7 +111,8 @@ addBirthdayQuery <- function(x,
     ageMissingMonth = ageMissingMonth,
     ageMissingDay = ageMissingDay,
     ageImposeMonth = ageImposeMonth,
-    ageImposeDay = ageImposeDay
+    ageImposeDay = ageImposeDay,
+    ageUnit = ageUnit
   )
 }
 
@@ -106,6 +123,7 @@ addBirthdayQuery <- function(x,
                               ageMissingDay,
                               ageImposeMonth,
                               ageImposeDay,
+                              ageUnit,
                               call = parent.frame()) {
   # initial checks
   x <- omopgenerics::validateCdmTable(table = x, call = call)
@@ -116,6 +134,7 @@ addBirthdayQuery <- function(x,
   ageMissingDay <- validateAgeMissingDay(ageMissingDay, null = FALSE, call = call)
   omopgenerics::assertLogical(ageImposeMonth, length = 1, call = call)
   omopgenerics::assertLogical(ageImposeDay, length = 1, call = call)
+  omopgenerics::assertChoice(ageUnit, c("days", "months", "years"), length = 1, call = call)
 
   cdm <- omopgenerics::cdmReference(table = x)
 
@@ -133,48 +152,79 @@ addBirthdayQuery <- function(x,
     qM <- "dplyr::coalesce(as.integer(.data$month_of_birth), {ageMissingMonth}L)"
   }
 
-  # add number of years
-  qY <- paste0("as.integer(.data$year_of_birth + ", as.integer(birthday), "L)")
+  # add number of units
+  if (ageUnit == "years") {
+    qY <- paste0("as.integer(.data$year_of_birth + ", as.integer(birthday), "L)")
+    qMonth <- NULL
+  } else if (ageUnit == "months") {
+    monthIndex <- glue::glue(
+      "(.data$month_of_birth - 1L + {as.integer(birthday)}L)"
+    )
+    qY <- glue::glue(
+      "as.integer(.data$year_of_birth + floor({monthIndex} / 12.0))"
+    )
+    qMonth <- glue::glue(
+      "as.integer({monthIndex} - floor({monthIndex} / 12.0) * 12L + 1L)"
+    )
+  } else {
+    qY <- "as.integer(.data$year_of_birth)"
+    qMonth <- NULL
+  }
 
-  # correct day of birth depending on leap year
+  # correct invalid dates
   qLp <- "dplyr::case_when(
-    .data$year_of_birth %% 4 == 0 & (.data$year_of_birth %% 100 != 0 | .data$year_of_birth %% 400 == 0) & .data$day_of_birth == 29L & .data$month_of_birth == 2L ~ 0L,
-    .data$day_of_birth == 29L & .data$month_of_birth == 2L ~ 1L,
+    .data$month_of_birth == 2L & .data$day_of_birth > dplyr::if_else(
+      .data$year_of_birth %% 4L == 0L & (.data$year_of_birth %% 100L != 0L | .data$year_of_birth %% 400L == 0L),
+      29L,
+      28L
+    ) ~ 1L,
+    .data$month_of_birth %in% c(4L, 6L, 9L, 11L) & .data$day_of_birth > 30L ~ 1L,
     .default = 0L
   )"
 
   # date of interest
-  if (inherits(x, "tbl_duckdb_connection")) {
-    qDt <- "dplyr::case_when(
-      is.na(.data$year_of_birth) ~ as.Date(NA),
-      .data$correct_leap_year == 0 ~ dbplyr::sql('make_date(year_of_birth, month_of_birth, day_of_birth)'),
-      .data$correct_leap_year == 1 ~ dbplyr::sql('make_date(year_of_birth, 3, 1)')
-    )"
-  } else {
-    qDt <- "dplyr::case_when(
-      is.na(.data$year_of_birth) ~ as.Date(NA),
-      .data$correct_leap_year == 0 ~ clock::date_build(year = .data$year_of_birth, month = .data$month_of_birth, day = .data$day_of_birth{ft}),
-      .data$correct_leap_year == 1 ~ clock::date_build(year = .data$year_of_birth, month = 3L, day = 1L)
-    )"
+  dateBuild <- .dateBuildQuery(
+    x = x,
+    year = ".data$year_of_birth",
+    month = ".data$month_of_birth",
+    day = ".data$day_of_birth"
+  )
+  leapDateBuild <- .dateBuildQuery(
+    x = x,
+    year = ".data$year_of_birth",
+    month = "dplyr::if_else(.data$month_of_birth == 12L, 12L, .data$month_of_birth + 1L)",
+    day = "1L"
+  )
+  qDt <- glue::glue("dplyr::case_when(
+    is.na(.data$year_of_birth) ~ as.Date(NA),
+    .data$correct_leap_year == 0 ~ {dateBuild},
+    .data$correct_leap_year == 1 ~ {leapDateBuild}
+  )")
+
+  if (ageUnit == "days") {
+    qDt <- glue::glue(
+      "as.Date(clock::add_days(x = ({qDt}), n = {as.integer(birthday)}L))"
+    )
   }
 
-  if (inherits(x, "data.frame")) {
-    ft <- ", invalid = 'next'"
-  } else {
-    ft <- ""
-  }
-
-  q <- c(qD, qM, qY, qLp, qDt) |>
+  q <- c(qD, qM, qY) |>
     purrr::map_chr(\(x) glue::glue(
       x,
       ageMissingDay = ageMissingDay,
-      ageMissingMonth = ageMissingMonth,
-      ft = ft
+      ageMissingMonth = ageMissingMonth
     )) |>
-    rlang::set_names(c(
-      "day_of_birth", "month_of_birth", "year_of_birth", "correct_leap_year",
-      birthdayName
-    )) |>
+    rlang::set_names(c("day_of_birth", "month_of_birth", "year_of_birth")) |>
+    rlang::parse_exprs()
+
+  if (!is.null(qMonth)) {
+    qMonth <- qMonth |>
+      rlang::parse_exprs() |>
+      rlang::set_names("month_of_birth")
+  }
+
+  qBirthday <- c(qLp, qDt) |>
+    purrr::map_chr(\(x) glue::glue(x)) |>
+    rlang::set_names(c("correct_leap_year", birthdayName)) |>
     rlang::parse_exprs()
 
   sel <- rlang::set_names(c("person_id", birthdayName), c(id, birthdayName))
@@ -183,6 +233,8 @@ addBirthdayQuery <- function(x,
     dplyr::left_join(
       cdm$person |>
         dplyr::mutate(!!!q) |>
+        dplyr::mutate(!!!qMonth) |>
+        dplyr::mutate(!!!qBirthday) |>
         dplyr::select(dplyr::all_of(sel)),
       by = id
     )

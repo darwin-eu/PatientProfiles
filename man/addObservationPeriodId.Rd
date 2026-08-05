@@ -13,14 +13,15 @@ addObservationPeriodId(
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-observation flag.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{nameObservationPeriodId}{Name of the new column.}
+\item{nameObservationPeriodId}{Name of the observation-period ID column to
+add.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
 }
 \value{
 Table with the current observation period id added.

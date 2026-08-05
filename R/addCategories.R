@@ -16,7 +16,7 @@
 
 #' Categorize a numeric variable
 #'
-#' @param x Table with individuals in the cdm.
+#' @inheritParams xDoc
 #' @param variable Target variable that we want to categorize.
 #' @param categories List of lists of named categories with lower and upper
 #' limit.
@@ -25,7 +25,7 @@
 #' @param overlap TRUE if the categories given overlap.
 #' @param includeLowerBound Whether to include the lower bound in the group.
 #' @param includeUpperBound Whether to include the upper bound in the group.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams nameDoc
 #'
 #' @return The x table with the categorical variable added.
 #'

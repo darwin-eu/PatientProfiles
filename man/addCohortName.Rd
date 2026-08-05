@@ -7,7 +7,7 @@
 addCohortName(cohort)
 }
 \arguments{
-\item{cohort}{cohort to which add the cohort name}
+\item{cohort}{A \code{cohort_table} object.}
 }
 \value{
 cohort with an extra column with the cohort names

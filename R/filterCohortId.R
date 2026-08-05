@@ -18,7 +18,7 @@
 #' computed into a table. only a query is added. Used usually as internal
 #' functions of other packages.
 #'
-#' @param cohort A `cohort_table` object.
+#' @inheritParams cohortDoc
 #' @param cohortId A vector with cohort ids.
 #'
 #' @return A `cohort_table` object.

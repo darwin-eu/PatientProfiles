@@ -15,17 +15,19 @@ addDeathDate(
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the window origin.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{Name of a column to stop followup.}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{window}{window to consider events over.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
 \item{deathDateName}{name of the new column to be added.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
 }
 \value{
 table x with the added column with death information added.

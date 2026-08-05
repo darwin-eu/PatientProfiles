@@ -10,25 +10,33 @@ addInObservationQuery(
   indexDate = "cohort_start_date",
   window = c(0, 0),
   completeInterval = FALSE,
-  nameStyle = "in_observation"
+  nameStyle = "in_observation",
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-observation flag.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{window}{window to consider events of.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
-\item{completeInterval}{If the individuals are in observation for the full window.}
+\item{completeInterval}{If \code{TRUE}, individuals must be observed for the full
+requested interval.}
 
-\item{nameStyle}{Name of the new columns to create, it must contain
-"window_name" if multiple windows are provided.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
-cohort table with the added numeric column assessing observation (1
-in observation, 0 not in observation).
+Cohort table with an added column assessing observation. Values are
+1/\code{TRUE} in observation and 0/\code{FALSE} otherwise, according to \code{type}.
 }
 \description{
 Same as \code{addInObservation()}, except query is not computed to a table.

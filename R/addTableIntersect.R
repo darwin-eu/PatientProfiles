@@ -14,27 +14,93 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Compute a flag intersect with an omop table.
+.addTableIntersect <- function(x,
+                               tableName,
+                               value,
+                               indexDate,
+                               censorDate,
+                               window,
+                               targetStartDate,
+                               targetEndDate,
+                               inObservation,
+                               order,
+                               allowDuplicates = FALSE,
+                               nameStyle,
+                               name,
+                               type = "auto") {
+  type <- validateColumnType(type, value)
+
+  cdm <- omopgenerics::cdmReference(x)
+  omopgenerics::assertCharacter(tableName)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
+  omopgenerics::assertCharacter(nameStyle, length = 1)
+
+  if (length(tableName) > 1 &&
+      !grepl("{table_name}", nameStyle, fixed = TRUE)) {
+    cli::cli_abort(
+      "If more than one `tableName` is provided, `nameStyle` must include `{{table_name}}`."
+    )
+  }
+
+  recycleArgument <- function(argument, argumentName) {
+    if (is.null(argument)) {
+      return(rep(list(NULL), length(tableName)))
+    }
+    if (length(argument) == 1) {
+      return(rep(as.list(argument), length(tableName)))
+    }
+    if (length(argument) != length(tableName)) {
+      cli::cli_abort(
+        "`{argumentName}` must have length 1 or the same length as `tableName`."
+      )
+    }
+    as.list(argument)
+  }
+
+  value <- recycleArgument(value, "value")
+  targetStartDate <- recycleArgument(targetStartDate, "targetStartDate")
+  targetEndDate <- recycleArgument(targetEndDate, "targetEndDate")
+
+  for (i in seq_along(tableName)) {
+    x <- .addIntersect(
+      x = x,
+      tableName = tableName[[i]],
+      filterVariable = NULL,
+      filterId = NULL,
+      idName = NULL,
+      value = value[[i]],
+      indexDate = indexDate,
+      targetStartDate = targetStartDate[[i]],
+      targetEndDate = targetEndDate[[i]],
+      inObservation = inObservation,
+      window = window,
+      order = order,
+      allowDuplicates = allowDuplicates,
+      nameStyle = gsub("\\{table_name\\}", tableName[[i]], nameStyle),
+      censorDate = censorDate,
+      name = if (i == length(tableName)) name else NULL,
+      type = type
+    )
+  }
+
+  x
+}
+
+#' Compute a flag intersect with an omop table
 #'
-#' @param x Table with individuals in the cdm.
-#' @param tableName Name of the table to intersect with. Options:
-#' visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-#' device_exposure, measurement, observation, drug_era, condition_era, specimen,
-#' episode.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param window window to consider events in.
-#' @param targetStartDate Column name with start date for comparison.
-#' @param targetEndDate Column name with end date for comparison.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams tableNameDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with intersect information.
+#' @returns `r documentationIntersect("flag", "table")`
 #'
 #' @export
 #'
@@ -58,54 +124,40 @@ addTableIntersectFlag <- function(x,
                                   targetEndDate = endDateColumn(tableName),
                                   inObservation = TRUE,
                                   nameStyle = "{table_name}_{window_name}",
-                                  name = NULL) {
-  cdm <- omopgenerics::cdmReference(x)
+                                  name = NULL,
+                                  type = "numeric") {
   omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+  if (missing(targetStartDate)) {
+    targetStartDate <- vapply(tableName, startDateColumn, character(1))
+  }
+  if (missing(targetEndDate)) {
+    targetEndDate <- vapply(tableName, endDateColumn, character(1))
+  }
 
-  x <- x |>
-    .addIntersect(
-      tableName = tableName,
-      filterVariable = NULL,
-      filterId = NULL,
-      idName = NULL,
-      value = "flag",
-      indexDate = indexDate,
-      targetStartDate = targetStartDate,
-      targetEndDate = targetEndDate,
-      inObservation = inObservation,
-      window = window,
-      order = "first",
-      nameStyle = nameStyle,
-      censorDate = censorDate,
-      name = name
-    )
-
-  return(x)
+  .addTableIntersect(
+    x = x, tableName = tableName, value = "flag", indexDate = indexDate,
+    censorDate = censorDate, window = window,
+    targetStartDate = targetStartDate, targetEndDate = targetEndDate,
+    inObservation = inObservation, order = "first", nameStyle = nameStyle,
+    name = name, type = type
+  )
 }
 
 #' Compute number of intersect with an omop table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param tableName Name of the table to intersect with. Options:
-#' visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-#' device_exposure, measurement, observation, drug_era, condition_era, specimen,
-#' episode.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param window window to consider events in.
-#' @param targetStartDate Column name with start date for comparison.
-#' @param targetEndDate Column name with end date for comparison.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams tableNameDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with intersect information.
+#' @returns `r documentationIntersect("count", "table")`
 #'
 #' @export
 #'
@@ -129,53 +181,37 @@ addTableIntersectCount <- function(x,
                                    targetEndDate = endDateColumn(tableName),
                                    inObservation = TRUE,
                                    nameStyle = "{table_name}_{window_name}",
-                                   name = NULL) {
-  cdm <- omopgenerics::cdmReference(x)
+                                   name = NULL,
+                                   type = "numeric") {
   omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+  if (missing(targetStartDate)) {
+    targetStartDate <- vapply(tableName, startDateColumn, character(1))
+  }
+  if (missing(targetEndDate)) {
+    targetEndDate <- vapply(tableName, endDateColumn, character(1))
+  }
 
-  x <- x |>
-    .addIntersect(
-      tableName = tableName,
-      filterVariable = NULL,
-      filterId = NULL,
-      idName = NULL,
-      value = "count",
-      indexDate = indexDate,
-      targetStartDate = targetStartDate,
-      targetEndDate = targetEndDate,
-      inObservation = inObservation,
-      window = window,
-      order = "first",
-      nameStyle = nameStyle,
-      censorDate = censorDate,
-      name = name
-    )
-
-  return(x)
+  .addTableIntersect(
+    x = x, tableName = tableName, value = "count", indexDate = indexDate,
+    censorDate = censorDate, window = window,
+    targetStartDate = targetStartDate, targetEndDate = targetEndDate,
+    inObservation = inObservation, order = "first", nameStyle = nameStyle,
+    name = name, type = type
+  )
 }
 
 #' Compute date of intersect with an omop table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param tableName Name of the table to intersect with. Options:
-#' visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-#' device_exposure, measurement, observation, drug_era, condition_era, specimen,
-#' episode.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param window window to consider events in.
-#' @param targetDate Target date in tableName.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param order which record is considered in case of multiple records (only
-#' required for date and days options).
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams tableNameDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams orderDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
 #'
 #' @return table with added columns with intersect information.
 #' @export
@@ -201,56 +237,37 @@ addTableIntersectDate <- function(x,
                                   order = "first",
                                   nameStyle = "{table_name}_{window_name}",
                                   name = NULL) {
-  cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+  if (missing(targetDate)) {
+    targetDate <- vapply(tableName, startDateColumn, character(1))
+  }
 
   if (missing(order) & rlang::is_interactive()) {
     messageOrder(order)
   }
 
-  x <- x |>
-    .addIntersect(
-      tableName = tableName,
-      filterVariable = NULL,
-      filterId = NULL,
-      idName = NULL,
-      value = "date",
-      indexDate = indexDate,
-      targetStartDate = targetDate,
-      targetEndDate = NULL,
-      inObservation = inObservation,
-      window = window,
-      order = order,
-      nameStyle = nameStyle,
-      censorDate = censorDate,
-      name = name
-    )
-
-  return(x)
+  .addTableIntersect(
+    x = x, tableName = tableName, value = "date", indexDate = indexDate,
+    censorDate = censorDate, window = window,
+    targetStartDate = targetDate, targetEndDate = NULL,
+    inObservation = inObservation, order = order, nameStyle = nameStyle,
+    name = name
+  )
 }
 
 #' Compute time to intersect with an omop table.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param tableName Name of the table to intersect with. Options:
-#' visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-#' device_exposure, measurement, observation, drug_era, condition_era, specimen,
-#' episode.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param window window to consider events in.
-#' @param targetDate Target date in tableName.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param order which record is considered in case of multiple records (only
-#' required for date and days options).
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams tableNameDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams orderDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return table with added columns with intersect information.
 #' @export
@@ -275,66 +292,43 @@ addTableIntersectDays <- function(x,
                                   inObservation = TRUE,
                                   order = "first",
                                   nameStyle = "{table_name}_{window_name}",
-                                  name = NULL) {
-  cdm <- omopgenerics::cdmReference(x)
+                                  name = NULL,
+                                  type = "numeric") {
   omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+  if (missing(targetDate)) {
+    targetDate <- vapply(tableName, startDateColumn, character(1))
+  }
 
   if (missing(order) & rlang::is_interactive()) {
     messageOrder(order)
   }
 
-  x <- x |>
-    .addIntersect(
-      tableName = tableName,
-      filterVariable = NULL,
-      filterId = NULL,
-      idName = NULL,
-      value = "days",
-      indexDate = indexDate,
-      targetStartDate = targetDate,
-      targetEndDate = NULL,
-      inObservation = inObservation,
-      window = window,
-      order = order,
-      nameStyle = nameStyle,
-      censorDate = censorDate,
-      name = name
-    )
-
-  return(x)
+  .addTableIntersect(
+    x = x, tableName = tableName, value = "days", indexDate = indexDate,
+    censorDate = censorDate, window = window,
+    targetStartDate = targetDate, targetEndDate = NULL,
+    inObservation = inObservation, order = order, nameStyle = nameStyle,
+    name = name, type = type
+  )
 }
 
 #' Intersecting the cohort with columns of an OMOP table of user's choice.
 #' It will add an extra column to the cohort, indicating the intersected
 #' entries with the target columns in a window of the user's choice.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param tableName Name of the table to intersect with. Options:
-#' visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-#' device_exposure, measurement, observation, drug_era, condition_era, specimen,
-#' episode.
-#' @param field The columns from the table in tableName to intersect over.
-#' For example, if the user uses visit_occurrence in tableName then for field the possible
-#' options include visit_occurrence_id, visit_concept_id, visit_type_concept_id.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param window window to consider events in when intersecting with the chosen column.
-#' @param targetDate The dates in the target columns in tableName that the user may want to restrict to.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param order which record is considered in case of multiple records (only
-#' required for date and days options).
-#' @param allowDuplicates Whether to allow multiple records with same
-#' conceptSet, person_id and targetDate. If switched to TRUE, the created new
-#' columns (field) will be collapsed to a character vector separated by `;` to
-#' account for multiple values per person.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams tableNameDoc
+#' @inheritParams fieldDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams orderDoc
+#' @inheritParams allowDuplicatesDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return table with added columns with intersect information.
 #' @export
@@ -366,35 +360,24 @@ addTableIntersectField <- function(x,
                                    order = "first",
                                    allowDuplicates = FALSE,
                                    nameStyle = "{table_name}_{field}_{window_name}",
-                                   name = NULL) {
-  cdm <- omopgenerics::cdmReference(x)
+                                   name = NULL,
+                                   type = "auto") {
   omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  nameStyle <- gsub("\\{table_name\\}", tableName, nameStyle)
+  if (missing(targetDate)) {
+    targetDate <- vapply(tableName, startDateColumn, character(1))
+  }
   nameStyle <- gsub("\\{field\\}", "\\{value\\}", nameStyle)
 
   if (missing(order) & rlang::is_interactive()) {
     messageOrder(order)
   }
 
-  x <- x |>
-    .addIntersect(
-      tableName = tableName,
-      filterVariable = NULL,
-      filterId = NULL,
-      idName = NULL,
-      value = field,
-      indexDate = indexDate,
-      targetStartDate = targetDate,
-      targetEndDate = NULL,
-      inObservation = inObservation,
-      window = window,
-      order = order,
-      allowDuplicates = allowDuplicates,
-      nameStyle = nameStyle,
-      censorDate = censorDate,
-      name = name
-    )
-
-  return(x)
+  .addTableIntersect(
+    x = x, tableName = tableName, value = field, indexDate = indexDate,
+    censorDate = censorDate, window = window,
+    targetStartDate = targetDate, targetEndDate = NULL,
+    inObservation = inObservation, order = order,
+    allowDuplicates = allowDuplicates, nameStyle = nameStyle, name = name,
+    type = type
+  )
 }

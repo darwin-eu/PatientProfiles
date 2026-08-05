@@ -43,7 +43,7 @@ test_that("addDeathDate", {
     x = cdm$cohort1,
     indexDate = "not_a_variable",
     window = c(0, Inf),
-    deathDateName = "ddate"
+    deathDateName = "new_ddate"
   ))
   expect_error(addDeathDate(
     x = cdm$cohort1,
@@ -271,7 +271,7 @@ test_that("check with omop table", {
   expect_error(addDeathDate(
     x = cdm$condition_occurrence,
     window = c(0, Inf),
-    deathDateName = "ddate"
+    deathDateName = "new_ddate"
   ))
 
   dropCreatedTables(cdm = cdm)

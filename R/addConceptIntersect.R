@@ -26,7 +26,10 @@
                                  value,
                                  allowDuplicates = FALSE,
                                  nameStyle = "{value}_{concept_name}_{window_name}",
-                                 name) {
+                                 name,
+                                 type = "auto") {
+  type <- validateColumnType(type, value)
+
   cdm <- omopgenerics::cdmReference(x)
 
   # initial checks
@@ -75,7 +78,8 @@
       inObservation = inObservation,
       allowDuplicates = allowDuplicates,
       nameStyle = nameStyle,
-      name = name
+      name = name,
+      type = type
     )
 
   # drop intermediate tables
@@ -127,6 +131,8 @@ conceptSetId <- function(conceptSet) {
     "concept_set_id" = as.integer(seq_along(conceptSet))
   )
 }
+
+
 subsetTable <- function(x, value) {
   cdm <- omopgenerics::cdmReference(x)
 
@@ -160,6 +166,9 @@ subsetTable <- function(x, value) {
   if (length(domains) == 0) {
     res <- cdm[["concept"]] |>
       dplyr::select("concept_id") |>
+      dplyr::filter(
+        is.na(.data$concept_id) & !is.na(.data$concept_id)
+      ) |>
       dplyr::mutate(
         "event_start_date" = as.Date("2000-01-01"),
         "event_end_date" = as.Date("2000-01-01"),
@@ -167,7 +176,7 @@ subsetTable <- function(x, value) {
         "person_id" = 0L
       ) |>
       utils::head(0)
-    if (!value %in% c("flag", "count", "date", "days")) {
+    if (!value %in% intersectOptions) {
       res <- res |>
         dplyr::mutate(!!value := "")
     }
@@ -175,7 +184,7 @@ subsetTable <- function(x, value) {
   }
 
   # extra column
-  if (!value %in% c("flag", "count", "date", "days")) {
+  if (!value %in% intersectOptions) {
     type <- purrr::map(domains, \(x) {
       nm <- supportedDomains[[x]]
       if (!nm %in% names(cdm)) {
@@ -223,7 +232,7 @@ subsetTable <- function(x, value) {
       "person_id"
     )
     if (extraColumn & value %in% colnames(cdm[[tableName]])) {
-      sel <- c(sel, value)
+      sel <- c(sel, stats::setNames(value, value))
     }
     res <- cdm[[tableName]] |>
       dplyr::select(dplyr::all_of(sel)) |>
@@ -277,7 +286,9 @@ checkDomainsAndTables <- function(x, supportedDomains) {
 
   if (length(presentTables) == 0) {
     x <- x |>
-      utils::head(0L)
+      dplyr::filter(
+        is.na(.data$domain_id) & !is.na(.data$domain_id)
+      )
   } else {
     x <- x |>
       dplyr::filter(.data$domain_id %in% .env$presentTables)
@@ -289,21 +300,19 @@ checkDomainsAndTables <- function(x, supportedDomains) {
 #' It creates column to indicate the flag overlap information between a table
 #' and a concept
 #'
-#' @param x Table with individuals in the cdm.
-#' @param conceptSet Concept set list.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a date column of x
-#' @param window window to consider events in.
-#' @param targetStartDate Event start date to use for the intersection.
-#' @param targetEndDate Event end date to use for the intersection.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams conceptSetDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with overlap information
+#' @returns `r documentationIntersect("flag", "conceptSet")`
 #'
 #' @export
 #'
@@ -343,7 +352,8 @@ addConceptIntersectFlag <- function(x,
                                     targetEndDate = "event_end_date",
                                     inObservation = TRUE,
                                     nameStyle = "{concept_name}_{window_name}",
-                                    name = NULL) {
+                                    name = NULL,
+                                    type = "numeric") {
   .addConceptIntersect(
     x = x,
     conceptSet = conceptSet,
@@ -356,28 +366,27 @@ addConceptIntersectFlag <- function(x,
     order = "first",
     value = "flag",
     nameStyle = nameStyle,
-    name = name
+    name = name,
+    type = type
   )
 }
 
 #' It creates column to indicate the count overlap information between a table
 #' and a concept
 #'
-#' @param x Table with individuals in the cdm.
-#' @param conceptSet Concept set list.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a date column of x
-#' @param window window to consider events in.
-#' @param targetStartDate Event start date to use for the intersection.
-#' @param targetEndDate Event end date to use for the intersection.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams conceptSetDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with overlap information
+#' @returns `r documentationIntersect("count", "conceptSet")`
 #'
 #' @export
 #'
@@ -417,7 +426,8 @@ addConceptIntersectCount <- function(x,
                                      targetEndDate = "event_end_date",
                                      inObservation = TRUE,
                                      nameStyle = "{concept_name}_{window_name}",
-                                     name = NULL) {
+                                     name = NULL,
+                                     type = "numeric") {
   .addConceptIntersect(
     x = x,
     conceptSet = conceptSet,
@@ -430,26 +440,24 @@ addConceptIntersectCount <- function(x,
     order = "first",
     value = "count",
     nameStyle = nameStyle,
-    name = name
+    name = name,
+    type = type
   )
 }
 
 #' It creates column to indicate the date overlap information between a table
 #' and a concept
 #'
-#' @param x Table with individuals in the cdm.
-#' @param conceptSet Concept set list.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a date column of x
-#' @param window window to consider events in.
-#' @param targetDate Event date to use for the intersection.
-#' @param order last or first date to use for date/days calculations.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams conceptSetDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
 #'
 #' @return table with added columns with overlap information
 #'
@@ -516,19 +524,17 @@ addConceptIntersectDate <- function(x,
 #' It creates column to indicate the days of difference from an index date to a
 #' concept
 #'
-#' @param x Table with individuals in the cdm.
-#' @param conceptSet Concept set list.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a date column of x
-#' @param window window to consider events in.
-#' @param targetDate Event date to use for the intersection.
-#' @param order last or first date to use for date/days calculations.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams conceptSetDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return table with added columns with overlap information
 #'
@@ -570,8 +576,8 @@ addConceptIntersectDays <- function(x,
                                     order = "first",
                                     inObservation = TRUE,
                                     nameStyle = "{concept_name}_{window_name}",
-                                    name = NULL) {
-
+                                    name = NULL,
+                                    type = "numeric") {
   if (missing(order) & rlang::is_interactive()) {
     messageOrder(order)
   }
@@ -588,7 +594,8 @@ addConceptIntersectDays <- function(x,
     order = order,
     value = "days",
     nameStyle = nameStyle,
-    name = name
+    name = name,
+    type = type
   )
 }
 
@@ -596,25 +603,19 @@ addConceptIntersectDays <- function(x,
 #' subsetted by concept id. In general it is used to add the first value of a
 #' certain measurement.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param conceptSet Concept set list.
-#' @param field Column in the standard omop table that you want to add.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate Whether to censor overlap events at a date column of x
-#' @param window Window to consider events in.
-#' @param targetDate Event date to use for the intersection.
-#' @param order 'last' or 'first' to refer to which event consider if multiple
-#' events are present in the same window.
-#' @param inObservation If TRUE only records inside an observation period
-#' will be considered.
-#' @param allowDuplicates Whether to allow multiple records with same
-#' conceptSet, person_id and targetDate. If switched to TRUE, the created new
-#' columns (field) will be collapsed to a character vector separated by `;` to
-#' account for multiple values per person.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams conceptSetDoc
+#' @inheritParams fieldDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams inObservationDoc
+#' @inheritParams allowDuplicatesDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return Table with the `field` value obtained from the intersection
 #'
@@ -661,7 +662,8 @@ addConceptIntersectField <- function(x,
                                      inObservation = TRUE,
                                      allowDuplicates = FALSE,
                                      nameStyle = "{field}_{concept_name}_{window_name}",
-                                     name = NULL) {
+                                     name = NULL,
+                                     type = "auto") {
   omopgenerics::assertCharacter(nameStyle, length = 1)
   nameStyle <- stringr::str_replace(
     string = nameStyle, pattern = "\\{field\\}", replacement = "\\{value\\}"
@@ -684,6 +686,7 @@ addConceptIntersectField <- function(x,
     value = field,
     allowDuplicates = allowDuplicates,
     nameStyle = nameStyle,
-    name = name
+    name = name,
+    type = type
   )
 }
