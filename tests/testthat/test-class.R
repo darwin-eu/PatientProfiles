@@ -16,12 +16,12 @@ test_that("test class consistency across cohort operations", {
     observation_period_end_date = as.Date(c("2102-04-02", "2102-04-02")),
     period_type_concept_id = c(0, 0)
   )
-  cdm <- mockPatientProfiles(
+  expect_warning(cdm <- mockPatientProfiles(
     dus_cohort = dus_cohort,
     observation_period = observation_period,
     source = "local"
   ) |>
-    copyCdm()
+    copyCdm(), "after the current date")
 
   operations <- list(
     "addInObservation" = addInObservation,

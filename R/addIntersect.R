@@ -29,7 +29,11 @@
                           order = "first",
                           allowDuplicates = FALSE,
                           nameStyle = "{value}_{id_name}_{window_name}",
-                          name = NULL) {
+                          name = NULL,
+                          type = "auto",
+                          call = parent.frame()) {
+  type <- validateColumnType(type, value, call)
+
   comp <- newTable(name)
   if (!is.list(window)) {
     window <- list(window)
@@ -39,25 +43,29 @@
   targetEndDate <- eval(targetEndDate)
 
   # initial checks
-  omopgenerics::validateCdmTable(table = x)
-  personVariable <- omopgenerics::getPersonIdentifier(x = x)
+  x <- omopgenerics::validateCdmTable(table = x, call = call)
+  indexDateInput <- materialiseIndexDate(
+    indexDate = indexDate, x = x
+  )
+  x <- indexDateInput$x
+  indexDate <- indexDateInput$indexDate
+  personVariable <- omopgenerics::getPersonIdentifier(x = x, call = call)
   cdm <- omopgenerics::cdmReference(x)
-  omopgenerics::assertCharacter(tableName, length = 1, na = FALSE)
-  omopgenerics::assertCharacter(tableName)
-  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName)
-  personVariableTable <- omopgenerics::getPersonIdentifier(x = cdm[[tableName]])
-  extraValue <- checkValue(value, cdm[[tableName]], tableName)
-  filterTbl <- checkFilter(filterVariable, filterId, idName, cdm[[tableName]])
-  window <- omopgenerics::validateWindowArgument(window)
-  checkVariableInX(indexDate, x)
-  checkVariableInX(targetStartDate, cdm[[tableName]], FALSE, "targetStartDate")
-  checkVariableInX(targetEndDate, cdm[[tableName]], TRUE, "targetEndDate")
-  omopgenerics::assertChoice(order, choices = c("first", "last"))
-  checkVariableInX(censorDate, x, TRUE, "censorDate")
-  omopgenerics::assertLogical(allowDuplicates, length = 1)
+  omopgenerics::assertCharacter(tableName, length = 1, na = FALSE, call = call)
+  omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = tableName, call = call)
+  personVariableTable <- omopgenerics::getPersonIdentifier(x = cdm[[tableName]], call = call)
+  extraValue <- checkValue(value, cdm[[tableName]], tableName, call = call)
+  filterTbl <- checkFilter(filterVariable, filterId, idName, cdm[[tableName]], call = call)
+  window <- omopgenerics::validateWindowArgument(window, call = call)
+  checkVariableInX(indexDate, x, call = call)
+  checkVariableInX(targetStartDate, cdm[[tableName]], FALSE, "targetStartDate", call = call)
+  checkVariableInX(targetEndDate, cdm[[tableName]], TRUE, "targetEndDate", call = call)
+  omopgenerics::assertChoice(order, choices = c("first", "last"), call = call)
+  checkVariableInX(censorDate, x, TRUE, "censorDate", call = call)
+  omopgenerics::assertLogical(allowDuplicates, length = 1, call = call)
 
   if (!is.null(censorDate)) {
-    checkCensorDate(x, censorDate)
+    checkCensorDate(x, censorDate, call = call)
   }
   if (!is.null(idName)) {
     idName <- omopgenerics::toSnakeCase(idName)
@@ -132,6 +140,19 @@
     ) |>
     dplyr::distinct()
 
+  resultKey <- c(
+    personVariable,
+    "index_date",
+    if (!is.null(censorDate)) "censor_date"
+  )
+  joinKey <- c(personVariable, indexDate)
+  if (!is.null(censorDate)) {
+    joinKey <- c(
+      joinKey,
+      rlang::set_names("censor_date", censorDate)
+    )
+  }
+
   if (any(value %in% c("count", "flag"))) {
     idsObs <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
     qInObservation <- newCols$colnam |>
@@ -200,7 +221,10 @@
 
   if (!is.null(censorDate)) {
     result <- result |>
-      dplyr::filter(.data$start_date <= .data$censor_date)
+      dplyr::filter(
+        is.na(.data$censor_date) |
+          .data$start_date <= .data$censor_date
+      )
   }
 
   if (isTRUE(inObservation)) {
@@ -216,7 +240,7 @@
       "end" = clock::date_count_between(start = .data$index_date, end = .data$end_date, precision = "day")
     ) |>
     dplyr::select(!dplyr::any_of(c(
-      "censor_date", "start_date", "end_date", "start_obs", "end_obs"
+      "start_date", "end_date", "start_obs", "end_obs"
     ))) |>
     dplyr::compute(name = omopgenerics::uniqueTableName(tablePrefix))
 
@@ -249,11 +273,11 @@
     if ("count" %in% value | "flag" %in% value) {
       if (identical("flag", value)) {
         resultCF <- resultW |>
-          dplyr::distinct(.data[[personVariable]], .data$index_date, .data$id_name) |>
+          dplyr::distinct(dplyr::across(dplyr::all_of(c(resultKey, "id_name")))) |>
           dplyr::mutate(flag = 1)
       } else {
         resultCF <- resultW |>
-          dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id_name) |>
+          dplyr::group_by(dplyr::across(dplyr::all_of(c(resultKey, "id_name")))) |>
           dplyr::summarise(count = as.numeric(dplyr::n()), .groups = "drop")
         if ("flag" %in% value) {
           resultCF <- resultCF |> dplyr::mutate(flag = 1)
@@ -278,8 +302,8 @@
     if (length(value[!(value %in% c("count", "flag"))]) > 0) {
       if (length(extraValue) > 0) {
         resultDTO <- resultW |>
-          dplyr::select(dplyr::all_of(c(personVariable, "index_date", "id_name", extraValue, "days" = "start"))) |>
-          dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id_name)
+          dplyr::select(dplyr::all_of(c(resultKey, "id_name", extraValue, "days" = "start"))) |>
+          dplyr::group_by(dplyr::across(dplyr::all_of(c(resultKey, "id_name"))))
         if (order == "first") {
           resultDTO <- resultDTO |>
             dplyr::filter(.data$days == min(.data$days, na.rm = TRUE))
@@ -290,10 +314,10 @@
         if (allowDuplicates) {
           qs <- extraValue |>
             rlang::set_names() |>
-            purrr::map_chr(\(x) paste0('stringr::str_flatten(.data[["', x, '"]], collapse = "; ")')) |>
+            purrr::map_chr(\(x) paste0('stringr::str_flatten(as.character(.data[["', x, '"]]), collapse = "; ")')) |>
             rlang::parse_exprs()
           resultDTO <- resultDTO |>
-            dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id_name, .data$days) |>
+            dplyr::group_by(.data$days, .add = TRUE) |>
             dplyr::summarise(!!!qs, .groups = "drop")
         }
         if ("date" %in% value) {
@@ -302,7 +326,7 @@
         }
       } else {
         resultDTO <- resultW |>
-          dplyr::group_by(.data[[personVariable]], .data$index_date, .data$id_name)
+          dplyr::group_by(dplyr::across(dplyr::all_of(c(resultKey, "id_name"))))
         if (order == "first") {
           resultDTO <- resultDTO |>
             dplyr::summarise(
@@ -355,7 +379,8 @@
     x <- x |>
       dplyr::left_join(
         resultCountFlagPivot,
-        by = c(personVariable, indexDate)
+        by = joinKey,
+        na_matches = "na"
       ) |>
       dplyr::compute(name = omopgenerics::uniqueTableName(tablePrefix))
 
@@ -372,11 +397,11 @@
     if (length(extraValue) > 0 & !allowDuplicates) {
       duplicates <- resultDateTimeOther |>
         dplyr::select(
-          dplyr::all_of(personVariable), "index_date",
+          dplyr::all_of(resultKey),
           dplyr::all_of(extraValue), "id_name", "window_name"
         ) |>
         dplyr::group_by(dplyr::across(dplyr::all_of(c(
-          personVariable, "index_date", "id_name", "window_name"
+          resultKey, "id_name", "window_name"
         )))) |>
         dplyr::filter(dplyr::n() > 1) |>
         dplyr::ungroup() |>
@@ -387,15 +412,15 @@
           x = "There are {duplicates} row{?s} in {.strong {tableName}} with same
           {.var {c(personVariable, filterVariable, targetStartDate)}}, solve
           duplications or swicth {.pkg allowDuplicates} to TRUE.",
-          i = "NOTE that `allowDuplicates = TRUE` can have different and
-          unpredictable behavior depending on the cdm_source."
+          i = "NOTE that `allowDuplicates = TRUE` can sort the values
+          inconsistently depending on the cdm_source."
         ))
       }
     }
 
     resultDateTimeOther <- resultDateTimeOther |>
       dplyr::select(
-        dplyr::all_of(personVariable), "index_date", dplyr::all_of(values),
+        dplyr::all_of(resultKey), dplyr::all_of(values),
         "id_name", "window_name"
       ) |>
       tidyr::pivot_wider(
@@ -408,7 +433,9 @@
 
     x <- x |>
       dplyr::left_join(
-        resultDateTimeOther, by = c(personVariable, indexDate)
+        resultDateTimeOther,
+        by = joinKey,
+        na_matches = "na"
       ) |>
       dplyr::compute(name = omopgenerics::uniqueTableName(tablePrefix))
   }
@@ -443,6 +470,14 @@
     }
   }
 
+  x <- removeMaterialisedIndexDate(x, indexDateInput)
+
+  x <- .convertColumnType(
+    x = x,
+    columns = newCols$colnam,
+    type = type
+  )
+
   x <- x |>
     dplyr::compute(name = comp$name, temporary = comp$temporary)
 
@@ -452,6 +487,7 @@
 
   return(x)
 }
+
 
 #' Get the name of the start date column for a certain table in the cdm
 #'

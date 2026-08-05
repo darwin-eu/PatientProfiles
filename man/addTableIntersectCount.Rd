@@ -14,39 +14,46 @@ addTableIntersectCount(
   targetEndDate = endDateColumn(tableName),
   inObservation = TRUE,
   nameStyle = "{table_name}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{tableName}{Name of the table to intersect with. Options:
-visit_occurrence, condition_occurrence, drug_exposure, procedure_occurrence,
-device_exposure, measurement, observation, drug_era, condition_era, specimen,
-episode.}
+\item{tableName}{Names of one or more OMOP CDM tables to intersect with.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-intersection.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{whether to censor overlap events at a specific date
-or a column date of x.}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{window}{window to consider events in.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
-\item{targetStartDate}{Column name with start date for comparison.}
+\item{targetStartDate}{Name or names of start-date columns in the target
+tables to use for the intersection.}
 
-\item{targetEndDate}{Column name with end date for comparison.}
+\item{targetEndDate}{Name or names of end-date columns in the target tables
+to use for the intersection. If \code{NULL}, the target is treated as a point
+event.}
 
-\item{inObservation}{If TRUE only records inside an observation period
-will be considered.}
+\item{inObservation}{If \code{TRUE}, only records that occur during an observation
+period are considered.}
 
-\item{nameStyle}{naming of the added column or columns, should include
-required parameters.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
-table with added columns with intersect information.
+The original table (\code{x}) with one added column per intersection with the desired table in a specific window. One column will be created for each combination of window and table. The value of the column will be the number of intersections in the desired window, or NA if the individual is not in observation at any time in the window.
 }
 \description{
 Compute number of intersect with an omop table.

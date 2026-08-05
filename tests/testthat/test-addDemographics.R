@@ -79,7 +79,7 @@ test_that("addDemographics, cohort and condition_occurrence", {
 })
 
 test_that("addDemographics, parameters", {
-  cdm <- mockPatientProfiles(
+  expect_warning(cdm <- mockPatientProfiles(
     person = dplyr::tibble(
       person_id = as.integer(c(1, 3)),
       year_of_birth = as.integer(c(1998, 1998)),
@@ -104,7 +104,7 @@ test_that("addDemographics, parameters", {
     ),
     source = "local"
   ) |>
-    copyCdm()
+    copyCdm(), "after the current date")
 
   cdm$cohort1 <- cdm$cohort1 |>
     addDemographics(
@@ -1236,6 +1236,7 @@ test_that("date of birth", {
 
 test_that("missing levels", {
   skip_on_cran()
+  set.seed(seed = 1)
   cdm <- mockPatientProfiles(source = "local") |>
     copyCdm()
 

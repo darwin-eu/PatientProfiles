@@ -742,7 +742,7 @@ test_that("casing of empty dates", {
 
 test_that("cohortIntersect after observation", {
   skip_on_cran()
-  cdm <- mockPatientProfiles(
+  expect_warning(cdm <- mockPatientProfiles(
     cohort1 = dplyr::tibble(
       cohort_definition_id = 1L,
       subject_id = 1L,
@@ -773,7 +773,7 @@ test_that("cohortIntersect after observation", {
     ),
     source = "local"
   ) |>
-    copyCdm()
+    copyCdm(), "after the current date")
 
   windows <- list(
     c(-Inf, Inf), c(0, 0), c(0, Inf), c(5000, 31000), c(31000, Inf),

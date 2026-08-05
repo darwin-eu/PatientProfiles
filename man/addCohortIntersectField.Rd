@@ -15,37 +15,44 @@ addCohortIntersectField(
   order = "first",
   window = list(c(0, Inf)),
   nameStyle = "{cohort_name}_{field}_{window_name}",
-  name = NULL
+  name = NULL,
+  type = "auto"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{targetCohortTable}{name of the cohort that we want to check for overlap.}
+\item{targetCohortTable}{Name of the cohort table to intersect with.}
 
-\item{field}{Column of interest in the targetCohort.}
+\item{field}{Name or names of columns in the target tables to add to \code{x}.}
 
-\item{targetCohortId}{vector of cohort definition ids to include.}
+\item{targetCohortId}{Cohort definition IDs to include from
+\code{targetCohortTable}. If \code{NULL}, all cohorts are included.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-intersection.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{censorDate}{whether to censor overlap events at a specific date
-or a column date of x.}
+\item{censorDate}{Date or name of a date column in \code{x} on which to censor
+follow-up. If \code{NULL}, no censoring is applied.}
 
-\item{targetDate}{Date of interest in the other cohort table. Either
-cohort_start_date or cohort_end_date.}
+\item{targetDate}{Name or names of date columns in the target tables to use
+for the intersection.}
 
-\item{order}{date to use if there are multiple records for an
-individual during the window of interest. Either first or last.}
+\item{order}{Which record to use when multiple records occur in a window:
+\code{"first"} or \code{"last"}.}
 
-\item{window}{Window of time to identify records relative to the indexDate.
-Records outside of this time period will be ignored.}
+\item{window}{Window or windows of time relative to \code{indexDate} to consider.}
 
-\item{nameStyle}{naming of the added column or columns, should include
-required parameters.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 table with added columns with overlap information.

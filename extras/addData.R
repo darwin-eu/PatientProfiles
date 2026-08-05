@@ -98,4 +98,15 @@ quantiles <- paste0("ifelse(all(is.na(x)), NA, Hmisc::wtd.quantile(x, weights = 
 names(quantiles) <- c(paste0("q0", 1:9), paste0("q", 10:99))
 estimatesFuncWeights <- c(estimatesFuncWeights, quantiles)
 
-use_data(estimatesFunc, estimatesFuncWeights, formats, namesTable, formatsOld, internal = TRUE, overwrite = TRUE)
+intersectOptions <- c("flag", "count", "date", "days")
+
+use_data(
+  estimatesFunc,
+  estimatesFuncWeights,
+  formats,
+  namesTable,
+  formatsOld,
+  intersectOptions,
+  internal = TRUE,
+  overwrite = TRUE
+)

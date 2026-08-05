@@ -8,9 +8,10 @@ is in observation.}
 filterInObservation(x, indexDate)
 }
 \arguments{
-\item{x}{A \code{cdm_table} object.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Name of a column of x that is a date.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 }
 \value{
 A \code{cdm_table} that is a subset of the original table.

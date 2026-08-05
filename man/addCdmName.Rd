@@ -7,9 +7,9 @@
 addCdmName(table, cdm = omopgenerics::cdmReference(table))
 }
 \arguments{
-\item{table}{Table in the cdm}
+\item{table}{A table to process.}
 
-\item{cdm}{A cdm reference object}
+\item{cdm}{A \code{cdm_reference} object.}
 }
 \value{
 Table with an extra column with the cdm names

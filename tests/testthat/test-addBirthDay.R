@@ -34,6 +34,26 @@ test_that("addBirthday functions", {
     as.Date(c("1990-01-30", "1991-01-29", "1992-02-29", "1993-02-01", "1994-04-01"))
   )
 
+  expect_identical(
+    cdm$cohort |>
+      addBirthday(birthday = 1, ageUnit = "months") |>
+      dplyr::collect() |>
+      dplyr::arrange(.data$subject_id) |>
+      dplyr::pull("birthday"),
+    as.Date(c("1990-03-01", "1991-03-01", "1992-03-29", "1993-03-01", "1994-05-01"))
+  )
+
+  expect_identical(
+    cdm$cohort |>
+      addBirthday(birthday = 1, ageUnit = "days") |>
+      dplyr::collect() |>
+      dplyr::arrange(.data$subject_id) |>
+      dplyr::pull("birthday"),
+    as.Date(c("1990-01-31", "1991-01-30", "1992-03-01", "1993-02-02", "1994-04-02"))
+  )
+
+  expect_error(cdm$cohort |> addBirthday(ageUnit = "weeks"))
+
   expect_no_error(
     x <- cdm$cohort |>
       addBirthday(birthday = 1) |>

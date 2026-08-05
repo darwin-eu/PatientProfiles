@@ -16,7 +16,7 @@ addCategories(
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
 \item{variable}{Target variable that we want to categorize.}
 
@@ -32,7 +32,7 @@ any named category. If NULL or NA, missing values will not be changed.}
 
 \item{includeUpperBound}{Whether to include the upper bound in the group.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
 }
 \value{
 The x table with the categorical variable added.

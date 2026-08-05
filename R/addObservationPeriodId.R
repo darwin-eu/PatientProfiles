@@ -17,11 +17,10 @@
 #' Add the ordinal number of the observation period associated that a given date
 #' is in.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' observation flag.
-#' @param nameObservationPeriodId Name of the new column.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams nameObservationPeriodIdDoc
+#' @inheritParams nameDoc
 #'
 #' @return Table with the current observation period id added.
 #' @export
@@ -59,10 +58,9 @@ addObservationPeriodId <- function(x,
 #' Add the ordinal number of the observation period associated that a given date
 #' is in. Result is not computed, only query is added.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' observation flag.
-#' @param nameObservationPeriodId Name of the new column.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams nameObservationPeriodIdDoc
 #'
 #' @return Table with the current observation period id added.
 #' @export
@@ -94,7 +92,12 @@ addObservationPeriodIdQuery <- function(x,
                                          nameObservationPeriodId,
                                          call = parent.frame()){
   cdm <- omopgenerics::cdmReference(x)
-  indexDate <- validateIndexDate(indexDate, null = FALSE, x = x, call = call)
+  originalColumns <- colnames(x)
+  indexDateInput <- materialiseIndexDate(
+    indexDate = indexDate, x = x, call = call
+  )
+  x <- indexDateInput$x
+  indexDate <- indexDateInput$indexDate
   personVariable <- c("person_id", "subject_id")
   personVariable <- personVariable[personVariable %in% colnames(x)]
   nameObservationPeriodId <- validateColumn(nameObservationPeriodId, call = call)
@@ -108,8 +111,12 @@ addObservationPeriodIdQuery <- function(x,
 
   # if empty table, return with variable name added
   if(x |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") == 0){
-    return(x |>
-             dplyr::mutate(!!nameObservationPeriodId := as.integer(NA)))
+    x <- x |>
+      dplyr::mutate(!!nameObservationPeriodId := as.integer(NA))
+    return(removeMaterialisedIndexDate(x, indexDateInput) |>
+      dplyr::select(dplyr::all_of(c(
+        originalColumns, nameObservationPeriodId
+      ))))
   }
 
   cols <- omopgenerics::uniqueId(n = 2, exclude = colnames(x))
@@ -138,6 +145,11 @@ addObservationPeriodIdQuery <- function(x,
       personVariable, indexDate, nameObservationPeriodId
     )))
 
-  x |>
+  x <- x |>
     dplyr::left_join(currentObsId, by = c(personVariable, indexDate))
+
+  removeMaterialisedIndexDate(x, indexDateInput) |>
+    dplyr::select(dplyr::all_of(c(
+      originalColumns, nameObservationPeriodId
+    )))
 }

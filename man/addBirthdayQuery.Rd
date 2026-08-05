@@ -11,27 +11,30 @@ addBirthdayQuery(
   ageMissingMonth = 1,
   ageMissingDay = 1,
   ageImposeMonth = FALSE,
-  ageImposeDay = FALSE
+  ageImposeDay = FALSE,
+  ageUnit = "years"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{birthdayName}{Birth day variable name.}
+\item{birthdayName}{Name of the birthday column to add.}
 
-\item{birthday}{Number of birth day.}
+\item{birthday}{Day of birth to add.}
 
-\item{ageMissingMonth}{Month of the year assigned to individuals with missing
-month of birth.}
+\item{ageMissingMonth}{Month of the year assigned when month of birth is
+missing.}
 
-\item{ageMissingDay}{day of the month assigned to individuals
-with missing day of birth.}
+\item{ageMissingDay}{Day of the month assigned when day of birth is missing.}
 
-\item{ageImposeMonth}{TRUE or FALSE. Whether the month of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeMonth}{If \code{TRUE}, month of birth is treated as missing for all
+individuals.}
 
-\item{ageImposeDay}{TRUE or FALSE. Whether the day of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeDay}{If \code{TRUE}, day of birth is treated as missing for all
+individuals.}
+
+\item{ageUnit}{Unit in which to express age: \code{"years"}, \code{"months"}, or
+\code{"days"}.}
 }
 \value{
 The table with a query that add the new column containing the birth

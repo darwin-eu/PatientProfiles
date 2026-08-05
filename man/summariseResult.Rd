@@ -14,11 +14,12 @@ summariseResult(
   variables = NULL,
   estimates = NULL,
   counts = TRUE,
-  weights = NULL
+  weights = NULL,
+  customEstimates = list()
 )
 }
 \arguments{
-\item{table}{Table with different records.}
+\item{table}{A table to process.}
 
 \item{group}{List of groups to be considered.}
 
@@ -40,6 +41,11 @@ set of variables.}
 
 \item{weights}{Name of the column in the table that contains the weights to
 be used when measuring the estimates.}
+
+\item{customEstimates}{Named list of custom functions. Each function must
+accept a variable vector as its first argument and return one numeric value.
+If \code{weights} are supplied, they are passed as the second argument when the
+function provides one; otherwise the estimate is calculated without weights.}
 }
 \value{
 A summarised_result object with the summarised data of interest.
@@ -78,6 +84,15 @@ result <- summariseResult(
   table = x,
   variables = list(c("age", "prior_observation"), "sex"),
   estimates = list(c("min", "max"), c("count", "percentage"))
+)
+
+# add a custom estimate
+ess <- function(x) sum(x^2) / sum(x)
+result <- summariseResult(
+  table = x,
+  variables = "age",
+  estimates = "ess",
+  customEstimates = list(ess = ess)
 )
 
 }

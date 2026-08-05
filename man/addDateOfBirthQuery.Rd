@@ -14,21 +14,19 @@ addDateOfBirthQuery(
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{dateOfBirthName}{dateOfBirth column name.}
+\item{dateOfBirthName}{Name of the date-of-birth column to add.}
 
-\item{missingDay}{day of the month assigned to individuals
-with missing day of birth.}
+\item{missingDay}{Day of the month assigned when day of birth is missing.}
 
-\item{missingMonth}{Month of the year assigned to individuals with missing
-month of birth.}
+\item{missingMonth}{Month of the year assigned when month of birth is missing.}
 
-\item{imposeDay}{TRUE or FALSE. Whether the day of the date of birth
-will be considered as missing for all the individuals.}
+\item{imposeDay}{If \code{TRUE}, day of birth is treated as missing for all
+individuals.}
 
-\item{imposeMonth}{TRUE or FALSE. Whether the month of the date of birth
-will be considered as missing for all the individuals.}
+\item{imposeMonth}{If \code{TRUE}, month of birth is treated as missing for all
+individuals.}
 }
 \value{
 The function returns the table x with an extra column that contains

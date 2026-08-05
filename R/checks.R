@@ -15,31 +15,36 @@
 # limitations under the License.
 
 #' @noRd
-checkVariableInX <- function(indexDate, x, nullOk = FALSE, name = "indexDate") {
-  omopgenerics::assertCharacter(indexDate, length = 1, null = nullOk)
+checkVariableInX <- function(indexDate, x, nullOk = FALSE, name = "indexDate", call = parent.frame()) {
+  omopgenerics::assertCharacter(indexDate, length = 1, null = nullOk, call = call)
   if (!is.null(indexDate) && !(indexDate %in% colnames(x))) {
-    cli::cli_abort(glue::glue("{name} ({indexDate}) should be a column in x"))
+    cli::cli_abort(glue::glue("{name} ({indexDate}) should be a column in x"), call = call)
   }
   invisible(NULL)
 }
 
 #' @noRd
-checkFilter <- function(filterVariable, filterId, idName, x) {
+checkFilter <- function(filterVariable, filterId, idName, x,
+                        call = parent.frame()) {
   if (is.null(filterVariable)) {
     filterId <- NULL
     idName <- NULL
     filterTbl <- NULL
   } else {
-    checkVariableInX(filterVariable, x, FALSE, "filterVariable")
-    omopgenerics::assertNumeric(filterId, na = FALSE)
+    checkVariableInX(
+      filterVariable, x, FALSE, "filterVariable", call = call
+    )
+    omopgenerics::assertNumeric(filterId, na = FALSE, call = call)
     omopgenerics::assertNumeric(utils::head(x, 1) |>
-                               dplyr::pull(dplyr::all_of(filterVariable)))
+                               dplyr::pull(dplyr::all_of(filterVariable)),
+                               call = call)
     if (is.null(idName)) {
       idName <- paste0("id", filterId)
     } else {
       omopgenerics::assertCharacter(idName,
                                     na = FALSE,
-                                    length = length(filterId))
+                                    length = length(filterId),
+                                    call = call)
     }
     filterTbl <- dplyr::tibble(
       id = filterId,
@@ -50,11 +55,10 @@ checkFilter <- function(filterVariable, filterId, idName, x) {
 }
 
 #' @noRd
-checkValue <- function(value, x, name) {
-  omopgenerics::assertCharacter(value, na = FALSE)
-  omopgenerics::assertTrue(all(value %in% c("flag", "count", "date", "days", colnames(x))))
-  valueOptions <- c("flag", "count", "date", "days")
-  valueOptions <- valueOptions[valueOptions %in% colnames(x)]
+checkValue <- function(value, x, name, call) {
+  omopgenerics::assertCharacter(value, na = FALSE, call = call)
+  omopgenerics::assertTrue(all(value %in% c(intersectOptions, colnames(x))), call = call)
+  valueOptions <- intersectOptions[intersectOptions %in% colnames(x)]
   if (length(valueOptions) > 0) {
     cli::cli_warn(paste0(
       "Variables: ",
@@ -65,7 +69,7 @@ checkValue <- function(value, x, name) {
       obtain that column please rename and run again."
     ))
   }
-  invisible(value[!(value %in% c("flag", "count", "date", "days"))])
+  invisible(value[!(value %in% intersectOptions)])
 }
 
 #' @noRd
@@ -116,7 +120,8 @@ checkStrata <- function(list, table, type = "strata") {
 }
 
 #' @noRd
-checkVariablesFunctions <- function(variables, estimates, table, weights = NULL) {
+checkVariablesFunctions <- function(variables, estimates, table, weights = NULL,
+                                    customEstimates = list()) {
   errorMessage <- "variables should be a unique named list that point to columns in table"
 
   # default variables
@@ -204,6 +209,14 @@ checkVariablesFunctions <- function(variables, estimates, table, weights = NULL)
     ))
   }
 
+  estimateFormats <- availableEstimates(fullQuantiles = TRUE) |>
+    dplyr::select(-"estimate_description") |>
+    dplyr::bind_rows(tidyr::expand_grid(
+      variable_type = unique(types$variable_type),
+      estimate_name = names(customEstimates),
+      estimate_type = "numeric"
+    ))
+
   functions <- lapply(seq_along(variables), function(k) {
     tidyr::expand_grid(
       variable_name = variables[[k]],
@@ -213,8 +226,7 @@ checkVariablesFunctions <- function(variables, estimates, table, weights = NULL)
     dplyr::bind_rows() |>
     dplyr::inner_join(types, by = "variable_name") |>
     dplyr::inner_join(
-      availableEstimates(fullQuantiles = TRUE) |>
-        dplyr::select(-"estimate_description"),
+      estimateFormats,
       by = c("variable_type", "estimate_name")
     )
 
@@ -259,14 +271,64 @@ checkVariablesFunctions <- function(variables, estimates, table, weights = NULL)
 }
 
 #' @noRd
-checkCensorDate <- function(x, censorDate) {
+checkCustomEstimates <- function(customEstimates) {
+  if (is.null(customEstimates)) {
+    return(list())
+  }
+  if (!is.list(customEstimates)) {
+    cli::cli_abort("{.arg customEstimates} must be a named list of functions.")
+  }
+  if (length(customEstimates) == 0) {
+    return(list())
+  }
+  if (is.null(names(customEstimates)) ||
+      any(names(customEstimates) == "") ||
+      anyDuplicated(names(customEstimates))) {
+    cli::cli_abort(
+      "{.arg customEstimates} must have unique, non-empty names."
+    )
+  }
+  if (!all(vapply(customEstimates, is.function, logical(1)))) {
+    cli::cli_abort("Every {.arg customEstimates} element must be a function.")
+  }
+  if (any(vapply(customEstimates, \(fun) length(estimateFormals(fun)) == 0,
+                 logical(1)))) {
+    cli::cli_abort(
+      "Every custom estimate function must have at least one argument."
+    )
+  }
+  builtIn <- union(
+    availableEstimates(fullQuantiles = TRUE)$estimate_name,
+    names(estimatesFunc)
+  )
+  conflicts <- intersect(names(customEstimates), builtIn)
+  if (length(conflicts) > 0) {
+    cli::cli_abort(c(
+      "Custom estimate names cannot overwrite built-in estimates.",
+      "x" = "Conflicting name{?s}: {conflicts}."
+    ))
+  }
+  customEstimates
+}
+
+#' @noRd
+estimateFormals <- function(fun) {
+  fmls <- formals(fun)
+  if (is.null(fmls)) {
+    fmls <- formals(args(fun))
+  }
+  fmls
+}
+
+#' @noRd
+checkCensorDate <- function(x, censorDate, call = parent.frame()) {
   check <- x |>
     dplyr::select(dplyr::all_of(censorDate)) |>
     utils::head(1) |>
     dplyr::pull() |>
     inherits("Date")
   if (!check) {
-    cli::cli_abort("{censorDate} is not a date variable")
+    cli::cli_abort("{censorDate} is not a date variable", call = call)
   }
 }
 
@@ -348,6 +410,46 @@ validateIndexDate <- function(indexDate, null, x, call) {
     cli::cli_abort("x[[{indexDate}]] is not a date column.", call = call)
   }
   return(indexDate)
+}
+
+materialiseIndexDate <- function(indexDate, x, null = FALSE,
+                                 call = parent.frame()) {
+  if (null) {
+    return(list(x = x, indexDate = NULL, temporaryColumn = NULL))
+  }
+
+  if (inherits(indexDate, "Date")) {
+    if (length(indexDate) != 1 || is.na(indexDate)) {
+      cli::cli_abort(
+        "indexDate must be a single non-missing date.",
+        call = call
+      )
+    }
+    temporaryColumn <- omopgenerics::uniqueId(exclude = colnames(x))
+    x <- x |>
+      dplyr::mutate(!!temporaryColumn := .env$indexDate)
+    return(list(
+      x = x,
+      indexDate = temporaryColumn,
+      temporaryColumn = temporaryColumn
+    ))
+  }
+
+  list(
+    x = x,
+    indexDate = validateIndexDate(
+      indexDate = indexDate, null = FALSE, x = x, call = call
+    ),
+    temporaryColumn = NULL
+  )
+}
+
+removeMaterialisedIndexDate <- function(x, indexDateInput) {
+  if (!is.null(indexDateInput$temporaryColumn)) {
+    x <- x |>
+      dplyr::select(!dplyr::any_of(indexDateInput$temporaryColumn))
+  }
+  x
 }
 validateColumn <- function(col, null = FALSE, call = parent.frame()) {
   if (null) {

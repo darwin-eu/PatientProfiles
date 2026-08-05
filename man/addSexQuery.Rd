@@ -7,11 +7,11 @@
 addSexQuery(x, sexName = "sex", missingSexValue = "None")
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{sexName}{Sex variable name.}
+\item{sexName}{Name of the sex column to add.}
 
-\item{missingSexValue}{Value to include if missing sex.}
+\item{missingSexValue}{Value to use when sex is missing.}
 }
 \value{
 table x with the added column with sex information.

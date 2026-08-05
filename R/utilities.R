@@ -16,7 +16,7 @@
 
 #' Add cohort name for each cohort_definition_id
 #'
-#' @param cohort cohort to which add the cohort name
+#' @inheritParams cohortDoc
 #'
 #' @return cohort with an extra column with the cohort names
 #'
@@ -48,10 +48,10 @@ addCohortName <- function(cohort) {
 
 #' Add concept name for each concept_id
 #'
-#' @param table cdm_table that contains column.
+#' @inheritParams tableDoc
 #' @param column Column to add the concept names from. If NULL any column that
 #' its name ends with `concept_id` will be used.
-#' @param nameStyle Name of the new column.
+#' @inheritParams nameStyleDoc
 #'
 #' @return table with an extra column with the concept names.
 #'
@@ -118,8 +118,8 @@ addConceptName <- function(table,
 
 #' Add cdm name
 #'
-#' @param table Table in the cdm
-#' @param cdm A cdm reference object
+#' @inheritParams tableDoc
+#' @inheritParams cdmDoc
 #'
 #' @return Table with an extra column with the cdm names
 #'
@@ -171,4 +171,63 @@ computeTable <- function(x, name) {
       dplyr::compute(name = name, temporary = FALSE)
   }
   return(x)
+}
+
+.dateBuildQuery <- function(x, year, month, day) {
+  # dbplyr does not translate clock::date_build() for DuckDB.
+  if (inherits(x, "tbl_duckdb_connection")) {
+    return(glue::glue("make_date({year}, {month}, {day})"))
+  }
+
+  invalid <- if (inherits(x, "data.frame")) {
+    ", invalid = 'next'"
+  } else {
+    ""
+  }
+
+  glue::glue(
+    "clock::date_build(year = {year}, month = {month}, day = {day}{invalid})"
+  )
+}
+
+validateColumnType <- function(type,
+                               column,
+                               call = parent.frame()) {
+  choices <- lapply(column, function(column) {
+    switch(
+      column,
+      days = c("auto", "numeric", "integer"),
+      count = c("auto", "numeric", "integer"),
+      age = c("auto", "numeric", "integer"),
+      observation = c("auto", "numeric", "integer"),
+      flag = c("auto", "numeric", "integer", "logical"),
+      date = "auto",
+      c("auto", "numeric", "integer", "logical", "character")
+    )
+  })
+  choices <- Reduce(intersect, choices)
+  omopgenerics::assertChoice(type, choices, length = 1, call = call)
+  return(type)
+}
+
+.convertColumnType <- function(x,
+                               columns,
+                               type) {
+  columns <- columns %||% character()
+
+  if (identical(type, "auto") || length(columns) == 0) {
+    return(x)
+  }
+
+  switch(
+    type,
+    numeric = x |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(columns), as.numeric)),
+    integer = x |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(columns), as.integer)),
+    logical = x |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(columns), as.logical)),
+    character = x |>
+      dplyr::mutate(dplyr::across(dplyr::all_of(columns), as.character))
+  )
 }

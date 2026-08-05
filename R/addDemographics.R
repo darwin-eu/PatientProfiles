@@ -16,40 +16,30 @@
 
 #' Compute demographic characteristics at a certain date
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' demographics characteristics.
-#' @param age TRUE or FALSE. If TRUE, age will be calculated relative to
-#' indexDate.
-#' @param ageMissingMonth Month of the year assigned to individuals with missing
-#' month of birth.
-#' @param ageName Age variable name.
-#' @param ageMissingDay day of the month assigned to individuals
-#' with missing day of birth.
-#' @param ageImposeMonth TRUE or FALSE. Whether the month of the date of birth
-#' will be considered as missing for all the individuals.
-#' @param ageImposeDay TRUE or FALSE. Whether the day of the date of birth
-#' will be considered as missing for all the individuals.
-#' @param ageUnit Unit for age it can either be 'years', 'months' or 'days'.
-#' @param ageGroup if not NULL, a list of ageGroup vectors.
-#' @param missingAgeGroupValue Value to include if missing age.
-#' @param sex TRUE or FALSE. If TRUE, sex will be identified.
-#' @param sexName Sex variable name.
-#' @param missingSexValue Value to include if missing sex.
-#' @param priorObservation TRUE or FALSE. If TRUE, days of between the start
-#' of the current observation period and the indexDate will be calculated.
-#' @param priorObservationName Prior observation variable name.
-#' @param priorObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param futureObservation TRUE or FALSE. If TRUE, days between the
-#' indexDate and the end of the current observation period will be
-#' calculated.
-#' @param futureObservationName Future observation variable name.
-#' @param futureObservationType Whether to return a "date" or the number of
-#' "days".
-#' @param dateOfBirth TRUE or FALSE, if true the date of birth will be return.
-#' @param dateOfBirthName dateOfBirth column name.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams ageDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageNameDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
+#' @inheritParams ageGroupDoc
+#' @inheritParams missingAgeGroupValueDoc
+#' @inheritParams sexDoc
+#' @inheritParams sexNameDoc
+#' @inheritParams missingSexValueDoc
+#' @inheritParams priorObservationDoc
+#' @inheritParams priorObservationNameDoc
+#' @inheritParams priorObservationTypeDoc
+#' @inheritParams futureObservationDoc
+#' @inheritParams futureObservationNameDoc
+#' @inheritParams futureObservationTypeDoc
+#' @inheritParams dateOfBirthDoc
+#' @inheritParams dateOfBirthNameDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with the added demographic information columns.
 #' @export
@@ -62,6 +52,9 @@
 #'
 #' cdm$cohort1 |>
 #'   addDemographics()
+#'
+#' cdm$cohort1 |>
+#'   addDemographics(indexDate = as.Date("2010-01-01"))
 #'
 #' }
 #'
@@ -87,7 +80,8 @@ addDemographics <- function(x,
                             futureObservationType = "days",
                             dateOfBirth = FALSE,
                             dateOfBirthName = "date_of_birth",
-                            name = NULL) {
+                            name = NULL,
+                            type = "numeric") {
 
   name <- validateName(name)
   cdm <- omopgenerics::cdmReference(x)
@@ -116,6 +110,7 @@ addDemographics <- function(x,
       futureObservationType = futureObservationType,
       dateOfBirth = dateOfBirth,
       dateOfBirthName = dateOfBirthName,
+      type = type,
       tmpName = tmpName
     ) |>
     computeTable(name = name)
@@ -127,7 +122,18 @@ addDemographics <- function(x,
 
 #' Compute the age of the individuals at a certain date
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams ageNameDoc
+#' @inheritParams ageGroupDoc
+#' @inheritParams ageMissingMonthDoc
+#' @inheritParams ageMissingDayDoc
+#' @inheritParams ageImposeMonthDoc
+#' @inheritParams ageImposeDayDoc
+#' @inheritParams ageUnitDoc
+#' @inheritParams missingAgeGroupValueDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return tibble with the age column added.
 #' @export
@@ -152,7 +158,8 @@ addAge <- function(x,
                    ageImposeDay = FALSE,
                    ageUnit = "years",
                    missingAgeGroupValue = "None",
-                   name = NULL) {
+                   name = NULL,
+                   type = "numeric") {
   name <- validateName(name)
   x |>
     .addDemographicsQuery(
@@ -176,7 +183,8 @@ addAge <- function(x,
       priorObservationType = NULL,
       futureObservationType = NULL,
       dateOfBirth = FALSE,
-      dateOfBirthName = NULL
+      dateOfBirthName = NULL,
+      type = type
     ) |>
     computeTable(name = name)
 
@@ -185,7 +193,12 @@ addAge <- function(x,
 #' Compute the number of days till the end of the observation period at a
 #' certain date
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams futureObservationNameDoc
+#' @inheritParams futureObservationTypeDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with added column containing future observation of the
 #' individuals.
@@ -205,7 +218,8 @@ addFutureObservation <- function(x,
                                  indexDate = "cohort_start_date",
                                  futureObservationName = "future_observation",
                                  futureObservationType = "days",
-                                 name = NULL) {
+                                 name = NULL,
+                                 type = "numeric") {
 
   name <- validateName(name)
   cdm <- omopgenerics::cdmReference(x)
@@ -234,6 +248,7 @@ addFutureObservation <- function(x,
       priorObservationType = NULL,
       dateOfBirth = FALSE,
       dateOfBirthName = NULL,
+      type = type,
       tmpName = tmpName
     ) |>
     computeTable(name = name)
@@ -246,7 +261,12 @@ addFutureObservation <- function(x,
 #' Compute the number of days of prior observation in the current observation period
 #' at a certain date
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams priorObservationNameDoc
+#' @inheritParams priorObservationTypeDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return cohort table with added column containing prior observation of the
 #' individuals.
@@ -267,7 +287,8 @@ addPriorObservation <- function(x,
                                 indexDate = "cohort_start_date",
                                 priorObservationName = "prior_observation",
                                 priorObservationType = "days",
-                                name = NULL) {
+                                name = NULL,
+                                type = "numeric") {
 
   name <- validateName(name)
   cdm <- omopgenerics::cdmReference(x)
@@ -296,6 +317,7 @@ addPriorObservation <- function(x,
       futureObservationType = NULL,
       dateOfBirth = FALSE,
       dateOfBirthName = NULL,
+      type = type,
       tmpName = tmpName
     ) |>
     computeTable(name = name)
@@ -307,17 +329,16 @@ addPriorObservation <- function(x,
 
 #' Indicate if a certain record is within the observation period
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the date to compute the
-#' observation flag.
-#' @param window window to consider events of.
-#' @param completeInterval If the individuals are in observation for the full window.
-#' @param nameStyle Name of the new columns to create, it must contain
-#' "window_name" if multiple windows are provided.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams completeIntervalDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return cohort table with the added numeric column assessing observation (1
-#' in observation, 0 not in observation).
+#' @return Cohort table with an added column assessing observation. Values are
+#' 1/`TRUE` in observation and 0/`FALSE` otherwise, according to `type`.
 #' @export
 #'
 #' @examples
@@ -336,7 +357,8 @@ addInObservation <- function(x,
                              window = c(0, 0),
                              completeInterval = FALSE,
                              nameStyle = "in_observation",
-                             name = NULL) {
+                             name = NULL,
+                             type = "numeric") {
   name <- validateName(name)
 
   cdm <- omopgenerics::cdmReference(x)
@@ -348,6 +370,7 @@ addInObservation <- function(x,
       window = window,
       completeInterval = completeInterval,
       nameStyle = nameStyle,
+      type = type,
       tmpName = tmpName
     ) |>
     computeTable(name = name)
@@ -359,7 +382,10 @@ addInObservation <- function(x,
 
 #' Compute the sex of the individuals
 #'
-#' @inheritParams addDemographics
+#' @inheritParams xDoc
+#' @inheritParams sexNameDoc
+#' @inheritParams missingSexValueDoc
+#' @inheritParams nameDoc
 #'
 #' @return table x with the added column with sex information.
 #'
@@ -410,15 +436,13 @@ addSex <- function(x,
 
 #' Add a column with the individual birth date
 #'
-#' @inheritParams addDemographics
-#' @param missingMonth Month of the year assigned to individuals with missing
-#' month of birth.
-#' @param missingDay day of the month assigned to individuals
-#' with missing day of birth.
-#' @param imposeMonth TRUE or FALSE. Whether the month of the date of birth
-#' will be considered as missing for all the individuals.
-#' @param imposeDay TRUE or FALSE. Whether the day of the date of birth
-#' will be considered as missing for all the individuals.
+#' @inheritParams xDoc
+#' @inheritParams dateOfBirthNameDoc
+#' @inheritParams nameDoc
+#' @inheritParams missingMonthDoc
+#' @inheritParams missingDayDoc
+#' @inheritParams imposeMonthDoc
+#' @inheritParams imposeDayDoc
 #'
 #' @return The function returns the table x with an extra column that contains
 #' the date of birth.

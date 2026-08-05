@@ -20,7 +20,9 @@ reference.}
 \item{...}{User self defined tables to put in cdm, it can input as many
 as the user want.}
 
-\item{source}{Source for the mock cdm, it can either be 'local' or 'duckdb'.}
+\item{source}{Source for the mock cdm, it can either be 'local' or 'duckdb'.
+By default, vocabulary tables are populated from the GiBleed mock vocabulary
+provided by omock. A user-provided \code{concept} table takes precedence.}
 
 \item{con}{deprecated.}
 

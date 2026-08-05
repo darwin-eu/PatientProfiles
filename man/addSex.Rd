@@ -7,13 +7,13 @@
 addSex(x, sexName = "sex", missingSexValue = "None", name = NULL)
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{sexName}{Sex variable name.}
+\item{sexName}{Name of the sex column to add.}
 
-\item{missingSexValue}{Value to include if missing sex.}
+\item{missingSexValue}{Value to use when sex is missing.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
 }
 \value{
 table x with the added column with sex information.

@@ -17,12 +17,12 @@
 #' Add date of death for individuals. Only death within the same observation
 #' period than `indexDate` will be observed.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the window origin.
-#' @param censorDate Name of a column to stop followup.
-#' @param window window to consider events over.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
 #' @param deathDateName name of the new column to be added.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams nameDoc
 #'
 #' @return table x with the added column with death information added.
 #' @export
@@ -58,12 +58,13 @@ addDeathDate <- function(x,
 #' Add days to death for individuals. Only death within the same observation
 #' period than `indexDate` will be observed.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the window origin.
-#' @param censorDate Name of a column to stop followup.
-#' @param window window to consider events over.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
 #' @param deathDaysName name of the new column to be added.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return table x with the added column with death information added.
 #' @export
@@ -84,7 +85,8 @@ addDeathDays <- function(x,
                          censorDate = NULL,
                          window = c(0, Inf),
                          deathDaysName = "days_to_death",
-                         name = NULL) {
+                         name = NULL,
+                         type = "numeric") {
   addDeath(
     x = x,
     value = "days",
@@ -92,7 +94,8 @@ addDeathDays <- function(x,
     censorDate = censorDate,
     window = window,
     deathName = deathDaysName,
-    name = name
+    name = name,
+    type = type
   )
 }
 
@@ -100,14 +103,16 @@ addDeathDays <- function(x,
 #' Add flag for death for individuals. Only death within the same observation
 #' period than `indexDate` will be observed.
 #'
-#' @param x Table with individuals in the cdm.
-#' @param indexDate Variable in x that contains the window origin.
-#' @param censorDate Name of a column to stop followup.
-#' @param window window to consider events over.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams windowDoc
 #' @param deathFlagName name of the new column to be added.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table x with the added column with death information added.
+#' @returns `r documentationIntersect("flag", "death")`
+#'
 #' @export
 #'
 #' @examples
@@ -126,7 +131,8 @@ addDeathFlag <- function(x,
                          censorDate = NULL,
                          window = c(0, Inf),
                          deathFlagName = "death",
-                         name = NULL) {
+                         name = NULL,
+                         type = "numeric") {
   addDeath(
     x = x,
     value = "flag",
@@ -134,7 +140,8 @@ addDeathFlag <- function(x,
     censorDate = censorDate,
     window = window,
     deathName = deathFlagName,
-    name = name
+    name = name,
+    type = type
   )
 }
 
@@ -147,10 +154,12 @@ addDeath <- function(x,
                      window,
                      deathName,
                      name,
+                     type = "auto",
                      call = parent.frame()) {
+  type <- validateColumnType(type, value, call)
 
   # input validation
-  omopgenerics::assertTable(x, class = "cdm_table", columns = c(indexDate), call = call)
+  omopgenerics::assertTable(x, class = "cdm_table", call = call)
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::validateCdmArgument(cdm, call = call)
   omopgenerics::assertTable(cdm[["death"]], class = "omop_table", call = call)
@@ -173,7 +182,8 @@ addDeath <- function(x,
       targetEndDate = NULL,
       order = "first",
       nameStyle = deathName,
-      name = name
+      name = name,
+      type = type
     )
 
   return(x)

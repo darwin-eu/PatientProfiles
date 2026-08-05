@@ -17,7 +17,7 @@
 #' Summarise variables using a set of estimate functions. The output will be
 #' a formatted summarised_result object.
 #'
-#' @param table Table with different records.
+#' @inheritParams tableDoc
 #' @param group List of groups to be considered.
 #' @param includeOverallGroup TRUE or FALSE. If TRUE, results for an overall
 #' group will be reported when a list of groups has been specified.
@@ -31,6 +31,10 @@
 #' @param counts Whether to compute number of records and number of subjects.
 #' @param weights Name of the column in the table that contains the weights to
 #' be used when measuring the estimates.
+#' @param customEstimates Named list of custom functions. Each function must
+#' accept a variable vector as its first argument and return one numeric value.
+#' If `weights` are supplied, they are passed as the second argument when the
+#' function provides one; otherwise the estimate is calculated without weights.
 #'
 #' @return A summarised_result object with the summarised data of interest.
 #'
@@ -68,6 +72,15 @@
 #'   estimates = list(c("min", "max"), c("count", "percentage"))
 #' )
 #'
+#' # add a custom estimate
+#' ess <- function(x) sum(x^2) / sum(x)
+#' result <- summariseResult(
+#'   table = x,
+#'   variables = "age",
+#'   estimates = "ess",
+#'   customEstimates = list(ess = ess)
+#' )
+#'
 #' }
 #'
 summariseResult <- function(table,
@@ -78,9 +91,11 @@ summariseResult <- function(table,
                             variables = NULL,
                             estimates = NULL,
                             counts = TRUE,
-                            weights = NULL) {
+                            weights = NULL,
+                            customEstimates = list()) {
   # initial checks
   omopgenerics::assertTable(x = table, class = "tbl")
+  customEstimates <- checkCustomEstimates(customEstimates)
   noVariables <- !is.null(variables) & length(variables) == 0
   noEstimates <- !is.null(estimates) & length(as.character(unlist(estimates))) == 0
   if ((noVariables | noEstimates) & counts == FALSE) {
@@ -124,7 +139,9 @@ summariseResult <- function(table,
     }
     checkStrata(group, table, type = "group")
     checkStrata(strata, table)
-    functions <- checkVariablesFunctions(variables, estimates, table, weights)
+    functions <- checkVariablesFunctions(
+      variables, estimates, table, weights, customEstimates
+    )
 
     if (!"person_id" %in% colnames(table)) {
       functions <- functions |>
@@ -137,7 +154,22 @@ summariseResult <- function(table,
 
     if (!is.null(weights)) {
       omopgenerics::validateColumn(column = weights, x = table, type = "numeric")
-      rlang::check_installed("Hmisc")
+      if (any(!functions$estimate_name %in% names(customEstimates))) {
+        rlang::check_installed("Hmisc")
+      }
+      unweighted <- names(customEstimates)[vapply(
+        customEstimates,
+        \(fun) length(estimateFormals(fun)) < 2,
+        logical(1)
+      )]
+      unweighted <- intersect(unweighted, functions$estimate_name)
+      if (length(unweighted) > 0) {
+        cli::cli_inform(c(
+          "!" = "Custom estimate{?s} {unweighted} will be calculated without
+          weighting because {?it/they} {?does/do} not provide a second
+          function argument."
+        ))
+      }
     }
 
     if (nrow(functions) == 0) {
@@ -182,13 +214,24 @@ summariseResult <- function(table,
       collectFlag <- functions |>
         dplyr::filter(grepl(estimatesCollect, .data$estimate_name)) |>
         nrow() > 0
+      customFlag <- any(
+        functions$estimate_name %in% names(customEstimates)
+      )
+      collectFlag <- collectFlag | customFlag
       # collect also if dates are present
       collectFlag <- collectFlag | any(functions$variable_type == "date")
       if (collectFlag) {
-        cli::cli_inform(c(
-          "!" = "Table is collected to memory as not all requested estimates are
-        supported on the database side"
-        ))
+        if (customFlag) {
+          cli::cli_inform(c(
+            "!" = "Table is collected to memory because custom estimates are
+            evaluated in R."
+          ))
+        } else {
+          cli::cli_inform(c(
+            "!" = "Table is collected to memory as not all requested estimates
+            are supported on the database side."
+          ))
+        }
         table <- table |> dplyr::collect()
       }
 
@@ -235,7 +278,8 @@ summariseResult <- function(table,
       for (groupk in group) {
         for (stratak in strata) {
           result[[resultk]] <- summariseInternal(
-            table, groupk, stratak, functions, counts, personVariable, weights
+            table, groupk, stratak, functions, counts, personVariable, weights,
+            customEstimates
           ) |>
             # order variables
             orderVariables(colOrder, unique(unlist(estimates)))
@@ -276,7 +320,8 @@ summariseResult <- function(table,
   return(result)
 }
 
-summariseInternal <- function(table, groupk, stratak, functions, counts, personVariable, weights) {
+summariseInternal <- function(table, groupk, stratak, functions, counts,
+                              personVariable, weights, customEstimates) {
   result <- list()
 
   # group by relevant variables
@@ -300,7 +345,7 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
       dplyr::mutate("strata_id" = dplyr::row_number()) |>
       dplyr::compute()
     table <- table |>
-        dplyr::inner_join(strataGroup, by = strataGroupk)
+      dplyr::inner_join(strataGroup, by = strataGroupk, na_matches = "na")
     # format group strata
     strataGroup <- strataGroup |>
       dplyr::collect() |>
@@ -326,7 +371,14 @@ summariseInternal <- function(table, groupk, stratak, functions, counts, personV
   }
 
   # summariseNumeric
-  result$numeric <- summariseNumeric(table, functions, weights)
+  result$numeric <- summariseNumeric(
+    table, functions, weights, customEstimates
+  )
+
+  # summariseCustom
+  result$custom <- summariseCustom(
+    table, functions, weights, customEstimates
+  )
 
   # summariseCategories
   result$categories <- summariseCategories(table, functions, weights)
@@ -400,12 +452,13 @@ countSubjects <- function(x, personVariable, weights) {
   return(result)
 }
 
-summariseNumeric <- function(table, functions, weights) {
+summariseNumeric <- function(table, functions, weights, customEstimates) {
   functions <- functions |>
     dplyr::filter(
       .data$variable_type %in% c("date", "numeric", "integer") &
         !startsWith(.data$estimate_name, "count") &
-        !startsWith(.data$estimate_name, "percentage")
+        !startsWith(.data$estimate_name, "percentage") &
+        !.data$estimate_name %in% names(customEstimates)
     )
 
   if (nrow(functions) == 0) {
@@ -485,6 +538,66 @@ summariseNumeric <- function(table, functions, weights) {
   return(res)
 }
 
+summariseCustom <- function(table, functions, weights, customEstimates) {
+  funs <- functions |>
+    dplyr::filter(.data$estimate_name %in% names(customEstimates)) |>
+    dplyr::mutate(
+      id = paste0(
+        "variable_",
+        stringr::str_pad(dplyr::row_number(), 6, pad = "0")
+      )
+    )
+
+  if (nrow(funs) == 0) {
+    return(NULL)
+  }
+
+  customSummary <- lapply(seq_len(nrow(funs)), function(k) {
+    estimateName <- funs$estimate_name[[k]]
+    variableName <- funs$variable_name[[k]]
+    fun <- customEstimates[[estimateName]]
+    useWeights <- length(weights) > 0 && length(estimateFormals(fun)) >= 2
+    if (useWeights) {
+      rlang::expr(runCustomEstimate(
+        !!fun, .data[[!!variableName]], .data[[!!weights]],
+        !!estimateName
+      ))
+    } else {
+      rlang::expr(runCustomEstimate(
+        !!fun, .data[[!!variableName]], name = !!estimateName
+      ))
+    }
+  }) |>
+    rlang::set_names(funs$id)
+
+  table |>
+    dplyr::group_by(.data$strata_id) |>
+    dplyr::summarise(!!!customSummary, .groups = "drop") |>
+    tidyr::pivot_longer(
+      cols = !"strata_id", names_to = "id", values_to = "estimate_value"
+    ) |>
+    dplyr::inner_join(
+      funs |>
+        dplyr::select(
+          "id", "variable_name", "estimate_name", "estimate_type"
+        ),
+      by = "id"
+    ) |>
+    dplyr::select(-"id") |>
+    dplyr::mutate("variable_level" = NA_character_) |>
+    correctTypes()
+}
+
+runCustomEstimate <- function(fun, x, weights = NULL, name) {
+  value <- if (is.null(weights)) fun(x) else fun(x, weights)
+  if (length(value) != 1 || !is.numeric(value)) {
+    cli::cli_abort(
+      "Custom estimate {.val {name}} must return one numeric value."
+    )
+  }
+  as.numeric(value)
+}
+
 correctTypes <- function(x) {
   x |>
     dplyr::mutate(estimate_value = dplyr::case_when(
@@ -535,7 +648,14 @@ densityResult <- function(x, w) {
       den <- stats::density(x, n = nPoints, from = qs[1], to = qs[2], na.rm = TRUE)
     } else {
       w <- as.numeric(w[id])
-      den <- stats::density(x, n = nPoints, from = qs[1], to = qs[2], weights = w/sum(w), na.rm = TRUE)
+      den <- suppressWarnings(stats::density(
+        x,
+        n = nPoints,
+        from = qs[1],
+        to = qs[2],
+        weights = w / sum(w),
+        na.rm = TRUE
+      ))
     }
 
   }
@@ -728,7 +848,8 @@ summariseCounts <- function(table, functions, weights) {
       dplyr::left_join(
         est |>
           dplyr::select("num" = "value", "num_name" = "name", "strata_id"),
-        by = "num_name"
+        by = "num_name",
+        relationship = "many-to-many"
       ) |>
       dplyr::left_join(
         est |>

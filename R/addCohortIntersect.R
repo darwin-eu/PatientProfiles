@@ -16,23 +16,20 @@
 
 #' It creates columns to indicate the presence of cohorts
 #'
-#' @param x Table with individuals in the cdm.
-#' @param targetCohortTable name of the cohort that we want to check for overlap.
-#' @param targetCohortId vector of cohort definition ids to include.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param targetStartDate date of reference in cohort table, either for start
-#' (in overlap) or on its own (for incidence).
-#' @param targetEndDate date of reference in cohort table, either for end
-#' (overlap) or NULL (if incidence).
-#' @param window window to consider events of.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams targetCohortTableDoc
+#' @inheritParams targetCohortIdDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with overlap information.
+#' @returns `r documentationIntersect("flag", "cohort")`
+#'
 #' @export
 #'
 #' @examples
@@ -57,7 +54,8 @@ addCohortIntersectFlag <- function(x,
                                    targetEndDate = "cohort_end_date",
                                    window = list(c(0, Inf)),
                                    nameStyle = "{cohort_name}_{window_name}",
-                                   name = NULL) {
+                                   name = NULL,
+                                   type = "numeric") {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
@@ -77,7 +75,8 @@ addCohortIntersectFlag <- function(x,
       window = window,
       nameStyle = nameStyle,
       censorDate = censorDate,
-      name = name
+      name = name,
+      type = type
     )
 
   return(x)
@@ -86,23 +85,20 @@ addCohortIntersectFlag <- function(x,
 #' It creates columns to indicate number of occurrences of intersection with a
 #' cohort
 #'
-#' @param x Table with individuals in the cdm.
-#' @param targetCohortTable name of the cohort that we want to check for overlap.
-#' @param targetCohortId vector of cohort definition ids to include.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param targetStartDate date of reference in cohort table, either for start
-#' (in overlap) or on its own (for incidence).
-#' @param targetEndDate date of reference in cohort table, either for end
-#' (overlap) or NULL (if incidence).
-#' @param window window to consider events of.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams targetCohortTableDoc
+#' @inheritParams targetCohortIdDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams targetStartDateDoc
+#' @inheritParams targetEndDateDoc
+#' @inheritParams windowDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
-#' @return table with added columns with overlap information.
+#' @returns `r documentationIntersect("count", "cohort")`
+#'
 #' @export
 #'
 #' @examples
@@ -127,7 +123,8 @@ addCohortIntersectCount <- function(x,
                                     targetEndDate = "cohort_end_date",
                                     window = list(c(0, Inf)),
                                     nameStyle = "{cohort_name}_{window_name}",
-                                    name = NULL) {
+                                    name = NULL,
+                                    type = "numeric") {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
@@ -147,7 +144,8 @@ addCohortIntersectCount <- function(x,
       window = window,
       nameStyle = nameStyle,
       censorDate = censorDate,
-      name = name
+      name = name,
+      type = type
     )
 
   return(x)
@@ -156,24 +154,17 @@ addCohortIntersectCount <- function(x,
 #' It creates columns to indicate the number of days between the current table
 #' and a target cohort
 #'
-#' @param x Table with individuals in the cdm.
-#' @param targetCohortTable Cohort table to.
-#' @param targetCohortId Cohort IDs of interest from the other cohort table. If
-#' NULL, all cohorts will be used with a days variable added for each
-#' cohort of interest.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param targetDate Date of interest in the other cohort table. Either
-#' cohort_start_date or cohort_end_date.
-#' @param order date to use if there are multiple records for an
-#' individual during the window of interest. Either first or last.
-#' @param window Window of time to identify records relative to the indexDate.
-#' Records outside of this time period will be ignored.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams targetCohortTableDoc
+#' @inheritParams targetCohortIdDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams windowDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return x along with additional columns for each cohort of interest.
 #' @export
@@ -198,7 +189,8 @@ addCohortIntersectDays <- function(x,
                                    order = "first",
                                    window = c(0, Inf),
                                    nameStyle = "{cohort_name}_{window_name}",
-                                   name = NULL) {
+                                   name = NULL,
+                                   type = "numeric") {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
@@ -223,7 +215,8 @@ addCohortIntersectDays <- function(x,
       order = order,
       nameStyle = nameStyle,
       censorDate = censorDate,
-      name = name
+      name = name,
+      type = type
     )
 
   return(x)
@@ -232,24 +225,16 @@ addCohortIntersectDays <- function(x,
 
 #' Date of cohorts that are present in a certain window
 #'
-#' @param x Table with individuals in the cdm.
-#' @param targetCohortTable Cohort table to.
-#' @param targetCohortId Cohort IDs of interest from the other cohort table. If
-#' NULL, all cohorts will be used with a time variable added for each
-#' cohort of interest.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param targetDate Date of interest in the other cohort table. Either
-#' cohort_start_date or cohort_end_date.
-#' @param order date to use if there are multiple records for an
-#' individual during the window of interest. Either first or last.
-#' @param window Window of time to identify records relative to the indexDate.
-#' Records outside of this time period will be ignored.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams targetCohortTableDoc
+#' @inheritParams targetCohortIdDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams windowDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
 #'
 #' @return x along with additional columns for each cohort of interest.
 #' @export
@@ -307,23 +292,18 @@ addCohortIntersectDate <- function(x,
 
 #' It creates a column with the field of a desired intersection
 #'
-#' @param x Table with individuals in the cdm.
-#' @param targetCohortTable name of the cohort that we want to check for overlap.
-#' @param field Column of interest in the targetCohort.
-#' @param targetCohortId vector of cohort definition ids to include.
-#' @param indexDate Variable in x that contains the date to compute the
-#' intersection.
-#' @param censorDate whether to censor overlap events at a specific date
-#' or a column date of x.
-#' @param targetDate Date of interest in the other cohort table. Either
-#' cohort_start_date or cohort_end_date.
-#' @param order date to use if there are multiple records for an
-#' individual during the window of interest. Either first or last.
-#' @param window Window of time to identify records relative to the indexDate.
-#' Records outside of this time period will be ignored.
-#' @param nameStyle naming of the added column or columns, should include
-#' required parameters.
-#' @param name Name of the new table, if NULL a temporary table is returned.
+#' @inheritParams xDoc
+#' @inheritParams targetCohortTableDoc
+#' @inheritParams fieldDoc
+#' @inheritParams targetCohortIdDoc
+#' @inheritParams indexDateDoc
+#' @inheritParams censorDateDoc
+#' @inheritParams targetDateDoc
+#' @inheritParams orderDoc
+#' @inheritParams windowDoc
+#' @inheritParams nameStyleDoc
+#' @inheritParams nameDoc
+#' @inheritParams typeDoc
 #'
 #' @return table with added columns with overlap information.
 #' @export
@@ -356,7 +336,8 @@ addCohortIntersectField <- function(x,
                                     order = "first",
                                     window = list(c(0, Inf)),
                                     nameStyle = "{cohort_name}_{field}_{window_name}",
-                                    name = NULL) {
+                                    name = NULL,
+                                    type = "auto") {
   cdm <- omopgenerics::cdmReference(x)
   omopgenerics::assertCharacter(targetCohortTable)
   omopgenerics::validateCdmArgument(cdm = cdm, requiredTables = targetCohortTable)
@@ -382,7 +363,8 @@ addCohortIntersectField <- function(x,
       order = order,
       nameStyle = nameStyle,
       censorDate = censorDate,
-      name = name
+      name = name,
+      type = type
     )
 
   return(x)

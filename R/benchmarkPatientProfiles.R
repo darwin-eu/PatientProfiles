@@ -2,7 +2,7 @@
 #' Benchmark intersections and demographics functions for a certain source
 #' (cdm).
 #'
-#' @param cdm A cdm_reference object.
+#' @inheritParams cdmDoc
 #' @param n Size of the synthetic cohorts used to benchmark.
 #' @param iterations Number of iterations to run the benchmark.
 #'

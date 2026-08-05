@@ -17,7 +17,7 @@
 #' Classify the variables between 5 types: "numeric", "categorical", "logical",
 #' "date", "integer", or NA.
 #'
-#' @param table Tibble.
+#' @inheritParams tableDoc
 #'
 #' @return Tibble with the variables type and classification.
 #'

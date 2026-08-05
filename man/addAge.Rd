@@ -15,36 +15,42 @@ addAge(
   ageImposeDay = FALSE,
   ageUnit = "years",
   missingAgeGroupValue = "None",
-  name = NULL
+  name = NULL,
+  type = "numeric"
 )
 }
 \arguments{
-\item{x}{Table with individuals in the cdm.}
+\item{x}{A table containing individuals in a CDM reference.}
 
-\item{indexDate}{Variable in x that contains the date to compute the
-demographics characteristics.}
+\item{indexDate}{Name of a date column in \code{x}, or a single date to use for
+all rows, used as the reference date.}
 
-\item{ageName}{Age variable name.}
+\item{ageName}{Name of the age column to add.}
 
-\item{ageGroup}{if not NULL, a list of ageGroup vectors.}
+\item{ageGroup}{If not \code{NULL}, a list of age-group vectors.}
 
-\item{ageMissingMonth}{Month of the year assigned to individuals with missing
-month of birth.}
+\item{ageMissingMonth}{Month of the year assigned when month of birth is
+missing.}
 
-\item{ageMissingDay}{day of the month assigned to individuals
-with missing day of birth.}
+\item{ageMissingDay}{Day of the month assigned when day of birth is missing.}
 
-\item{ageImposeMonth}{TRUE or FALSE. Whether the month of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeMonth}{If \code{TRUE}, month of birth is treated as missing for all
+individuals.}
 
-\item{ageImposeDay}{TRUE or FALSE. Whether the day of the date of birth
-will be considered as missing for all the individuals.}
+\item{ageImposeDay}{If \code{TRUE}, day of birth is treated as missing for all
+individuals.}
 
-\item{ageUnit}{Unit for age it can either be 'years', 'months' or 'days'.}
+\item{ageUnit}{Unit in which to express age: \code{"years"}, \code{"months"}, or
+\code{"days"}.}
 
-\item{missingAgeGroupValue}{Value to include if missing age.}
+\item{missingAgeGroupValue}{Value to use when age is missing.}
 
-\item{name}{Name of the new table, if NULL a temporary table is returned.}
+\item{name}{Name of the new table. If \code{NULL}, a temporary table is returned.}
+
+\item{type}{Type of the created column(s). Counts, days, age, and observation
+durations can be \code{"numeric"} or \code{"integer"}. Flag columns can also be
+\code{"logical"}. Field columns can use \code{"auto"} to preserve the source type, or
+can be converted to \code{"numeric"}, \code{"integer"}, \code{"logical"}, or \code{"character"}.}
 }
 \value{
 tibble with the age column added.

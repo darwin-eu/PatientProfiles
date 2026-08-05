@@ -7,12 +7,14 @@
 addConceptName(table, column = NULL, nameStyle = "{column}_name")
 }
 \arguments{
-\item{table}{cdm_table that contains column.}
+\item{table}{A table to process.}
 
 \item{column}{Column to add the concept names from. If NULL any column that
 its name ends with \code{concept_id} will be used.}
 
-\item{nameStyle}{Name of the new column.}
+\item{nameStyle}{Naming pattern for the added column or columns. It should
+include the required formatting variables. If more than one \code{tableName} is
+provided, it must include \code{{table_name}}.}
 }
 \value{
 table with an extra column with the concept names.

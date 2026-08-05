@@ -2,8 +2,8 @@
 #' Filter the rows of a `cdm_table` to the ones in observation that `indexDate`
 #' is in observation.
 #'
-#' @param x A `cdm_table` object.
-#' @param indexDate Name of a column of x that is a date.
+#' @inheritParams xDoc
+#' @inheritParams indexDateDoc
 #'
 #' @return A `cdm_table` that is a subset of the original table.
 #' @export
@@ -24,7 +24,10 @@ filterInObservation <- function(x,
                                 indexDate) {
   # initial check
   x <- omopgenerics::validateCdmTable(x)
-  omopgenerics::validateColumn(indexDate, x = x, type = "date")
+  originalColumns <- colnames(x)
+  indexDateInput <- materialiseIndexDate(indexDate = indexDate, x = x)
+  x <- indexDateInput$x
+  indexDate <- indexDateInput$indexDate
   cdm <- omopgenerics::cdmReference(x)
 
   id <- omopgenerics::getPersonIdentifier(x = x)
@@ -35,7 +38,7 @@ filterInObservation <- function(x,
   ) |>
     rlang::set_names(c(id, cols))
 
-  x |>
+  x <- x |>
     dplyr::inner_join(
       cdm$observation_period |>
         dplyr::select(dplyr::all_of(sel)),
@@ -46,4 +49,7 @@ filterInObservation <- function(x,
         .data[[indexDate]] <= .data[[cols[2]]]
     ) |>
     dplyr::select(!dplyr::all_of(cols))
+
+  removeMaterialisedIndexDate(x, indexDateInput) |>
+    dplyr::select(dplyr::all_of(originalColumns))
 }
