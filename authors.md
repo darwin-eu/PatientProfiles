@@ -24,17 +24,17 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/darwin-eu/PatientProfiles/blob/v1.6.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/darwin-eu/PatientProfiles/blob/main/DESCRIPTION)
 
 Català M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N (2026).
 *PatientProfiles: Identify Characteristics of Patients in the OMOP
-Common Data Model*. R package version 1.6.0,
+Common Data Model*. R package version 1.6.1,
 <https://darwin-eu.github.io/PatientProfiles/>.
 
     @Manual{,
       title = {PatientProfiles: Identify Characteristics of Patients in the OMOP Common Data Model},
       author = {Martí Català and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},
       year = {2026},
-      note = {R package version 1.6.0},
+      note = {R package version 1.6.1},
       url = {https://darwin-eu.github.io/PatientProfiles/},
     }

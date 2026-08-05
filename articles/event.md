@@ -166,11 +166,11 @@ concept_event_days |>
 #> Rows: ??
 #> Columns: 6
 #> $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-#> $ subject_id           <int> 2, 49, 11, 61, 41, 19, 3, 36, 1, 38, 65, 72, 116,…
-#> $ cohort_start_date    <date> 1931-09-03, 1978-03-10, 1966-10-25, 1969-12-23, …
-#> $ cohort_end_date      <date> 1931-09-17, 1978-03-24, 1966-11-08, 1970-01-06, …
-#> $ event_next_event     <chr> "osteoarthritis", "osteoarthritis", "osteoarthrit…
-#> $ days_next_event      <dbl> 9224, 11418, 7538, 13033, 12339, 2814, 3464, 1154…
+#> $ subject_id           <int> 35, 40, 32, 63, 30, 57, 114, 94, 96, 95, 117, 149…
+#> $ cohort_start_date    <date> 1960-06-20, 1964-12-28, 1944-06-24, 1973-12-05, …
+#> $ cohort_end_date      <date> 1960-07-04, 1965-01-04, 1944-07-01, 1973-12-05, …
+#> $ event_next_event     <chr> "diverticular_disease", "osteoarthritis", "osteoa…
+#> $ days_next_event      <dbl> 13465, 10423, 15624, 6810, 12553, 5569, 16080, 11…
 ```
 
 For concept events, `targetDate` can be either `event_start_date`, the
@@ -239,9 +239,9 @@ cdm$my_cohort |>
 #> # A tibble: 3 × 2
 #>   event_next               n
 #>   <chr>                <dbl>
-#> 1 diverticular_disease   390
-#> 2 end_of_observation     115
-#> 3 osteoarthritis        2174
+#> 1 osteoarthritis        2174
+#> 2 diverticular_disease   390
+#> 3 end_of_observation     115
 ```
 
 Use `TRUE` to combine all events that occur on the selected date:
@@ -261,8 +261,8 @@ cdm$my_cohort |>
 #> # A tibble: 3 × 2
 #>   event_next                               n
 #>   <chr>                                <dbl>
-#> 1 diverticular_disease; osteoarthritis   390
-#> 2 osteoarthritis                        2174
+#> 1 osteoarthritis                        2174
+#> 2 diverticular_disease; osteoarthritis   390
 #> 3 end_of_observation                     115
 ```
 
