@@ -24,6 +24,8 @@ knitr::opts_chunk$set(
 
 In previous vignettes we have seen how to add patient level demographics (age, sex, prior observation, ...) `r vignette("demographics", package = "PatientProfiles")` or intersections with cohorts `r vignette("cohort-intersect", package = "PatientProfiles")`, concepts and tables. 
 
+The cohort tables in this example are created with `CohortConstructor`. PatientProfiles then adds variables and summarises the resulting valid cohort tables; cohort creation and modification are outside the scope of PatientProfiles and can be handled by other dedicated OMOP cohort-generation packages.
+
 Once we have added several columns to our table of interest we may want to summarise all this data into a `summarised_result` object using several different estimates.
 
 ### Variables type

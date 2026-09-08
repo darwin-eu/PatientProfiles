@@ -37,6 +37,8 @@ Each function adds two columns for every window:
 - an `event` column containing the name of the selected event; and
 - a `date` or `days` column containing when that event occurred.
 
+The cohort tables searched by the event functions below are created with `CohortConstructor`. PatientProfiles then searches these valid cohort tables but does not create or modify cohort definitions; those tasks can be handled by `CohortConstructor` or other dedicated OMOP cohort-generation packages.
+
 Unlike the intersection functions, the event functions also return the
 applicable boundary when no target event occurs in the requested window. This
 makes it possible to distinguish an observed event, an explicit censoring
