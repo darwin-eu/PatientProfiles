@@ -15,6 +15,12 @@ Each function adds two columns for every window:
 - an `event` column containing the name of the selected event; and
 - a `date` or `days` column containing when that event occurred.
 
+The cohort tables searched by the event functions below are created with
+`CohortConstructor`. PatientProfiles then searches these valid cohort
+tables but does not create or modify cohort definitions; those tasks can
+be handled by `CohortConstructor` or other dedicated OMOP
+cohort-generation packages.
+
 Unlike the intersection functions, the event functions also return the
 applicable boundary when no target event occurs in the requested window.
 This makes it possible to distinguish an observed event, an explicit
@@ -166,11 +172,11 @@ concept_event_days |>
 #> Rows: ??
 #> Columns: 6
 #> $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-#> $ subject_id           <int> 6, 16, 42, 9, 7, 17, 5, 23, 28, 102, 78, 69, 105,…
-#> $ cohort_start_date    <date> 1969-12-20, 1974-06-11, 1937-09-07, 1982-04-30, …
-#> $ cohort_end_date      <date> 1970-01-03, 1974-06-25, 1937-09-14, 1982-05-14, …
+#> $ subject_id           <int> 2, 49, 11, 61, 41, 19, 3, 36, 1, 38, 65, 72, 116,…
+#> $ cohort_start_date    <date> 1931-09-03, 1978-03-10, 1966-10-25, 1969-12-23, …
+#> $ cohort_end_date      <date> 1931-09-17, 1978-03-24, 1966-11-08, 1970-01-06, …
 #> $ event_next_event     <chr> "osteoarthritis", "osteoarthritis", "osteoarthrit…
-#> $ days_next_event      <dbl> 12989, 14163, 4634, 11785, 13249, 8434, 13959, 95…
+#> $ days_next_event      <dbl> 9224, 11418, 7538, 13033, 12339, 2814, 3464, 1154…
 ```
 
 For concept events, `targetDate` can be either `event_start_date`, the
@@ -261,9 +267,9 @@ cdm$my_cohort |>
 #> # A tibble: 3 × 2
 #>   event_next                               n
 #>   <chr>                                <dbl>
-#> 1 diverticular_disease; osteoarthritis   390
-#> 2 osteoarthritis                        2174
-#> 3 end_of_observation                     115
+#> 1 osteoarthritis                        2174
+#> 2 end_of_observation                     115
+#> 3 diverticular_disease; osteoarthritis   390
 ```
 
 Alternatively, provide an explicit priority order. Here,

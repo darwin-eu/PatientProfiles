@@ -2,6 +2,8 @@
 
 ## PatientProfiles 1.6.1
 
+CRAN release: 2026-08-21
+
 - Fix na_matches = “na” performance by
   [@catalamarti](https://github.com/catalamarti)
 

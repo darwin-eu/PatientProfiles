@@ -304,8 +304,12 @@ cdm$condition_occurrence |>
 ## Adding characteristics to a cohort tables
 
 The above functions can be used on both standard OMOP CDM tables and
-cohort tables. Note as the default index date in the functions is
-“cohort_start_date” we can now omit this.
+cohort tables. The cohort tables used below are assumed to have been
+created and validated by a dedicated OMOP cohort-generation package,
+such as `CohortConstructor` or `CDMConnector`. PatientProfiles adds
+characteristics to these tables but does not create or modify cohort
+definitions. Note that, as the default index date in the functions is
+`cohort_start_date`, we can now omit this argument.
 
 ``` r
 
@@ -390,7 +394,7 @@ cdm$cohort2 |>
 ```
 
     ## # A query:  ?? x 10
-    ## # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
+    ## # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
     ##    cohort_definition_id subject_id cohort_start_date cohort_end_date   age
     ##                   <int>      <int> <date>            <date>          <dbl>
     ##  1                    2       8662 1934-11-29        1947-06-07          4
@@ -412,7 +416,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 1.623 sec elapsed
+    ## 1.729 sec elapsed
 
 ``` r
 
@@ -451,7 +455,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 0.575 sec elapsed
+    ## 0.627 sec elapsed
 
 In our small mock dataset we see a small improvement in performance, but
 this difference will become much more noticeable when working with real

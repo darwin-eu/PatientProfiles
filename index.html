@@ -70,7 +70,7 @@
 <img src="logo.png" class="logo" alt=""><h1 id="patientprofiles-">PatientProfiles <a class="anchor" aria-label="anchor" href="#patientprofiles-"></a>
 </h1>
 </div>
-<p><a href="https://CRAN.R-project.org/package=PatientProfiles" class="external-link"><img src="https://www.r-pkg.org/badges/version/PatientProfiles" alt="CRAN status"></a> <a href="https://github.com/darwin-eu/PatientProfiles/actions" class="external-link"><img src="https://github.com/darwin-eu/PatientProfiles/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle:stable"></a> <a href="https://cran.r-project.org/package=PatientProfiles" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/PatientProfiles" alt="metacran downloads"></a> <a href="https://cran.r-project.org/package=PatientProfiles" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/PatientProfiles" alt="metacran downloads"></a></p>
+<p><a href="https://CRAN.R-project.org/package=PatientProfiles" class="external-link"><img src="https://www.r-pkg.org/badges/version/PatientProfiles" alt="CRAN status"></a> <a href="https://joss.theoj.org/papers/714e68b9a4e1904ce3bb4cada723fd99" class="external-link"><img src="https://joss.theoj.org/papers/714e68b9a4e1904ce3bb4cada723fd99/status.svg" alt="status"></a> <a href="https://github.com/darwin-eu/PatientProfiles/actions" class="external-link"><img src="https://github.com/darwin-eu/PatientProfiles/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle:stable"></a> <a href="https://cran.r-project.org/package=PatientProfiles" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/PatientProfiles" alt="metacran downloads"></a> <a href="https://cran.r-project.org/package=PatientProfiles" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/PatientProfiles" alt="metacran downloads"></a></p>
 <div class="section level2">
 <h2 id="package-overview">Package overview<a class="anchor" aria-label="anchor" href="#package-overview"></a>
 </h2>
@@ -92,7 +92,7 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Català M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N</span></span>
 <span><span class="co">#&gt;   (????). _PatientProfiles: Identify Characteristics of Patients in the</span></span>
-<span><span class="co">#&gt;   OMOP Common Data Model_. R package version 1.4.3,</span></span>
+<span><span class="co">#&gt;   OMOP Common Data Model_. R package version 1.6.1,</span></span>
 <span><span class="co">#&gt;   &lt;https://darwin-eu.github.io/PatientProfiles/&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
@@ -100,7 +100,7 @@
 <span><span class="co">#&gt;   @Manual{,</span></span>
 <span><span class="co">#&gt;     title = {PatientProfiles: Identify Characteristics of Patients in the OMOP Common Data Model},</span></span>
 <span><span class="co">#&gt;     author = {Martí Català and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},</span></span>
-<span><span class="co">#&gt;     note = {R package version 1.4.3},</span></span>
+<span><span class="co">#&gt;     note = {R package version 1.6.1},</span></span>
 <span><span class="co">#&gt;     url = {https://darwin-eu.github.io/PatientProfiles/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
@@ -193,6 +193,7 @@
 <h4 id="adding-characteristics-of-a-cohort">Adding characteristics of a cohort<a class="anchor" aria-label="anchor" href="#adding-characteristics-of-a-cohort"></a>
 </h4>
 <p>As with other tables in the OMOP CDM, we can work in a similar way with cohort tables. For example, say we have the below cohort table</p>
+<p>PatientProfiles’ core functions work with valid OMOP cohort tables. The cohort definitions used in an analysis should be created or modified with dedicated OMOP packages such as <code>CohortConstructor</code>, <code>CDMConnector</code>, or other cohort-generation tools. Once a cohort has been created, PatientProfiles can add characteristics, identify intersections, and summarise it.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>

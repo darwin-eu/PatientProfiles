@@ -70,7 +70,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Adding first or last events</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.6.1/vignettes/event.rmd" class="external-link"><code>vignettes/event.rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/vignettes/event.rmd" class="external-link"><code>vignettes/event.rmd</code></a></small>
       <div class="d-none name"><code>event.rmd</code></div>
     </div>
 
@@ -113,6 +113,11 @@ event; and</li>
 <li>a <code>date</code> or <code>days</code> column containing when that
 event occurred.</li>
 </ul>
+<p>The cohort tables searched by the event functions below are created
+with <code>CohortConstructor</code>. PatientProfiles then searches these
+valid cohort tables but does not create or modify cohort definitions;
+those tasks can be handled by <code>CohortConstructor</code> or other
+dedicated OMOP cohort-generation packages.</p>
 <p>Unlike the intersection functions, the event functions also return
 the applicable boundary when no target event occurs in the requested
 window. This makes it possible to distinguish an observed event, an
@@ -248,11 +253,11 @@ concept sets become the event names.</p>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
 <span><span class="co">#&gt; $ cohort_definition_id <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1…</span></span>
-<span><span class="co">#&gt; $ subject_id           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 6<span style="color: #949494;">, </span>16<span style="color: #949494;">, </span>42<span style="color: #949494;">, </span>9<span style="color: #949494;">, </span>7<span style="color: #949494;">, </span>17<span style="color: #949494;">, </span>5<span style="color: #949494;">, </span>23<span style="color: #949494;">, </span>28<span style="color: #949494;">, </span>102<span style="color: #949494;">, </span>78<span style="color: #949494;">, </span>69<span style="color: #949494;">, </span>105<span style="color: #949494;">,</span>…</span></span>
-<span><span class="co">#&gt; $ cohort_start_date    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 1969-12-20<span style="color: #949494;">, </span>1974-06-11<span style="color: #949494;">, </span>1937-09-07<span style="color: #949494;">, </span>1982-04-30<span style="color: #949494;">, </span>…</span></span>
-<span><span class="co">#&gt; $ cohort_end_date      <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 1970-01-03<span style="color: #949494;">, </span>1974-06-25<span style="color: #949494;">, </span>1937-09-14<span style="color: #949494;">, </span>1982-05-14<span style="color: #949494;">, </span>…</span></span>
+<span><span class="co">#&gt; $ subject_id           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2<span style="color: #949494;">, </span>49<span style="color: #949494;">, </span>11<span style="color: #949494;">, </span>61<span style="color: #949494;">, </span>41<span style="color: #949494;">, </span>19<span style="color: #949494;">, </span>3<span style="color: #949494;">, </span>36<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>38<span style="color: #949494;">, </span>65<span style="color: #949494;">, </span>72<span style="color: #949494;">, </span>116<span style="color: #949494;">,</span>…</span></span>
+<span><span class="co">#&gt; $ cohort_start_date    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 1931-09-03<span style="color: #949494;">, </span>1978-03-10<span style="color: #949494;">, </span>1966-10-25<span style="color: #949494;">, </span>1969-12-23<span style="color: #949494;">, </span>…</span></span>
+<span><span class="co">#&gt; $ cohort_end_date      <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 1931-09-17<span style="color: #949494;">, </span>1978-03-24<span style="color: #949494;">, </span>1966-11-08<span style="color: #949494;">, </span>1970-01-06<span style="color: #949494;">, </span>…</span></span>
 <span><span class="co">#&gt; $ event_next_event     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "osteoarthritis"<span style="color: #949494;">, </span>"osteoarthritis"<span style="color: #949494;">, </span>"osteoarthrit…</span></span>
-<span><span class="co">#&gt; $ days_next_event      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 12989<span style="color: #949494;">, </span>14163<span style="color: #949494;">, </span>4634<span style="color: #949494;">, </span>11785<span style="color: #949494;">, </span>13249<span style="color: #949494;">, </span>8434<span style="color: #949494;">, </span>13959<span style="color: #949494;">, </span>95…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ days_next_event      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 9224<span style="color: #949494;">, </span>11418<span style="color: #949494;">, </span>7538<span style="color: #949494;">, </span>13033<span style="color: #949494;">, </span>12339<span style="color: #949494;">, </span>2814<span style="color: #949494;">, </span>3464<span style="color: #949494;">, </span>1154…</span></span></code></pre></div>
 <p>For concept events, <code>targetDate</code> can be either
 <code>event_start_date</code>, the default, or
 <code>event_end_date</code>. The concept set is validated against the
@@ -350,9 +355,9 @@ selected date:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
 <span><span class="co">#&gt;   event_next                               n</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> diverticular_disease; osteoarthritis   390</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> osteoarthritis                        <span style="text-decoration: underline;">2</span>174</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> end_of_observation                     115</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> osteoarthritis                        <span style="text-decoration: underline;">2</span>174</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> end_of_observation                     115</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> diverticular_disease; osteoarthritis   390</span></span></code></pre></div>
 <p>Alternatively, provide an explicit priority order. Here,
 <code>osteoarthritis</code> is selected before
 <code>diverticular_disease</code> when they occur on the same date:</p>

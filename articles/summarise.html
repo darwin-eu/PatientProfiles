@@ -70,7 +70,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise result</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.6.1/vignettes/summarise.Rmd" class="external-link"><code>vignettes/summarise.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/vignettes/summarise.Rmd" class="external-link"><code>vignettes/summarise.Rmd</code></a></small>
       <div class="d-none name"><code>summarise.Rmd</code></div>
     </div>
 
@@ -82,6 +82,11 @@
 <p>In previous vignettes we have seen how to add patient level
 demographics (age, sex, prior observation, …) or intersections with
 cohorts , concepts and tables.</p>
+<p>The cohort tables in this example are created with
+<code>CohortConstructor</code>. PatientProfiles then adds variables and
+summarises the resulting valid cohort tables; cohort creation and
+modification are outside the scope of PatientProfiles and can be handled
+by other dedicated OMOP cohort-generation packages.</p>
 <p>Once we have added several columns to our table of interest we may
 want to summarise all this data into a <code>summarised_result</code>
 object using several different estimates.</p>
@@ -903,7 +908,7 @@ summarise:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Creating local <span style="color: #0000BB;">&lt;cdm_reference&gt;</span> object.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Inserting <span style="color: #0000BB;">&lt;cdm_reference&gt;</span> into <span style="color: #0000BB;">duckdb</span>.</span></span>
 <span><span class="co">#&gt; duckdb keeps downloaded extensions and secrets in a temporary directory:</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> /tmp/RtmpVB70Tx/duckdb</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> /tmp/Rtmp0l8rFI/duckdb</span></span>
 <span><span class="co">#&gt; This is removed when the R session ends.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Secrets are lost.</span></span>
@@ -1003,7 +1008,7 @@ tidyverse functions like:</p>
 <span><span class="co">#&gt; Use `na.rm = TRUE` to silence this warning</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A query:  ?? x 3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1//tmp/RtmpVB70Tx/file24337517643c.duckdb]</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1//tmp/Rtmp0l8rFI/file23d52256b3cc.duckdb]</span></span></span>
 <span><span class="co">#&gt;   sex    mean_age sd_age</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Female     7.51   7.46</span></span>
@@ -1030,9 +1035,9 @@ function).</p></li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">strata_name</span>, <span class="va">strata_level</span>, <span class="va">variable_name</span>, <span class="va">estimate_value</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:41.048439</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:36.459967</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:41.35581</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:36.774055</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
 <span><span class="co">#&gt;   strata_name strata_level variable_name estimate_value  </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1054,9 +1059,9 @@ function).</p></li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">strata_name</span>, <span class="va">strata_level</span>, <span class="va">variable_name</span>, <span class="va">estimate_value</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:41.990539</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:37.449662</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:42.492564</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:37.970538</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 4</span></span></span>
 <span><span class="co">#&gt;    strata_name        strata_level variable_name estimate_value  </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1084,9 +1089,9 @@ include it we have to specify it as follows:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:43.14058</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:38.62663</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:43.864785</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:39.381832</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 4</span></span></span>
 <span><span class="co">#&gt;    strata_name                strata_level variable_name estimate_value  </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1123,9 +1128,9 @@ option:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:44.519929</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:40.06739</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:44.931759</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:40.515065</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8 × 4</span></span></span>
 <span><span class="co">#&gt;   strata_name        strata_level variable_name estimate_value  </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1155,9 +1160,9 @@ can specify them independently:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:45.87208</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:41.476371</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:46.81702</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:42.220133</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 6</span></span></span>
 <span><span class="co">#&gt;    group_name  group_level strata_name strata_level variable_name estimate_value</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
@@ -1184,9 +1189,9 @@ identifier is found) counts with the counts parameter:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span>n <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The following estimates will be calculated:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:47.506156</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:43.046286</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:47.668624</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:43.208163</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 4</span></span></span>
 <span><span class="co">#&gt;   strata_name strata_level variable_name   estimate_value  </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1211,9 +1216,9 @@ groups of variables you can use lists:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> age: mean, sd</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> prior_observation: mean, sd</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> sex: count, percentage</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:48.33933</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:43.862703</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:48.661495</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:44.226745</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 4</span></span></span>
 <span><span class="co">#&gt;    strata_name        strata_level variable_name     estimate_value  </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
@@ -1277,9 +1282,9 @@ groups of variables you can use lists:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> cohort_end_date: median, q25, q75, min, max</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Table is collected to memory as not all requested estimates are supported on</span></span>
 <span><span class="co">#&gt;   the database side.</span></span>
-<span><span class="co">#&gt; → Start summary of data, at 2026-08-05 15:49:49.65676</span></span>
+<span><span class="co">#&gt; → Start summary of data, at 2026-09-09 00:45:45.217621</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-08-05 15:49:49.955233</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> Summary finished, at 2026-09-09 00:45:45.512944</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 159 × 6</span></span></span>
 <span><span class="co">#&gt;    group_name  group_level strata_name strata_level variable_name estimate_value</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>

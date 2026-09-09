@@ -6,6 +6,12 @@ In previous vignettes we have seen how to add patient level demographics
 (age, sex, prior observation, …) or intersections with cohorts ,
 concepts and tables.
 
+The cohort tables in this example are created with `CohortConstructor`.
+PatientProfiles then adds variables and summarises the resulting valid
+cohort tables; cohort creation and modification are outside the scope of
+PatientProfiles and can be handled by other dedicated OMOP
+cohort-generation packages.
+
 Once we have added several columns to our table of interest we may want
 to summarise all this data into a `summarised_result` object using
 several different estimates.
@@ -125,7 +131,7 @@ cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #> ℹ Creating local <cdm_reference> object.
 #> ℹ Inserting <cdm_reference> into duckdb.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpVB70Tx/duckdb
+#> ℹ /tmp/Rtmp0l8rFI/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -230,7 +236,7 @@ x |>
 #> Use `na.rm = TRUE` to silence this warning
 #> This warning is displayed once every 8 hours.
 #> # A query:  ?? x 3
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1//tmp/RtmpVB70Tx/file24337517643c.duckdb]
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1//tmp/Rtmp0l8rFI/file23d52256b3cc.duckdb]
 #>   sex    mean_age sd_age
 #>   <chr>     <dbl>  <dbl>
 #> 1 Female     7.51   7.46
@@ -263,9 +269,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:41.048439
+#> → Start summary of data, at 2026-09-09 00:45:36.459967
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:41.35581
+#> ✔ Summary finished, at 2026-09-09 00:45:36.774055
 #> # A tibble: 6 × 4
 #>   strata_name strata_level variable_name estimate_value  
 #>   <chr>       <chr>        <chr>         <chr>           
@@ -291,9 +297,9 @@ x |>
   select(strata_name, strata_level, variable_name, estimate_value)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:41.990539
+#> → Start summary of data, at 2026-09-09 00:45:37.449662
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:42.492564
+#> ✔ Summary finished, at 2026-09-09 00:45:37.970538
 #> # A tibble: 10 × 4
 #>    strata_name        strata_level variable_name estimate_value  
 #>    <chr>              <chr>        <chr>         <chr>           
@@ -325,9 +331,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:43.14058
+#> → Start summary of data, at 2026-09-09 00:45:38.62663
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:43.864785
+#> ✔ Summary finished, at 2026-09-09 00:45:39.381832
 #> # A tibble: 18 × 4
 #>    strata_name                strata_level variable_name estimate_value  
 #>    <chr>                      <chr>        <chr>         <chr>           
@@ -367,9 +373,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:44.519929
+#> → Start summary of data, at 2026-09-09 00:45:40.06739
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:44.931759
+#> ✔ Summary finished, at 2026-09-09 00:45:40.515065
 #> # A tibble: 8 × 4
 #>   strata_name        strata_level variable_name estimate_value  
 #>   <chr>              <chr>        <chr>         <chr>           
@@ -403,9 +409,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:45.87208
+#> → Start summary of data, at 2026-09-09 00:45:41.476371
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:46.81702
+#> ✔ Summary finished, at 2026-09-09 00:45:42.220133
 #> # A tibble: 10 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         
@@ -436,9 +442,9 @@ x |>
   print(n = Inf)
 #> ℹ The following estimates will be calculated:
 #> • age: mean, sd
-#> → Start summary of data, at 2026-08-05 15:49:47.506156
+#> → Start summary of data, at 2026-09-09 00:45:43.046286
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:47.668624
+#> ✔ Summary finished, at 2026-09-09 00:45:43.208163
 #> # A tibble: 4 × 4
 #>   strata_name strata_level variable_name   estimate_value  
 #>   <chr>       <chr>        <chr>           <chr>           
@@ -467,9 +473,9 @@ x |>
 #> • age: mean, sd
 #> • prior_observation: mean, sd
 #> • sex: count, percentage
-#> → Start summary of data, at 2026-08-05 15:49:48.33933
+#> → Start summary of data, at 2026-09-09 00:45:43.862703
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:48.661495
+#> ✔ Summary finished, at 2026-09-09 00:45:44.226745
 #> # A tibble: 16 × 4
 #>    strata_name        strata_level variable_name     estimate_value  
 #>    <chr>              <chr>        <chr>             <chr>           
@@ -537,9 +543,9 @@ x |>
 #> • cohort_end_date: median, q25, q75, min, max
 #> ! Table is collected to memory as not all requested estimates are supported on
 #>   the database side.
-#> → Start summary of data, at 2026-08-05 15:49:49.65676
+#> → Start summary of data, at 2026-09-09 00:45:45.217621
 #> 
-#> ✔ Summary finished, at 2026-08-05 15:49:49.955233
+#> ✔ Summary finished, at 2026-09-09 00:45:45.512944
 #> # A tibble: 159 × 6
 #>    group_name  group_level strata_name strata_level variable_name estimate_value
 #>    <chr>       <chr>       <chr>       <chr>        <chr>         <chr>         

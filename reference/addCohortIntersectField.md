@@ -95,7 +95,7 @@ library(dplyr)
 
 cdm <- mockPatientProfiles(source = "duckdb")
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpB2T0r9/duckdb
+#> ℹ /tmp/Rtmp52x3ty/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -112,7 +112,7 @@ cdm$cohort1 |>
     targetCohortTable = "cohort2"
   )
 #> # A query:  ?? x 7
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
 #>    cohort_definition_id subject_id cohort_start_date cohort_end_date
 #>                   <int>      <int> <date>            <date>         
 #>  1                    2          6 1952-08-01        1965-06-15     
@@ -125,7 +125,7 @@ cdm$cohort1 |>
 #>  8                    1          8 1982-12-10        1985-02-05     
 #>  9                    3          2 1967-10-12        1975-01-21     
 #> 10                    3          1 1922-07-04        1939-05-11     
-#> # ℹ 3 more variables: cohort_1_0_to_inf <dbl>, cohort_2_0_to_inf <dbl>,
+#> # ℹ 3 more variables: cohort_2_0_to_inf <dbl>, cohort_1_0_to_inf <dbl>,
 #> #   cohort_3_0_to_inf <dbl>
 
 # }

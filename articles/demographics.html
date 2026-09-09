@@ -70,7 +70,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Adding patient demographics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/v1.6.1/vignettes/demographics.rmd" class="external-link"><code>vignettes/demographics.rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/PatientProfiles/blob/main/vignettes/demographics.rmd" class="external-link"><code>vignettes/demographics.rmd</code></a></small>
       <div class="d-none name"><code>demographics.rmd</code></div>
     </div>
 
@@ -331,8 +331,13 @@ future,</p>
 <h2 id="adding-characteristics-to-a-cohort-tables">Adding characteristics to a cohort tables<a class="anchor" aria-label="anchor" href="#adding-characteristics-to-a-cohort-tables"></a>
 </h2>
 <p>The above functions can be used on both standard OMOP CDM tables and
-cohort tables. Note as the default index date in the functions is
-“cohort_start_date” we can now omit this.</p>
+cohort tables. The cohort tables used below are assumed to have been
+created and validated by a dedicated OMOP cohort-generation package,
+such as <code>CohortConstructor</code> or <code>CDMConnector</code>.
+PatientProfiles adds characteristics to these tables but does not create
+or modify cohort definitions. Note that, as the default index date in
+the functions is <code>cohort_start_date</code>, we can now omit this
+argument.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -401,7 +406,7 @@ period tables.</p>
 <span>  <span class="fu"><a href="../reference/addPriorObservation.html">addPriorObservation</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/addFutureObservation.html">addFutureObservation</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A query:  ?? x 10</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]</span></span></span>
 <span><span class="co">##    cohort_definition_id subject_id cohort_start_date cohort_end_date   age</span></span>
 <span><span class="co">##                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 1</span>                    2       <span style="text-decoration: underline;">8</span>662 1934-11-29        1947-06-07          4</span></span>
@@ -419,7 +424,7 @@ period tables.</p>
 <span><span class="co">## <span style="color: #949494;">#   prior_observation &lt;dbl&gt;, future_observation &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 1.623 sec elapsed</span></span></code></pre>
+<pre><code><span><span class="co">## 1.729 sec elapsed</span></span></code></pre>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort2</span> <span class="op">|&gt;</span></span>
@@ -450,7 +455,7 @@ period tables.</p>
 <span><span class="co">## $ prior_observation    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 8852<span style="color: #949494;">, </span>13310<span style="color: #949494;">, </span>4699<span style="color: #949494;">, </span>8782<span style="color: #949494;">, </span>9209<span style="color: #949494;">, </span>12167<span style="color: #949494;">, </span>259<span style="color: #949494;">, </span>130<span style="color: #949494;">, </span>5…</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 0.575 sec elapsed</span></span></code></pre>
+<pre><code><span><span class="co">## 0.627 sec elapsed</span></span></code></pre>
 <p>In our small mock dataset we see a small improvement in performance,
 but this difference will become much more noticeable when working with
 real data that will typically be far larger.</p>
