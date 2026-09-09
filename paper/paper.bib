@@ -1,9 +1,14 @@
-@Manual{omock,
-  title = {omock: Creation of Mock Observational Medical Outcomes Partnership Common Data Model},
-  author = {Mike Du and Martí Català and Edward Burn and Nuria Mercade-Besora and Xihang Chen},
-  year = {2024},
-  note = {R package version 0.2.0, https://github.com/oxford-pharmacoepi/omock},
-  url = {https://oxford-pharmacoepi.github.io/omock/},
+@Article{omock,
+  title = {omock: A R package for Mock Data Generation for the Observational Medical Outcomes Partnership Common Data Model},
+  author = {Mike Du and Núria Mercadé-Besora and Marta Alcalde-Herraiz and Xihang Chen and Yuchen Guo and Kim López-Güell and Edward Burn and Martí Català},
+  year = {2025},
+  journal = {Journal of Open Source Software},
+  volume = {10},
+  number = {113},
+  pages = {8178},
+  doi = {10.21105/joss.08178},
+  url = {https://doi.org/10.21105/joss.08178},
+  note = {R package version 0.7.0},
 }
 
 @article{omop,
@@ -38,13 +43,16 @@
   number = {43},
   pages = {1686},
   doi = {10.21105/joss.01686},
+  note = {R package version 2.0.0},
 }
 
 @Manual{cdmconnector,
   title = {CDMConnector: Connect to an OMOP Common Data Model},
-  author = {Adam Black and Artem Gorbachev and Edward Burn and Martí Català},
-  year = {2024},
-  note = {https://darwin-eu.github.io/CDMConnector/, https://github.com/darwin-eu/CDMConnector},
+  author = {Ger Inberg and Adam Black and Artem Gorbachev and Edward Burn and Martí Català and Ioanna Nika},
+  year = {2026},
+  doi = {10.32614/CRAN.package.CDMConnector},
+  note = {R package version 2.7.0},
+  url = {https://darwin-eu.github.io/CDMConnector/, https://github.com/darwin-eu/CDMConnector},
 }
 
 @Article{testthat,
@@ -54,7 +62,9 @@
   year = {2011},
   volume = {3},
   pages = {5--10},
-  url = {https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf},
+  doi = {10.32614/rj-2011-002},
+  url = {https://journal.r-project.org/articles/RJ-2011-002/},
+  note = {R package version 3.3.2},
 }
 
 @article {heart,
@@ -87,15 +97,46 @@
 @Manual{patientprofiles,
   title = {PatientProfiles: Identify Characteristics of Patients in the OMOP Common Data Model},
   author = {Martí Català and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},
-  year = {2025},
-  note = {R package version 1.4.1},
+  year = {2026},
+  doi = {10.32614/CRAN.package.PatientProfiles},
+  note = {R package version 1.6.1},
   url = {https://darwin-eu.github.io/PatientProfiles/, https://github.com/darwin-eu/PatientProfiles},
 }
 
 @Manual{omopgenerics,
   title = {omopgenerics: Methods and Classes for the OMOP Common Data Model},
   author = {Martí Català and Edward Burn},
-  year = {2024},
-  note = {R package version 1.2.0},
+  year = {2026},
+  doi = {10.32614/CRAN.package.omopgenerics},
+  note = {R package version 1.4.2},
   url = {https://darwin-eu.github.io/omopgenerics/, https://github.com/darwin-eu/omopgenerics},
+}
+
+@Article{hades,
+  title = {Health-Analytics Data to Evidence Suite (HADES): Open-Source Software for Observational Research},
+  author = {M. J. Schuemie and J. M. Reps and A. Black and F. DeFalco and L. Evans and E. Fridgeirsson and J. P. Gilbert and C. Knoll and M. Lavallee and G. Rao and P. Rijnbeek and K. Sadowski and A. Sena and J. Swerdel and R. D. Williams and M. A. Suchard},
+  journal = {Studies in Health Technology and Informatics},
+  year = {2024},
+  volume = {310},
+  pages = {966--970},
+  doi = {10.3233/SHTI231108},
+  url = {https://doi.org/10.3233/SHTI231108},
+}
+
+@Misc{tidyromop,
+  title = {Tidy R programming with the OMOP Common Data Model},
+  author = {Edward Burn and Martí Català Sabaté},
+  year = {2025},
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.17532124},
+  url = {https://ohdsi.github.io/Tidy-R-programming-with-OMOP/},
+  note = {First edition},
+}
+
+@Misc{hadesextras,
+  title = {HadesExtras},
+  author = {{FinnGen}},
+  url = {https://github.com/FINNGEN/HadesExtras},
+  urldate = {2026-09-09},
+  note = {R package and community extension for HADES},
 }

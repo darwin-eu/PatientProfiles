@@ -29,6 +29,8 @@ knitr::opts_chunk$set(
 
 So far we've seen that we can add variables indicating intersections based on cohorts or concept sets. One additional option we have is to simply add an intersection based on a table.
 
+In this example, `CohortConstructor` is used to create the ankle sprain cohort. PatientProfiles then adds table intersections to the resulting valid cohort table; it does not create or modify cohort definitions.
+
 Let's again create a cohort containing people with an ankle sprain.
 
 ```{r, warning = FALSE, message = FALSE}

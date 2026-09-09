@@ -17,6 +17,8 @@ vignette: >
 
 Cohorts are often a key component in studies that use the OMOP CDM. They may be created to represent various clinical events of interest and we often use cohorts in combination, whether it is to identify outcomes among people with an exposure of interest, report baseline comorbidites among a certain study population, or for many other possible reasons.
 
+PatientProfiles works with valid OMOP cohort tables and focuses on adding variables and identifying intersections. Cohort definitions should be created or modified with dedicated OMOP packages such as `CohortConstructor`, `CDMConnector`, or other cohort-generation tools.
+
 Cohorts have a particular format in the OMOP CDM, which we can see for two cohort tables created by the `mockPatientProfiles()` function provided by PatientProfiles, which mimics a database in the OMOP CDM format. We can see the first cohort table contains 2 cohorts while the second contains 3 cohorts.
 
 ```{r, message= FALSE, warning=FALSE}

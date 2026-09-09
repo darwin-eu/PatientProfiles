@@ -138,7 +138,7 @@ cdm$condition_occurrence |>
 
 ## Adding characteristics to a cohort tables
 
-The above functions can be used on both standard OMOP CDM tables and cohort tables. Note as the default index date in the functions is "cohort_start_date" we can now omit this.
+The above functions can be used on both standard OMOP CDM tables and cohort tables. The cohort tables used below are assumed to have been created and validated by a dedicated OMOP cohort-generation package, such as `CohortConstructor` or `CDMConnector`. PatientProfiles adds characteristics to these tables but does not create or modify cohort definitions. Note that, as the default index date in the functions is `cohort_start_date`, we can now omit this argument.
 
 ```{r, message= FALSE, warning=FALSE}
 cdm$cohort1 |>

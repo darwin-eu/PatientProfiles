@@ -3,6 +3,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/PatientProfiles)](https://CRAN.R-project.org/package=PatientProfiles)
+[![status](https://joss.theoj.org/papers/714e68b9a4e1904ce3bb4cada723fd99/status.svg)](https://joss.theoj.org/papers/714e68b9a4e1904ce3bb4cada723fd99)
 [![R-CMD-check](https://github.com/darwin-eu/PatientProfiles/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/PatientProfiles/actions)
 [![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![metacran
@@ -38,7 +39,7 @@ citation("PatientProfiles")
 #> 
 #>   Català M, Guo Y, Du M, Lopez-Guell K, Burn E, Mercade-Besora N
 #>   (????). _PatientProfiles: Identify Characteristics of Patients in the
-#>   OMOP Common Data Model_. R package version 1.4.3,
+#>   OMOP Common Data Model_. R package version 1.6.1,
 #>   <https://darwin-eu.github.io/PatientProfiles/>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -46,7 +47,7 @@ citation("PatientProfiles")
 #>   @Manual{,
 #>     title = {PatientProfiles: Identify Characteristics of Patients in the OMOP Common Data Model},
 #>     author = {Martí Català and Yuchen Guo and Mike Du and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora},
-#>     note = {R package version 1.4.3},
+#>     note = {R package version 1.6.1},
 #>     url = {https://darwin-eu.github.io/PatientProfiles/},
 #>   }
 ```
@@ -159,6 +160,12 @@ cdm$condition_occurrence |>
 
 As with other tables in the OMOP CDM, we can work in a similar way with
 cohort tables. For example, say we have the below cohort table
+
+PatientProfiles' core functions work with valid OMOP cohort tables. The cohort
+definitions used in an analysis should be created or modified with dedicated
+OMOP packages such as `CohortConstructor`, `CDMConnector`, or other
+cohort-generation tools. Once a cohort has been created, PatientProfiles can
+add characteristics, identify intersections, and summarise it.
 
 ``` r
 cdm$cohort1 |>
