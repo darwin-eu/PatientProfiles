@@ -55,27 +55,33 @@ Built on the tidyverse [@tidyverse] and omopgenerics infrastructure, PatientProf
 
 # Statement of need
 
-Real-world data (RWD), routinely collected health data such as GP records, hospital data, and insurance claims data are valuable resources for conducting epidemiological research studies. However, with such data typically not collected primarily for research, different RWD sources can vary substantially in format and clinical coding systems. To overcome this difficulty a common data model (CDM) is often used. A CDM helps standardising data structures across various sources, enhancing data consistency, quality, and interoperability. A particularly popular data model is the Observational Medical Outcomes Partnership (OMOP) CDM, with more than 800 million patients' health care data transformed into this format [@omop]. 
+Real-world data (RWD), routinely collected health data such as GP records, hospital data, and insurance claims data are valuable resources for conducting epidemiological research studies. However, with such data typically not collected primarily for research, different RWD sources can vary substantially in format and clinical coding systems. To overcome this difficulty a common data model (CDM) is often used. A CDM helps standardising data structures across various sources, enhancing data consistency, quality, and interoperability. A particularly popular data model is the Observational Medical Outcomes Partnership (OMOP) CDM, with more than 800 million patients' health care data transformed into this format [@omop].
 
 The OMOP CDM is a person-centric relational data model. Patients' data is spread across various tables related to different clinical domains with, for example, the *condition occurrence* table containing diagnoses while the *drug exposure* table contains drug prescriptions. These different clinical tables are all linked back to the *person* table which contains a unique identifier for each individual along with some key demographic data such as their date of birth. Meanwhile, records in the *observation period* table define the period of calendar time over which an individual is followed-up. [@omopcdm]
 
 One of the principal benefits of mapping data to a CDM is that it allows for the same analytic code to be run across different datasets. Developing well-tested and easy-to-use software for common analytic tasks can therefore bring significant benefits, both improving the speed at which analyses can be performed and improving quality by reducing the amount of study-specific bespoke code needing to be written.
 
-Obtaining the characteristics of individuals is one of the most common first tasks when working with patient-level data. In almost all analyses specific characteristics of individuals will need to be identified, after which groups of individuals who share some specific common condition or characteristic need to be identified and relationships between these groups are described (for example the time between a given diagnosis and a health outcome of interest). 
+Obtaining the characteristics of individuals is one of the most common first tasks when working with patient-level data. In almost all analyses specific characteristics of individuals will need to be identified, after which groups of individuals who share some specific common condition or characteristic need to be identified and relationships between these groups are described (for example the time between a given diagnosis and a health outcome of interest).
 
 We created the PatientProfiles R package to support identifying patient characteristics in data mapped to the OMOP CDM. It provides functionality to obtain demographic information (such as age, sex, prior observation time, future observation time, and so on), describe intersections between different groups of patients, and summarise the results in a standard output format.
 
+# State of the field
+
+PatientProfiles is part of the tidyverse-oriented OMOP R ecosystem described in *Tidy R programming with the OMOP Common Data Model* [@tidyromop], alongside packages such as CDMConnector, CodelistGenerator, CohortCharacteristics, CohortConstructor, OmopSketch, omock, and omopgenerics. These packages are examples from a growing ecosystem of OMOP R tools that supports different analytical needs. Together, they form a modular stack: CDMConnector and omopgenerics support OMOP CDM references, omock provides mock data, CohortConstructor creates and manipulates cohorts, PatientProfiles adds demographics and intersections, and CohortCharacteristics summarises and visualises cohort characteristics. The components can be combined as needed in to build different analyses pipelines.
+
+HADES is another established approach, providing a broad suite for end-to-end OMOP analytics, including population characterisation, causal effect estimation, and patient-level prediction [@hades]. HADES emphasises specifying and executing large-scale observational analyses and exploring their standardised results through integrated workflows and user interfaces. PatientProfiles instead contributes a focused, composable layer for patient characteristics, intersections, and standard summaries, providing a complementary modular approach aligned with tidyverse-style R programming. Community projects such as HadesExtras [@hadesextras] illustrate efforts to extend HADES workflows; the two ecosystems are complementary and fit different needs rather than competing alternatives.
+
 # Design principles
 
-PatientProfiles was designed to adhere to the tidyverse tidy design principles.  The tidyverse is a collection of R packages designed for data science, offering a cohesive and consistent syntax for data manipulation, and analysis [@tidyverse]. The dplyr package defines multiple methods that can be implemented to many different sources of data. Of particular relevance to working with OMOP CDM data which is typically stored in a database, the dbplyr package provides translations of dplyr methods to SQL. 
+PatientProfiles was designed to adhere to the tidyverse tidy design principles. The tidyverse is a collection of R packages designed for data science, offering a cohesive and consistent syntax for data manipulation, and analysis [@tidyverse]. The dplyr package defines multiple methods that can be implemented to many different sources of data. Of particular relevance to working with OMOP CDM data which is typically stored in a database, the dbplyr package provides translations of dplyr methods to SQL.
 
 The core dependency of PatientProfiles is the omopgenerics package [@omopgenerics], which provides methods, classes and basic operations for packages working with data in the OMOP CDM format. It defines a central object, a `cdm_reference`, that provides a central reference to all the different OMOP CDM tables, along with various other S3 classes and methods that facilitate working with the data contained in this reference.
 
 # Development of the PatientProfiles R package
 
-PatientProfiles was developed in accordance with best practices for R packages with the devtools and usethis R packages used for common development tasks. The core, general dependencies of the package include dplyr and tidyr for common data manipulations and dbplyr which provides translations to SQL. In addition the core dependency related to OMOP CDM data is the omopgenerics package which provides core classes and methods specific to this data format. 
+PatientProfiles was developed in accordance with best practices for R packages with the devtools and usethis R packages used for common development tasks. The core, general dependencies of the package include dplyr and tidyr for common data manipulations and dbplyr which provides translations to SQL. In addition the core dependency related to OMOP CDM data is the omopgenerics package which provides core classes and methods specific to this data format.
 
-The PatientProfiles package includes functionality to create its own mock data in the OMOP CDM format. This mock data is used to test the package using the testthat framework [@testthat]. Every line of the packages is tested multiple times trying to account for various edge cases. Currently, the package is tested iteratively against different database management systems: PostgreSQL, SQL Server, Amazon Redshift, and DuckDB. In addition to unit tests, end-to-end integration tests of the package have been conducted to ensure the face validity of results. 
+The PatientProfiles package includes functionality to create its own mock data in the OMOP CDM format. This mock data is used to test the package using the testthat framework [@testthat]. Every line of the packages is tested multiple times trying to account for various edge cases. Currently, the package is tested iteratively against different database management systems: PostgreSQL, SQL Server, Amazon Redshift, and DuckDB. In addition to unit tests, end-to-end integration tests of the package have been conducted to ensure the face validity of results.
 
 The package is open-source and released via CRAN: <https://CRAN.R-project.org/package=PatientProfiles> [@patientprofiles] (version 1.6.1, released 5 August 2026) and also available on GitHub: <https://github.com/darwin-eu/PatientProfiles> with its own website with more documentation and vignettes that cover the content of the package in more depth.
 
@@ -85,13 +91,13 @@ PatientProfiles contains three main groups of functions (\autoref{fig:diagram}).
 
 PatientProfiles works with valid OMOP cohort tables; apart from generating mock data for examples and tests, cohort creation and modification are outside the scope of the package. Dedicated OMOP packages such as CohortConstructor, CDMConnector [@cdmconnector], CohortGenerator, and other cohort-generation tools can be used to create and modify cohorts. PatientProfiles then adds characteristics, identifies intersections, and summarises the resulting cohort tables.
 
-![PatientProfiles functions bloks. Note that each demographic function has its own analogous *query* function to only add a query to the data, e.g. `addAge()` -> `addAgeQuery()`.\label{fig:diagram}](diagram.pdf)
+![PatientProfiles functions bloks. Note that each demographic function has its own analogous *query* function to only add a query to the data, e.g. `addAge()` -\> `addAgeQuery()`.\label{fig:diagram}](diagram.pdf)
 
 ## Mock data
 
 A reference to an OMOP CDM instance is needed to use PatientProfiles. In this simple tutorial we will use mock toy data produced by the same package, using the omock mock-data infrastructure [@omock], and request that it is copied into an in-process `duckdb` database.
 
-```
+```         
 library(PatientProfiles)
 library(CohortConstructor)
 cdm <- mockPatientProfiles(numberIndividuals = 1000, source = "duckdb")
@@ -111,15 +117,15 @@ cdm$target <- cdm$cohort2 |>
 
 `addDemographics()` is used to characterise the demographics of a table. The table must be part of a `cdm_reference` object and contain a person identifier column (either person_id or subject_id). There are multiple columns that can be added with this function:
 
-- *age*: the age at a certain `indexDate`. You can also add an *age group* column grouping individuals into different age ranges.
-- *sex*: the sex of the individual.
-- *prior observation*: the number of days between start of observation and `indexDate`.
-- *future observation*: the number of days between `indexDate` and end of observation.
-- *date of birth*: the birth date of the individual.
+-   *age*: the age at a certain `indexDate`. You can also add an *age group* column grouping individuals into different age ranges.
+-   *sex*: the sex of the individual.
+-   *prior observation*: the number of days between start of observation and `indexDate`.
+-   *future observation*: the number of days between `indexDate` and end of observation.
+-   *date of birth*: the birth date of the individual.
 
 An example to add the demographics to a mock cohort table is:
 
-```
+```         
 cdm$my_flu_cohort |>
   addDemographics(
     indexDate = "cohort_start_date", 
@@ -128,19 +134,21 @@ cdm$my_flu_cohort |>
   dplyr::glimpse()
 ```
 
-    ## Rows: ??
-    ## Columns: 10
-    ## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
-    ## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-    ## $ subject_id           <int> 117, 818, 634, 729, 886, 245, 761, 385, 597, 53, …
-    ## $ cohort_start_date    <date> 1959-06-03, 1936-09-03, 1979-08-13, 2010-03-14, …
-    ## $ cohort_end_date      <date> 1960-11-29, 1981-03-23, 2053-12-02, 2044-04-28, …
-    ## $ age                  <int> 27, 2, 16, 36, 58, 20, 38, 82, 94, 77, 18, 5, 5, …
-    ## $ age_group            <chr> "adult", "children", "children", "adult", "adult"…
-    ## $ sex                  <chr> "Female", "Female", "Female", "Male", "Male", "Ma…
-    ## $ prior_observation    <int> 10015, 976, 6068, 13221, 21371, 7397, 13961, 3005…
-    ## $ future_observation   <int> 768, 41462, 32133, 40592, 20967, 10212, 20892, 19…
-    ## $ date_of_birth        <date> 1932-01-01, 1934-01-01, 1963-01-01, 1974-01-01, …
+```         
+## Rows: ??
+## Columns: 10
+## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
+## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ subject_id           <int> 117, 818, 634, 729, 886, 245, 761, 385, 597, 53, …
+## $ cohort_start_date    <date> 1959-06-03, 1936-09-03, 1979-08-13, 2010-03-14, …
+## $ cohort_end_date      <date> 1960-11-29, 1981-03-23, 2053-12-02, 2044-04-28, …
+## $ age                  <int> 27, 2, 16, 36, 58, 20, 38, 82, 94, 77, 18, 5, 5, …
+## $ age_group            <chr> "adult", "children", "children", "adult", "adult"…
+## $ sex                  <chr> "Female", "Female", "Female", "Male", "Male", "Ma…
+## $ prior_observation    <int> 10015, 976, 6068, 13221, 21371, 7397, 13961, 3005…
+## $ future_observation   <int> 768, 41462, 32133, 40592, 20967, 10212, 20892, 19…
+## $ date_of_birth        <date> 1932-01-01, 1934-01-01, 1963-01-01, 1974-01-01, …
+```
 
 For each functionality, there is an individual function: `addAge()`, `addSex()`, `addPriorObservation()`, `addFutureObservation()` or `addDateOfBirth()`.
 
@@ -148,8 +156,8 @@ For each functionality, there is an individual function: `addAge()`, `addSex()`,
 
 The *observation_period* contains the period of time that an individual in the database is in observation. There might be multiple individual periods per person, but they can not overlap each other. When doing analysis it can be of interest knowing if a certain date is in observation, whether the individual will be in observation after a certain time, and from which observation period is an observation. To do so we have two functions:
 
-- `addInObservation()` to identify if an individual is in observation in a certain *window* with respect to an *indexDate*.
-- `addObservationPeriodId()` to identify the observation period ordinal for that date.
+-   `addInObservation()` to identify if an individual is in observation in a certain *window* with respect to an *indexDate*.
+-   `addObservationPeriodId()` to identify the observation period ordinal for that date.
 
 ``` r
 cdm$my_flu_cohort |>
@@ -162,16 +170,18 @@ cdm$my_flu_cohort |>
   dplyr::glimpse()
 ```
 
-    ## Rows: ??
-    ## Columns: 7
-    ## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
-    ## $ cohort_definition_id  <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-    ## $ subject_id            <int> 962, 1158, 4462, 351, 3556, 320, 1965, 2105, 259…
-    ## $ cohort_start_date     <date> 1995-07-09, 2016-12-27, 1990-10-23, 2018-06-28,…
-    ## $ cohort_end_date       <date> 2019-06-14, 2017-02-15, 2018-04-27, 2018-06-29,…
-    ## $ obs_index_date        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-    ## $ in_1_year             <int> 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, …
-    ## $ observation_period_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+```         
+## Rows: ??
+## Columns: 7
+## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
+## $ cohort_definition_id  <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ subject_id            <int> 962, 1158, 4462, 351, 3556, 320, 1965, 2105, 259…
+## $ cohort_start_date     <date> 1995-07-09, 2016-12-27, 1990-10-23, 2018-06-28,…
+## $ cohort_end_date       <date> 2019-06-14, 2017-02-15, 2018-04-27, 2018-06-29,…
+## $ obs_index_date        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ in_1_year             <int> 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, …
+## $ observation_period_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+```
 
 ## Query functions
 
@@ -181,25 +191,23 @@ Usually OMOP CDM instances are stored in SQL databases. The functions that we ha
 
 `PatientProfiles` has 15 functions that are used to compute intersections between tables, cohorts, and concepts. Common function parameters are:
 
-- `indexDate`: Name of the column that contains the date that will be the origin time of our calculations.
-- `censorDate`: Name of the column that contains the date to censor the observation window.
-- `window`: Window of time with respect to the index date that we will consider relevant events.
+-   `indexDate`: Name of the column that contains the date that will be the origin time of our calculations.
+-   `censorDate`: Name of the column that contains the date to censor the observation window.
+-   `window`: Window of time with respect to the index date that we will consider relevant events.
 
 There are 5 different function types:
 
-- *Flag*: Creates a new integer column that can have three possible values: `1` if an event of interest is observed; `0` if the event is not observed; and `NA` if the individual is not in observation within that window.
-- *Count*: Creates a new integer column with the number of observed events; `NA` is reported if the individual is not in observation in that window.
-- *Date*: Creates a new date column containing the date of a certain event; `NA` is reported if the event is not observed or the individual is not in observation in that window.
-- *Days*: Creates a new integer column containing the time difference to a certain event; `NA` is reported if the event is not observed or the individual is not in observation in that window.
-- *Field*: Creates a new column containing a selected field from the first or last matching event in the window; `NA` is reported if no event is observed or the individual is not in observation in that window.
+-   *Flag*: Creates a new integer column that can have three possible values: `1` if an event of interest is observed; `0` if the event is not observed; and `NA` if the individual is not in observation within that window.
+-   *Count*: Creates a new integer column with the number of observed events; `NA` is reported if the individual is not in observation in that window.
+-   *Date*: Creates a new date column containing the date of a certain event; `NA` is reported if the event is not observed or the individual is not in observation in that window.
+-   *Days*: Creates a new integer column containing the time difference to a certain event; `NA` is reported if the event is not observed or the individual is not in observation in that window.
+-   *Field*: Creates a new column containing a selected field from the first or last matching event in the window; `NA` is reported if no event is observed or the individual is not in observation in that window.
 
-For the *Flag* and *Count* functions there are two extra parameters:
-- `targetStartDate`: Name of the column that identifies the start of the event.
-- `targetEndDate`: Name of the column identifying the end of the episode. If `NULL`, the event is considered to start and end on `targetStartDate`.
+For the *Flag* and *Count* functions there are two extra parameters: - `targetStartDate`: Name of the column that identifies the start of the event. - `targetEndDate`: Name of the column identifying the end of the episode. If `NULL`, the event is considered to start and end on `targetStartDate`.
 
 With the following code you can add the number of visits recorded in the prior year (`number_visits`) and a flag to see if there is a record of asthma at any time before the index date.
 
-```
+```         
 cdm$my_flu_cohort |>
   addTableIntersectCount(
     tableName = "visit_occurrence",
@@ -215,19 +223,19 @@ cdm$my_flu_cohort |>
   dplyr::glimpse()
 ```
 
-    ## Rows: ??
-    ## Columns: 6
-    ## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
-    ## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-    ## $ subject_id           <int> 117, 818, 634, 886, 245, 761, 597, 53, 124, 285, …
-    ## $ cohort_start_date    <date> 1959-06-03, 1936-09-03, 1979-08-13, 1996-07-06, …
-    ## $ cohort_end_date      <date> 1960-11-29, 1981-03-23, 2053-12-02, 2048-10-18, …
-    ## $ number_visits        <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-    ## $ prior_asthma         <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+```         
+## Rows: ??
+## Columns: 6
+## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
+## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ subject_id           <int> 117, 818, 634, 886, 245, 761, 597, 53, 124, 285, …
+## $ cohort_start_date    <date> 1959-06-03, 1936-09-03, 1979-08-13, 1996-07-06, …
+## $ cohort_end_date      <date> 1960-11-29, 1981-03-23, 2053-12-02, 2048-10-18, …
+## $ number_visits        <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ prior_asthma         <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+```
 
-For the *Date*, *Days*, and *Field* functions there are two extra parameters:
-- `targetDate`: Name of the column that contains the event of interest.
-- `order`: Whether we are interested in the "first" or "last" event in the window.
+For the *Date*, *Days*, and *Field* functions there are two extra parameters: - `targetDate`: Name of the column that contains the event of interest. - `order`: Whether we are interested in the "first" or "last" event in the window.
 
 The *Field* functions also require `field`, the name of the field to return from the selected event.
 
@@ -243,23 +251,25 @@ cdm$my_flu_cohort |>
   dplyr::glimpse()
 ```
 
-    ## Rows: ??
-    ## Columns: 6
-    ## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
-    ## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-    ## $ subject_id           <int> 761, 597, 124, 285, 157, 348, 297, 919, 830, 741,…
-    ## $ cohort_start_date    <date> 2037-03-23, 2093-08-24, 1981-12-13, 1993-01-28, …
-    ## $ cohort_end_date      <date> 2058-09-28, 2141-02-14, 2020-03-08, 2006-09-29, …
-    ## $ covid_test_1_to_inf  <date> 2077-08-29, NA, NA, NA, 2043-06-27, NA, NA, 2045…
-    ## $ flu_test_1_to_inf    <date> NA, 2194-01-24, 2058-08-07, 2093-09-06, NA, 2041…
-    
+```         
+## Rows: ??
+## Columns: 6
+## Database: DuckDB v1.0.0 [root@Darwin 23.4.0:R 4.4.1/:memory:]
+## $ cohort_definition_id <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ subject_id           <int> 761, 597, 124, 285, 157, 348, 297, 919, 830, 741,…
+## $ cohort_start_date    <date> 2037-03-23, 2093-08-24, 1981-12-13, 1993-01-28, …
+## $ cohort_end_date      <date> 2058-09-28, 2141-02-14, 2020-03-08, 2006-09-29, …
+## $ covid_test_1_to_inf  <date> 2077-08-29, NA, NA, NA, 2043-06-27, NA, NA, 2045…
+## $ flu_test_1_to_inf    <date> NA, 2194-01-24, 2058-08-07, 2093-09-06, NA, 2041…
+```
+
 NOTE that each function has some arguments related to the intersecting target (cohort, concept or clinical table).
 
 ## Summarise data
 
 `summariseResult()` allows users to summarise multiple columns into multiple estimates (see `availableEstimates()`) in a standard output format, as shown below:
 
-```
+```         
 cdm$my_flu_cohort |>
   addDemographics() |>
   addTableIntersectCount(
@@ -288,21 +298,23 @@ cdm$my_flu_cohort |>
   dplyr::glimpse()
 ```
 
-    ## Rows: 84
-    ## Columns: 13
-    ## $ result_id        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-    ## $ cdm_name         <chr> "PP_MOCK", "PP_MOCK", "PP_MOCK", "PP_MOCK", "PP_MOCK"…
-    ## $ group_name       <chr> "cohort_name", "cohort_name", "cohort_name", "cohort_…
-    ## $ group_level      <chr> "flu", "flu", "flu", "flu", "flu", "flu", "flu", "flu…
-    ## $ strata_name      <chr> "overall", "overall", "overall", "overall", "overall"…
-    ## $ strata_level     <chr> "overall", "overall", "overall", "overall", "overall"…
-    ## $ variable_name    <chr> "number records", "number subjects", "age", "age", "a…
-    ## $ variable_level   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-    ## $ estimate_name    <chr> "count", "count", "median", "q25", "q75", "median", "…
-    ## $ estimate_type    <chr> "integer", "integer", "integer", "integer", "integer"…
-    ## $ estimate_value   <chr> "350", "350", "49", "23", "87", "0", "0", "0", "1945-…
-    ## $ additional_name  <chr> "overall", "overall", "overall", "overall", "overall"…
-    ## $ additional_level <chr> "overall", "overall", "overall", "overall", "overall"…
+```         
+## Rows: 84
+## Columns: 13
+## $ result_id        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ cdm_name         <chr> "PP_MOCK", "PP_MOCK", "PP_MOCK", "PP_MOCK", "PP_MOCK"…
+## $ group_name       <chr> "cohort_name", "cohort_name", "cohort_name", "cohort_…
+## $ group_level      <chr> "flu", "flu", "flu", "flu", "flu", "flu", "flu", "flu…
+## $ strata_name      <chr> "overall", "overall", "overall", "overall", "overall"…
+## $ strata_level     <chr> "overall", "overall", "overall", "overall", "overall"…
+## $ variable_name    <chr> "number records", "number subjects", "age", "age", "a…
+## $ variable_level   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+## $ estimate_name    <chr> "count", "count", "median", "q25", "q75", "median", "…
+## $ estimate_type    <chr> "integer", "integer", "integer", "integer", "integer"…
+## $ estimate_value   <chr> "350", "350", "49", "23", "87", "0", "0", "0", "1945-…
+## $ additional_name  <chr> "overall", "overall", "overall", "overall", "overall"…
+## $ additional_level <chr> "overall", "overall", "overall", "overall", "overall"…
+```
 
 # Conclusions
 
