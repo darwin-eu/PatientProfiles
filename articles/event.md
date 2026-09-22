@@ -268,8 +268,8 @@ cdm$my_cohort |>
 #>   event_next                               n
 #>   <chr>                                <dbl>
 #> 1 osteoarthritis                        2174
-#> 2 end_of_observation                     115
-#> 3 diverticular_disease; osteoarthritis   390
+#> 2 diverticular_disease; osteoarthritis   390
+#> 3 end_of_observation                     115
 ```
 
 Alternatively, provide an explicit priority order. Here,
