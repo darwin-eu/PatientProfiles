@@ -416,7 +416,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 1.725 sec elapsed
+    ## 1.849 sec elapsed
 
 ``` r
 
@@ -455,7 +455,7 @@ cdm$cohort2 |>
 tictoc::toc()
 ```
 
-    ## 0.611 sec elapsed
+    ## 0.676 sec elapsed
 
 In our small mock dataset we see a small improvement in performance, but
 this difference will become much more noticeable when working with real
