@@ -17,7 +17,7 @@ authors:
   - name: Yuchen Guo
     orcid: 0000-0002-0847-4855
     affiliation: 1
-  - name: Kim Lopez-Guell
+  - name: Kim López-Güell
     orcid: 0000-0002-8462-8668
     affiliation: 1
   - name: Núria Mercadé-Besora
